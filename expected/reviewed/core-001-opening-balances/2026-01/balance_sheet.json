@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "10000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "owner_equity": {
+      "ending_balance": "10000.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "core-001-opening-balances",
+  "statement_type": "balance_sheet"
+}

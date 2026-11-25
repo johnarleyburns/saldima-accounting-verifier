@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://saldima.dev/schemas/financial-statement.schema.json",
+  "title": "Financial Statement Report",
+  "description": "Normalized shape for a trial balance / income statement / balance sheet / cash flow statement at a single reporting period, as produced by the reference model, a system adapter, or a reviewed fixture.",
+  "type": "object",
+  "required": ["scenario_id", "period", "currency", "statement_type", "lines"],
+  "properties": {
+    "scenario_id": { "type": "string" },
+    "period": { "type": "string" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "statement_type": {
+      "type": "string",
+      "enum": ["trial_balance", "income_statement", "balance_sheet", "cash_flow"]
+    },
+    "lines": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "debit": { "type": "string" },
+          "credit": { "type": "string" },
+          "ending_balance": { "type": "string" }
+        }
+      }
+    }
+  }
+}

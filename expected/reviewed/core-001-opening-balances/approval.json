@@ -1,0 +1,12 @@
+{
+  "scenario_id": "core-001-opening-balances",
+  "scenario_version": 1,
+  "reference_model_commit": "initial Phase 1 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-25",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": "Hand-verified: $10,000 cash contributed against Owner's Equity. Trial balance debits=credits=10000.00. Balance sheet: assets 10000.00 = equity 10000.00 (owner_equity 10000.00 + current_period_earnings 0.00, no revenue/expense activity in this scenario).",
+  "periods_covered": ["2026-01"]
+}

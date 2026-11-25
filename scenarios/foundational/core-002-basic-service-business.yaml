@@ -1,0 +1,268 @@
+scenario:
+  id: core-002-basic-service-business
+  name: Basic Service Business — Full Fiscal Year
+  version: 1
+  category: foundational
+  description: >
+    A sole proprietor service business operates for one full fiscal year:
+    owner contribution, twelve months of cash service revenue, twelve
+    months of cash rent expense, and a year-end closing entry. Validates
+    the full accounting cycle end to end, multi-period reporting
+    (monthly, mid-year, and annual), and the indirect-method cash flow
+    reconciliation. See docs/plan.md Phase 1, scenario CORE-002.
+
+  accounting:
+    framework: US_GAAP
+    basis: cash
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2026-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: rent_expense
+      name: Rent Expense
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "5000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "5000.00"
+
+  events:
+    - id: revenue-2026-01
+      date: 2026-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-02
+      date: 2026-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-03
+      date: 2026-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-04
+      date: 2026-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-05
+      date: 2026-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-06
+      date: 2026-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-07
+      date: 2026-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-08
+      date: 2026-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-09
+      date: 2026-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-10
+      date: 2026-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-11
+      date: 2026-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+    - id: revenue-2026-12
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "1000.00"
+        - account_id: service_revenue
+          credit: "1000.00"
+    - id: rent-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-06"
+      - period: "2026-12"
+      - period: "2026"

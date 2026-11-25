@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "8500.00"
+    },
+    "ending_cash": {
+      "ending_balance": "9200.00"
+    },
+    "net_income": {
+      "ending_balance": "700.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "700.00"
+    }
+  },
+  "period": "2026-06",
+  "scenario_id": "core-002-basic-service-business",
+  "statement_type": "cash_flow"
+}

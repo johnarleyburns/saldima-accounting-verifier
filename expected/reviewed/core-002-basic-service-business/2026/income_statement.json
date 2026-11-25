@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "8400.00"
+    },
+    "rent_expense": {
+      "ending_balance": "3600.00"
+    },
+    "service_revenue": {
+      "ending_balance": "12000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "core-002-basic-service-business",
+  "statement_type": "income_statement"
+}

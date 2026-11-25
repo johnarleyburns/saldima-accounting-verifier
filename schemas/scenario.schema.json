@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://saldima.dev/schemas/scenario.schema.json",
+  "title": "Scenario",
+  "type": "object",
+  "required": ["scenario"],
+  "properties": {
+    "scenario": {
+      "type": "object",
+      "required": ["id", "name", "version", "category", "accounting", "start_date", "end_date", "accounts", "events", "expected"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+        "name": { "type": "string" },
+        "version": { "type": "integer", "minimum": 1 },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "accounting": {
+          "type": "object",
+          "required": ["framework", "basis", "currency", "fiscal_year_end"],
+          "properties": {
+            "framework": { "type": "string", "enum": ["US_GAAP", "IFRS", "CASH_BASIS", "TAX_BASIS", "MANAGEMENT"] },
+            "basis": { "type": "string", "enum": ["accrual", "cash"] },
+            "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+            "fiscal_year_end": { "type": "string", "pattern": "^\\d{2}-\\d{2}$" }
+          }
+        },
+        "rounding": {
+          "type": "object",
+          "properties": {
+            "currency_precision": { "type": "integer", "minimum": 0 },
+            "method": { "type": "string", "enum": ["HALF_UP", "HALF_EVEN", "DOWN"] }
+          }
+        },
+        "policies": { "type": "object" },
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" },
+        "cash_accounts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "closing": {
+          "type": "object",
+          "required": ["retained_earnings_account", "dates"],
+          "properties": {
+            "retained_earnings_account": { "type": "string" },
+            "dates": {
+              "type": "array",
+              "items": { "type": "string", "format": "date" }
+            }
+          }
+        },
+        "opening_balances": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["account_id", "debit", "credit"],
+            "properties": {
+              "account_id": { "type": "string" },
+              "debit": { "type": "string" },
+              "credit": { "type": "string" }
+            }
+          }
+        },
+        "accounts": {
+          "type": "array",
+          "items": { "$ref": "account.schema.json" }
+        },
+        "events": {
+          "type": "array",
+          "items": { "$ref": "event.schema.json" }
+        },
+        "expected": {
+          "type": "object",
+          "required": ["reports"],
+          "properties": {
+            "reports": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["period"],
+                "properties": { "period": { "type": "string" } }
+              }
+            },
+            "schedules": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

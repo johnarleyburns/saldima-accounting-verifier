@@ -1,0 +1,10 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "0.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "core-001-opening-balances",
+  "statement_type": "income_statement"
+}

@@ -1,0 +1,46 @@
+[project]
+name = "saldima-accounting-validation"
+version = "0.1.0"
+description = "Independent accounting-correctness validation suite for Saldima and GnuCash compatibility"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "AGPL-3.0-or-later" }
+dependencies = [
+    "pydantic>=2.6",
+    "jsonschema>=4.21",
+    "pyyaml>=6.0",
+    "typer>=0.12",
+    "pandas>=2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "hypothesis>=6.98",
+    "coverage>=7.4",
+    "mypy>=1.9",
+    "ruff>=0.4",
+    "types-jsonschema>=4.21",
+    "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+saldima-validate = "runner.cli:app"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["reference*", "runner*", "adapters*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true

@@ -1,0 +1,15 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "10000.00"
+    },
+    "owner_equity": {
+      "credit": "10000.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "core-001-opening-balances",
+  "statement_type": "trial_balance"
+}

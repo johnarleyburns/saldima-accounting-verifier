@@ -1,0 +1,18 @@
+{
+  "scenario_id": "core-002-basic-service-business",
+  "scenario_version": 1,
+  "reference_model_commit": "initial Phase 1 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "cash",
+  "policies": {},
+  "review_date": "2026-11-25",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output:",
+    "2026-01 (January): revenue 1000.00, rent expense 300.00, net income 700.00. Cash 5000.00 (opening) + 1000.00 - 300.00 = 5700.00. Equity = owner_equity 5000.00 + current_period_earnings 700.00 (no closing yet) = 5700.00 = assets. Cash flow reconciles: operating_cash_flow 5700.00 (net_income 700.00 + owner_equity contribution adjustment 5000.00) == ending_cash 5700.00 - beginning_cash 0.00.",
+    "2026-06 (June, standalone month — 'YYYY-MM' periods are single calendar months, not year-to-date): revenue 1000.00, rent 300.00, net 700.00, matching every other month. Cash flow reconciles: 700.00 == ending_cash 9200.00 - beginning_cash (end of May) 8500.00.",
+    "2026-12 (December, standalone month, after the 2026-12-31 closing entry has posted): revenue 1000.00, rent 300.00, net 700.00 for December's own activity (closing entries are excluded from period activity — see docs/reference-model.md). Balance sheet shows retained_earnings 8400.00 (the full year's net income, swept in by the closing entry) and current_period_earnings 0.00 (nothing left unclosed as of the closing date) — total equity 13400.00 = assets (cash 13400.00). Cash flow for December alone reconciles to 700.00, unaffected by the same-day closing entry (which has zero cash impact), by design (cash_flow.py is blind to closing entries).",
+    "2026 (full fiscal year, 'YYYY' == calendar year): revenue 12*1000.00=12000.00, rent 12*300.00=3600.00, net income 8400.00, matching 12 months of identical activity. Cash: 5000.00 (opening) + 12000.00 - 3600.00 = 13400.00. Equity = owner_equity 5000.00 + retained_earnings 8400.00 + current_period_earnings 0.00 = 13400.00 = assets. Cash flow reconciles: operating_cash_flow 13400.00 (net_income 8400.00 + owner_equity adjustment 5000.00) == ending_cash 13400.00 - beginning_cash 0.00."
+  ],
+  "periods_covered": ["2026-01", "2026-06", "2026-12", "2026"]
+}

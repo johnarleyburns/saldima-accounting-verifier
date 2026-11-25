@@ -1,0 +1,45 @@
+scenario:
+  id: core-001-opening-balances
+  name: Initial Balances and Opening Entries
+  version: 1
+  category: foundational
+  description: >
+    A sole proprietor contributes cash to open the business. Validates that
+    an opening balance posts as a balanced journal entry and that the trial
+    balance and balance sheet agree from day one. See docs/plan.md Phase 1,
+    scenario CORE-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2026-01-31
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+
+  opening_balances:
+    - account_id: cash
+      debit: "10000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "10000.00"
+
+  events: []
+
+  expected:
+    reports:
+      - period: "2026-01"
