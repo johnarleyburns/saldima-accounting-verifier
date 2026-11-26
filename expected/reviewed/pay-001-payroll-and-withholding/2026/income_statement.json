@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "31410.00"
+    },
+    "payroll_tax_expense": {
+      "ending_balance": "4590.00"
+    },
+    "salaries_expense": {
+      "ending_balance": "60000.00"
+    },
+    "service_revenue": {
+      "ending_balance": "96000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "pay-001-payroll-and-withholding",
+  "statement_type": "income_statement"
+}

@@ -26,7 +26,7 @@ Per-account (under `accounts[]`): `cash_flow_category`
 
 ## Events
 
-Six event types are implemented. Adding a new one means:
+Seven event types are implemented. Adding a new one means:
 
 1. Add it to `schemas/event.schema.json`.
 2. Teach `runner/scenario_runner.py` how to translate it into
@@ -128,6 +128,35 @@ A **write-down** (`INV-002`) is not a separate event type — it's a plain
 `manual_journal_entry` (debit a write-down expense account, credit
 inventory), since the write-down amount is a stated business judgment,
 not something derived from a schedule.
+
+### `loan_origination` (Phase 4)
+
+Fields: `cash_account_id`, `loan_payable_account_id`,
+`interest_expense_account_id`, `principal`, `annual_interest_rate` (a
+decimal fraction, e.g. `"0.06"` for 6%), `term_months` (the event `date`
+is the origination date, first day of its month). Models an
+equal-principal, declining-interest loan — the reference model derives
+the equal monthly principal payment (`principal / term_months`, remainder
+in the last month — the same convention as `fixed_asset_purchase`) and
+each month's interest (that month's *remaining* balance times the
+monthly rate, rounded) itself, via
+`reference/schedules/debt.py`'s `build_amortization_schedule`. Posts one
+origination entry (debit cash, credit the loan payable, for `principal`)
+and one payment entry per month for the full `term_months` (debit
+interest expense and the loan payable's principal portion, credit cash
+for the sum). `loan_payable_account_id` should be declared `type:
+liability` with `cash_flow_category: financing` in `accounts[]` — see
+`docs/accounting-policy.md`. No early-payoff/disposal counterpart exists
+yet (not needed by `DEBT-001`); the schedule always runs the full
+`term_months`.
+
+**Payroll (`PAY-001`) is not a new event type** — gross pay, every
+withholding amount, and the employer's matching payroll tax are all
+stated business facts with no schedule to derive, so it's
+`manual_journal_entry` throughout. See
+`scenarios/payroll/pay-001-payroll-and-withholding.yaml` for the
+one-month accrual/remittance-lag pattern (the same shape as
+`ACCR-001`'s accrued-liability lag).
 
 ## Reporting periods
 

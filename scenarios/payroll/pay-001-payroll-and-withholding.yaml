@@ -1,0 +1,578 @@
+scenario:
+  id: pay-001-payroll-and-withholding
+  name: Payroll and Withholding
+  version: 1
+  category: payroll
+  description: >
+    A service business runs monthly payroll for one fiscal year: gross
+    pay of $5,000/month, with federal income tax ($800.00), state income
+    tax ($200.00), and the employee's share of FICA ($382.50) withheld;
+    net pay ($3,617.50) is paid to the employee immediately, while the
+    employer also accrues a matching FICA liability ($382.50) as payroll
+    tax expense. All withheld and employer amounts are remitted to the
+    taxing authorities together, with a one-month lag -- the same
+    accrual/payment lag `ACCR-001` already established for accrued
+    liabilities. All of these amounts (gross pay, withholding, the
+    employer match) are stated business facts, not something the
+    reference model derives from a schedule, so this scenario uses only
+    `manual_journal_entry` events -- see docs/accounting-policy.md.
+    Validates payroll liabilities flowing through the trial balance,
+    balance sheet, and cash flow reconciliation. See docs/plan.md Phase 4,
+    scenario PAY-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2026-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: salaries_expense
+      name: Salaries Expense
+      type: expense
+    - id: payroll_tax_expense
+      name: Payroll Tax Expense (Employer)
+      type: expense
+    - id: federal_income_tax_withheld_payable
+      name: Federal Income Tax Withheld Payable
+      type: liability
+    - id: state_income_tax_withheld_payable
+      name: State Income Tax Withheld Payable
+      type: liability
+    - id: fica_payable
+      name: FICA Payable (Employee and Employer Shares)
+      type: liability
+
+  opening_balances:
+    - account_id: cash
+      debit: "10000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "10000.00"
+
+  events:
+    - id: revenue-2026-01
+      date: 2026-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-02
+      date: 2026-02-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-02
+      date: 2026-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-03
+      date: 2026-03-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-03
+      date: 2026-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-04
+      date: 2026-04-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-04
+      date: 2026-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-05
+      date: 2026-05-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-05
+      date: 2026-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-06
+      date: 2026-06-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-06
+      date: 2026-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-07
+      date: 2026-07-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-07
+      date: 2026-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-08
+      date: 2026-08-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-08
+      date: 2026-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-09
+      date: 2026-09-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-09
+      date: 2026-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-10
+      date: 2026-10-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-10
+      date: 2026-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-11
+      date: 2026-11-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-11
+      date: 2026-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: remit-payroll-taxes-2026-12
+      date: 2026-12-01
+      type: manual_journal_entry
+      lines:
+        - account_id: federal_income_tax_withheld_payable
+          debit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          debit: "200.00"
+        - account_id: fica_payable
+          debit: "765.00"
+        - account_id: cash
+          credit: "1765.00"
+    - id: revenue-2026-12
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "8000.00"
+        - account_id: service_revenue
+          credit: "8000.00"
+    - id: payroll-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "5000.00"
+        - account_id: cash
+          credit: "3617.50"
+        - account_id: federal_income_tax_withheld_payable
+          credit: "800.00"
+        - account_id: state_income_tax_withheld_payable
+          credit: "200.00"
+        - account_id: fica_payable
+          credit: "382.50"
+    - id: employer-payroll-tax-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: payroll_tax_expense
+          debit: "382.50"
+        - account_id: fica_payable
+          credit: "382.50"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-06"
+      - period: "2026-12"
+      - period: "2026"

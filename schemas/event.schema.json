@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://saldima.dev/schemas/event.schema.json",
   "title": "Business Event",
-  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment'. Phase 3 adds 'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', and 'inventory_sale' -- each a case where the reference model itself must derive entries from a declared policy (depreciation schedule, disposal gain/loss, FIFO costing) rather than copying author-supplied numbers. See docs/scenario-authoring.md and docs/accounting-policy.md.",
+  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment'. Phase 3 adds 'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', and 'inventory_sale'. Phase 4 adds 'loan_origination' -- each a case where the reference model itself must derive entries from a declared policy (depreciation schedule, disposal gain/loss, FIFO costing, loan amortization) rather than copying author-supplied numbers. See docs/scenario-authoring.md and docs/accounting-policy.md.",
   "type": "object",
   "required": ["id", "date", "type"],
   "additionalProperties": true,
@@ -58,6 +58,11 @@
     "revenue_account_id": { "type": "string", "description": "Used by type=inventory_sale (also used per-obligation by type=customer_contract_payment)" },
     "quantity": { "type": "string", "description": "Used by type=inventory_purchase and type=inventory_sale" },
     "unit_cost": { "type": "string", "description": "Used by type=inventory_purchase" },
-    "unit_price": { "type": "string", "description": "Used by type=inventory_sale" }
+    "unit_price": { "type": "string", "description": "Used by type=inventory_sale" },
+    "loan_payable_account_id": { "type": "string", "description": "Used by type=loan_origination (liability-type account; should set cash_flow_category: financing)" },
+    "interest_expense_account_id": { "type": "string", "description": "Used by type=loan_origination" },
+    "principal": { "type": "string", "description": "Used by type=loan_origination" },
+    "annual_interest_rate": { "type": "string", "description": "Used by type=loan_origination, as a decimal fraction (e.g. \"0.06\" for 6%)" },
+    "term_months": { "type": "integer", "minimum": 1, "description": "Used by type=loan_origination" }
   }
 }
