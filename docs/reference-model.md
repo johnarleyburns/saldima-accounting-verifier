@@ -239,6 +239,72 @@ convention, generalized to an arbitrary number of named targets rather
 than a fixed time sequence, is also what `closing.py`'s new
 `partner_allocations` path uses (see the Phase 5 section above).
 
+## The double-entry invariants, numbered (Phase 7)
+
+`docs/plan.md` section 13 describes the invariants this reference model
+enforces in prose only. The numbering actually in use comes from
+`tests/invariants/test_double_entry_invariants.py`'s own scheme, which
+this section now makes canonical, recording for each invariant whether
+it's covered by a hand-built example (`tests/invariants/`), a
+Hypothesis property test generalizing it across randomly generated
+books (`tests/property/`, Phase 7), or both:
+
+| # | Invariant | Hand-built example | Property test |
+|---|---|---|---|
+| 1 | Every posted journal entry balances | `test_invariant_1_...` (construction-time enforcement) | — (enforced unconditionally by `JournalEntry.__post_init__`; every other property test's input is already balanced by construction) |
+| 2 | The trial balance always balances | `test_invariant_2_...` | `tests/property/test_balanced_ledger_invariants.py::test_trial_balance_always_balances_for_arbitrary_valid_postings` |
+| 3 | The balance sheet satisfies the accounting equation | `test_invariant_3_...` (also checks the broken-ledger detector fires) | `tests/property/test_balanced_ledger_invariants.py::test_accounting_equation_holds_for_arbitrary_valid_ledgers` |
+| 6 | Posted transactions are immutable | `test_invariant_6_...` | — (a `FrozenInstanceError` check; there is no randomized input to vary) |
+| 7 | A reversal restores original balances | `test_invariant_7_...` | — |
+| 8 | Every split references a valid account | `test_invariant_8_...` | — (an `AccountingError` check; there is no randomized input to vary) |
+| 12 | Closing does not change historical entries | `test_invariant_12_...` | — |
+
+Two further properties this phase adds have no pre-existing hand-built
+example or assigned invariant number, so they're recorded here directly
+rather than forcing a number onto them:
+
+- **Idempotent replay**: posting the same set of valid entries in a
+  different order produces identical final account balances —
+  `tests/property/test_balanced_ledger_invariants.py::test_posting_order_does_not_affect_final_balances`.
+- **Cash-flow reconciliation holds for arbitrary activity**, generalizing
+  the proof sketch above beyond the specific scenarios that exercise it
+  today — `tests/property/test_cash_flow_reconciliation.py`.
+
+Two more Phase 7 property suites generalize claims this document already
+makes in prose, beyond their one hand-picked example apiece:
+`tests/property/test_closing_allocation_invariants.py` (the Phase 5
+partner-allocation remainder convention, for arbitrary partner counts and
+ratios) and `tests/property/test_rounding_remainder_invariant.py` (the
+shared remainder-to-last convention across every `reference/schedules/*`
+and `reference/tax/liabilities.py` module that uses it). A fifth,
+`tests/property/test_merge_invariants.py`, generalizes `reference/sync/
+merge.py`'s conflict semantics (see below) across randomly generated
+branch sizes and edit amounts.
+
+## Phase 7's performance baseline surfaced (and fixed) a real O(n²) bottleneck
+
+Building `scripts/run_performance_benchmark.py`'s large synthetic ledgers
+for the first time (see "the double-entry invariants, numbered" above)
+did exactly what `docs/plan.md` section 15 says a baseline is for:
+`Ledger.post`'s duplicate-id check was `any(existing.id == entry.id for
+existing in self.entries)`, an O(n) linear scan on every post, making
+posting `n` entries O(n²) overall. At 100,000 transactions this took over
+a thousand CPU-seconds; at 1,000,000 it would never have finished in any
+practical time. The fix is a `Ledger._entry_ids: set[str]` tracked
+alongside `entries` (seeded from any pre-existing entries in
+`__post_init__`, updated on every successful `post`) — an O(1) membership
+check with identical behavior and the identical `AccountingError` message
+for a genuine duplicate. This is the one `reference/accounting/*.py`
+change this phase makes: every other Phase 7 addition (`tests/property/`,
+`scripts/generate_synthetic_ledger.py`,
+`scripts/run_performance_benchmark.py`) only calls existing public
+functions. All 17 pre-Phase-7 scenarios' reviewed fixtures were confirmed
+byte-for-byte unchanged before and after this fix (it doesn't change
+`Ledger`'s externally observable behavior at all, only its internal
+duplicate-id algorithm), and a full 1,000,000-transaction benchmark run
+completes in well under a minute after the fix (building the ledger:
+~18s; each report: under 1.5s).
+
 ## `reference/sync/merge.py` models an "edit" as a replacement, never a mutation (Phase 6)
 
 Invariant 6 (docs/plan.md section 13; `tests/invariants/
