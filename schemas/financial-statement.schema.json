@@ -11,7 +11,7 @@
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
     "statement_type": {
       "type": "string",
-      "enum": ["trial_balance", "income_statement", "balance_sheet", "cash_flow"]
+      "enum": ["trial_balance", "income_statement", "balance_sheet", "cash_flow", "bank_reconciliation"]
     },
     "lines": {
       "type": "object",

@@ -1,0 +1,43 @@
+{
+  "lines": {
+    "bank_fee_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "checking": {
+      "credit": "0.00",
+      "debit": "9800.00"
+    },
+    "interest_income": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "owner_equity": {
+      "credit": "10000.00",
+      "debit": "0.00"
+    },
+    "rent_expense": {
+      "credit": "0.00",
+      "debit": "1200.00"
+    },
+    "retained_earnings": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "savings": {
+      "credit": "0.00",
+      "debit": "3000.00"
+    },
+    "service_revenue": {
+      "credit": "4000.00",
+      "debit": "0.00"
+    },
+    "utilities_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026-Q1",
+  "scenario_id": "core-003-cash-and-bank-transactions",
+  "statement_type": "trial_balance"
+}

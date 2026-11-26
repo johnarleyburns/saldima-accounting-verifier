@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "12800.00"
+    },
+    "ending_cash": {
+      "ending_balance": "15600.00"
+    },
+    "net_income": {
+      "ending_balance": "2800.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "2800.00"
+    }
+  },
+  "period": "2026-Q2",
+  "scenario_id": "core-003-cash-and-bank-transactions",
+  "statement_type": "cash_flow"
+}

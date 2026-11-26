@@ -179,6 +179,24 @@ for the consolidation scope boundaries (wholly-owned subsidiary, cost
 method, no noncontrolling interest, fiscal-year-end-only, no consolidated
 cash flow).
 
+Implemented (`CORE-003`, cash and bank transactions / bank
+reconciliation — docs/plan.md section 19; out-of-roadmap follow-on work,
+closing out section 19's corpus entirely): `reference/accounting/
+bank_reconciliation.py` (new, additive — the classic `book_balance ==
+bank_statement_balance + deposits_in_transit - outstanding_checks`
+identity, mirroring `cash_flow.py`'s own result-dataclass-plus-
+`assert_reconciles()` shape). A new, optional `bank_reconciliations`
+scenario block (`schemas/scenario.schema.json`) and
+`runner/reference_runner.generate_bank_reconciliations` produce each
+declared reconciliation as its own `reconciliation-<cash_account_id>-
+<as_of>` "period" entry, reusing `runner/compare.py` and
+`tests/integration/test_core_scenarios.py`'s existing comparison loop
+completely unchanged. `CORE-003` also confirms (not just assumes) that
+multiple cash accounts and a transfer between them already flow
+correctly through `cash_flow.py`'s existing reconciliation with zero
+`reference/accounting/*.py` changes beyond the new module above — see
+`docs/accounting-policy.md`.
+
 Scaffolded only (directory + README explaining what's planned, see
 `docs/plan.md` section 18 for phases): `adapters/{saldima,csv,ofx,qfx}/`,
 every scenario category besides `foundational/`, `accruals/`,

@@ -1,0 +1,22 @@
+{
+  "scenario_id": "core-003-cash-and-bank-transactions",
+  "scenario_version": 1,
+  "reference_model_commit": "CORE-003 implementation (docs/plan.md section 19)",
+  "accounting_framework": "US_GAAP",
+  "basis": "cash",
+  "policies": {
+    "bank_reconciliation": "outstanding items are declared by the scenario author, not detected by matching an imported bank feed -- see docs/accounting-policy.md"
+  },
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output.",
+    "Checking balance walk: opening 10000.00 -> transfer to savings -3000.00 = 7000.00 -> Q1 (+4000.00 revenue -1200.00 rent) = 9800.00 -> Q2 (+2800.00) = 12600.00 -> Q3 (+2800.00) = 15400.00 -> Q4 revenue/rent (+2800.00) = 18200.00 -> check 1200 (-800.00) = 17400.00 -> check 1201 (-450.00) = 16950.00 -> deposit in transit (+1500.00) = 18450.00 -> bank fee (-25.00) = 18425.00.",
+    "Savings balance: transfer +3000.00, interest earned +15.00 = 3015.00.",
+    "2026 income statement: service_revenue 4x4000.00 + 1500.00 (Dec 31 deposit) = 17500.00; interest_income 15.00; rent_expense 4x1200.00 = 4800.00; utilities_expense 800.00+450.00 = 1250.00; bank_fee_expense 25.00. net_income = (17500.00+15.00) - (4800.00+1250.00+25.00) = 17515.00 - 6075.00 = 11440.00, swept into retained_earnings by the 2026-12-31 closing.",
+    "2026 balance sheet: assets checking 18425.00 + savings 3015.00 = 21440.00 = equity (owner_equity 10000.00 + retained_earnings 11440.00) 21440.00.",
+    "2026 cash flow: the checking-to-savings transfer touches only accounts in cash_accounts (both checking and savings), so it has zero net effect on beginning_cash/ending_cash and never appears as an adjustment -- confirmed with no changes needed anywhere in reference/accounting/cash_flow.py. operating_cash_flow = net_income 11440.00 + owner_equity 10000.00 (untagged equity account, defaults to operating) = 21440.00, matching ending_cash 21440.00 - beginning_cash 0.00.",
+    "Bank reconciliation for checking at 2026-12-31: book_balance 18425.00 (from the walk above). Declared outstanding_checks 1250.00 (the two December checks, 800.00+450.00, not yet cleared) and deposits_in_transit 1500.00 (the December 31 deposit, not yet processed by the bank). bank_statement_balance is declared as 18175.00, derived as book_balance - deposits_in_transit + outstanding_checks = 18425.00 - 1500.00 + 1250.00 = 18175.00, so the identity bank_statement_balance + deposits_in_transit - outstanding_checks = 18175.00 + 1500.00 - 1250.00 = 18425.00 holds exactly against book_balance, independently re-derived from the generated output before promoting this fixture."
+  ],
+  "periods_covered": ["2026-Q1", "2026-Q2", "2026-Q3", "2026-Q4", "2026", "reconciliation-checking-2026-12-31"]
+}

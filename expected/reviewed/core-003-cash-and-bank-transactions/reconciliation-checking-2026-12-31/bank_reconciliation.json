@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "adjusted_bank_balance": {
+      "ending_balance": "18425.00"
+    },
+    "bank_statement_balance": {
+      "ending_balance": "18175.00"
+    },
+    "book_balance": {
+      "ending_balance": "18425.00"
+    },
+    "deposits_in_transit": {
+      "ending_balance": "1500.00"
+    },
+    "outstanding_checks": {
+      "ending_balance": "1250.00"
+    }
+  },
+  "period": "reconciliation-checking-2026-12-31",
+  "scenario_id": "core-003-cash-and-bank-transactions",
+  "statement_type": "bank_reconciliation"
+}

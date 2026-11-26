@@ -18,6 +18,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SCENARIOS = [
     REPO_ROOT / "scenarios" / "foundational" / "core-001-opening-balances.yaml",
     REPO_ROOT / "scenarios" / "foundational" / "core-002-basic-service-business.yaml",
+    REPO_ROOT / "scenarios" / "foundational" / "core-003-cash-and-bank-transactions.yaml",
     REPO_ROOT / "scenarios" / "accruals" / "accr-001-accrued-payroll-and-utilities.yaml",
     REPO_ROOT / "scenarios" / "accruals" / "accr-002-prepaid-insurance-and-rent.yaml",
     REPO_ROOT / "scenarios" / "revenue-recognition" / "rev-001-advance-service-contract.yaml",

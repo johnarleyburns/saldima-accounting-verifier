@@ -12,7 +12,14 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
-from reference.accounting import balance_sheet, cash_flow, closing, income_statement, trial_balance
+from reference.accounting import (
+    balance_sheet,
+    bank_reconciliation,
+    cash_flow,
+    closing,
+    income_statement,
+    trial_balance,
+)
 from reference.accounting.rounding import money
 from reference.reporting import statements
 from runner import period as period_mod
@@ -52,7 +59,9 @@ def generate_period_reports(scenario: LoadedScenario, period: str) -> dict[str, 
     fy_start = period_mod.fiscal_year_start(end)
 
     tb = trial_balance.generate(scenario.ledger, scenario.chart, end, scenario.id, period)
-    income = income_statement.generate(scenario.ledger, scenario.chart, start, end, scenario.id, period)
+    income = income_statement.generate(
+        scenario.ledger, scenario.chart, start, end, scenario.id, period
+    )
     bs = balance_sheet.generate(scenario.ledger, scenario.chart, end, fy_start, scenario.id, period)
 
     result = {
@@ -63,7 +72,13 @@ def generate_period_reports(scenario: LoadedScenario, period: str) -> dict[str, 
 
     if scenario.cash_account_ids:
         cf = cash_flow.generate(
-            scenario.ledger, scenario.chart, start, end, scenario.cash_account_ids, scenario.id, period
+            scenario.ledger,
+            scenario.chart,
+            start,
+            end,
+            scenario.cash_account_ids,
+            scenario.id,
+            period,
         )
         lines = {
             "net_income": {"ending_balance": f"{cf.net_income:.2f}"},
@@ -99,6 +114,39 @@ def generate_period_reports(scenario: LoadedScenario, period: str) -> dict[str, 
     return result
 
 
+def generate_bank_reconciliations(scenario: LoadedScenario) -> dict[str, dict[str, Any]]:
+    """CORE-003 scope: a scenario may declare zero or more bank
+    reconciliations (see schemas/scenario.schema.json's
+    `bank_reconciliations`). Each one is returned as its own "period"
+    entry -- `reconciliation-<cash_account_id>-<as_of>` -- alongside
+    `generate_period_reports`'s ordinary periods, so it reuses the exact
+    same fixture/comparison machinery (runner/compare.py,
+    tests/integration/test_core_scenarios.py) with no changes to either.
+    """
+    results: dict[str, dict[str, Any]] = {}
+    for entry in scenario.raw.get("bank_reconciliations", []):
+        cash_account_id = entry["cash_account_id"]
+        as_of = date.fromisoformat(entry["as_of"])
+        rec = bank_reconciliation.generate(
+            scenario.ledger,
+            scenario.chart,
+            cash_account_id,
+            as_of,
+            money(entry["bank_statement_balance"]),
+            money(entry["deposits_in_transit"]),
+            money(entry["outstanding_checks"]),
+            scenario.id,
+            f"reconciliation-{cash_account_id}-{as_of.isoformat()}",
+        )
+        period = f"reconciliation-{cash_account_id}-{as_of.isoformat()}"
+        results[period] = {"bank_reconciliation": statements.bank_reconciliation_to_dict(rec)}
+    return results
+
+
 def run(scenario: LoadedScenario) -> dict[str, dict[str, Any]]:
     apply_closing_entries(scenario)
-    return {period: generate_period_reports(scenario, period) for period in scenario.report_periods}
+    reports = {
+        period: generate_period_reports(scenario, period) for period in scenario.report_periods
+    }
+    reports.update(generate_bank_reconciliations(scenario))
+    return reports
