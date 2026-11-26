@@ -1,0 +1,19 @@
+{
+  "scenario_id": "multi-002-subsidiary",
+  "scenario_version": 1,
+  "reference_model_commit": "Multi-entity consolidation implementation (MULTI-002, docs/plan.md section 19)",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output.",
+    "Formation + loan received (2026-01-01): cash 100000.00 (common_stock) + 50000.00 (intercompany_payable) = cash 150000.00.",
+    "Per-year net income = revenue - operating_expense - 3000.00 (intercompany interest) - 10000.00 (intercompany management fee), with revenue growing 80000/85000/90000/95000/100000 and operating_expense growing 50000/52000/54000/56000/58000 over the five years: 2026 80000-50000-3000-10000=17000; 2027 85000-52000-3000-10000=20000; 2028 90000-54000-3000-10000=23000; 2029 95000-56000-3000-10000=26000; 2030 100000-58000-3000-10000=29000. Cumulative retained_earnings after each year's closing: 17000, 37000, 60000, 86000, 115000.",
+    "Cash walk: 150000.00 (start) -> +80000-50000-3000-10000=167000.00 (2026) -> +85000-52000-3000-10000=187000.00 (2027) -> +90000-54000-3000-10000=210000.00 (2028) -> +95000-56000-3000-10000=236000.00 (2029) -> +100000-58000-3000-10000-50000(loan principal repaid)=215000.00 (2030).",
+    "Balance sheet checks (assets cash vs liabilities intercompany_payable (50000.00 through 2029, 0.00 in 2030) + equity (common_stock 100000.00 constant + retained_earnings)): 2026 167000.00 = 50000.00+100000.00+17000.00; 2027 187000.00 = 50000.00+100000.00+37000.00; 2028 210000.00 = 50000.00+100000.00+60000.00; 2029 236000.00 = 50000.00+100000.00+86000.00; 2030 215000.00 = 0.00+100000.00+115000.00.",
+    "This is the Subsidiary half of MULTI-002's two-entity group; see scenarios/multi-entity/multi-002-parent.yaml for the Parent half and docs/accounting-policy.md for how the two consolidate (the actual MULTI-002 validation target, under expected/reviewed/multi-002-multi-entity-reporting/)."
+  ],
+  "periods_covered": ["2026", "2027", "2028", "2029", "2030"]
+}

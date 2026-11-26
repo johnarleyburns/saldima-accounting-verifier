@@ -1,0 +1,22 @@
+{
+  "scenario_id": "multi-001-intercompany-transactions",
+  "scenario_version": 1,
+  "reference_model_commit": "Multi-entity consolidation implementation (MULTI-001, docs/plan.md section 19)",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {
+    "consolidation": "wholly-owned subsidiary, cost method, no noncontrolling interest; consolidated only at a fiscal year end after each entity's own closing; no consolidated statement of cash flows -- see docs/accounting-policy.md"
+  },
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against each entity's own reviewed fixtures (expected/reviewed/multi-001-parent/, multi-001-subsidiary/) before comparing to the consolidation module's output -- see reference/accounting/consolidation.py and runner/consolidation_runner.py.",
+    "2026, pre-elimination (summing each entity's end-of-2026 balances by account id): cash 53000.00 (Parent) + 177000.00 (Sub) = 230000.00. investment_in_subsidiary 100000.00 (Parent) vs common_stock 100000.00 (Sub) -- equal, eliminated. intercompany_receivable 50000.00 (Parent) vs intercompany_payable 50000.00 (Sub) -- equal, eliminated. paid_in_capital 200000.00 (Parent only). retained_earnings 3000.00 (Parent) + 27000.00 (Sub) = 30000.00.",
+    "2026 consolidated balance sheet: assets cash 230000.00 = liabilities 0.00 + equity (paid_in_capital 200000.00 + retained_earnings 30000.00) 230000.00. Note retained_earnings sums directly across entities with no elimination -- correct for a 100%-owned subsidiary with no noncontrolling interest: only the subsidiary's *original* contributed capital (common_stock) is eliminated against the parent's investment account; its post-formation retained earnings is fully attributable to the parent and consolidates normally.",
+    "2026 consolidated income statement: Parent's intercompany_interest_income 3000.00 (period activity) exactly offsets Sub's intercompany_interest_expense 3000.00 -- eliminated, so neither appears as a gross line item (demonstrating the elimination's real effect: the un-eliminated gross figures would have been revenue 83000.00 / expenses 53000.00, both overstated by the intercompany amount, even though net income is unaffected either way). Remaining: revenue 80000.00 (Sub's external revenue only), operating_expense 50000.00 (Sub only), net_income 30000.00.",
+    "2027, pre-elimination: cash 106000.00 (Parent) + 159000.00 (Sub) = 265000.00. investment_in_subsidiary 100000.00 vs common_stock 100000.00 -- eliminated. intercompany_receivable 0.00 vs intercompany_payable 0.00 (the balloon principal was repaid during 2027) -- trivially equal, eliminated. retained_earnings 6000.00 (Parent) + 59000.00 (Sub) = 65000.00.",
+    "2027 consolidated balance sheet: assets cash 265000.00 = equity (paid_in_capital 200000.00 + retained_earnings 65000.00) 265000.00.",
+    "2027 consolidated income statement: Parent's second-year intercompany_interest_income 3000.00 exactly offsets Sub's intercompany_interest_expense 3000.00 -- eliminated. Remaining: revenue 90000.00, operating_expense 55000.00, net_income 35000.00."
+  ],
+  "periods_covered": ["2026", "2027"]
+}

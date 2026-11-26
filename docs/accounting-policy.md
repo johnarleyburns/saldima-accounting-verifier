@@ -465,3 +465,73 @@ documented deviation: "Duration: Multiple branches" doesn't fit the
 calendar-period reporting convention any other scenario uses, and there's
 no financial-statement baseline to hand-verify, since the correctness bar
 is the merge algorithm's own behavior, not a business's books.
+
+## Multi-entity accounting and consolidation scope boundaries (`MULTI-001`/`MULTI-002`)
+
+`MULTI-001`/`MULTI-002` (item 15 of `docs/plan.md` section 1's validation
+list) don't map to any of the 7 named phases in section 18 — they're
+out-of-roadmap follow-on work implemented after Phase 7, filling in the
+one remaining gap in section 19's corpus. Four explicit, stated scope
+boundaries, the same kind `FA-003` and `PART-002`/`003` already use for
+their own tax-side simplifications:
+
+- **Wholly-owned subsidiary, cost method, no noncontrolling interest.**
+  The parent's `investment_in_subsidiary` is recorded once at formation
+  and never remeasured; it eliminates only against the subsidiary's
+  *original* contributed capital (`common_stock`). The subsidiary's
+  post-formation `retained_earnings` consolidates by ordinary same-id
+  summing across entities, with no elimination at all — which is exactly
+  correct for a 100%-owned subsidiary with no noncontrolling interest to
+  carve out, not a simplification that happens to look right. Partial
+  ownership and noncontrolling-interest accounting are not modeled.
+- **Consolidation is only valid at a fiscal year end, after every
+  entity's own closing entries for that year have posted.**
+  `reference/accounting/consolidation.py`'s `consolidated_balance_sheet`
+  enforces this directly (raising `AccountingError` if any entity has
+  unclosed revenue/expense activity at the requested date). At that
+  point every entity's revenue/expense accounts are already zero, so
+  consolidation never needs `balance_sheet.py`'s synthetic
+  `current_period_earnings` machinery for an in-progress fiscal year —
+  summing real post-closing balances and eliminating intercompany pairs
+  is already exactly correct. Mid-year/interim consolidation is not
+  modeled.
+- **No consolidated statement of cash flows.** Section 19's "Primary
+  validation" column for both scenarios is trial-balance/income-
+  statement/balance-sheet-level ("Consolidation", "Consolidated
+  statements"), not cash flow; correctly eliminating intercompany
+  *financing* activity in an indirect-method consolidated cash flow
+  statement is a materially harder problem this gap-filling work doesn't
+  take on. Each entity's own *standalone* cash flow statement is still
+  validated normally (every account in both scenarios' charts that needs
+  one is tagged `cash_flow_category`).
+- **Account ids are a shared flat namespace across an entity pair.**
+  Externally-facing accounts (`cash`, `revenue`, `operating_expense`,
+  `retained_earnings`) use the same id in every entity file in a group,
+  so `consolidation.py` can combine them by summing same-id balances
+  directly — the same convention a real consolidated chart of accounts
+  uses. Intercompany-specific accounts get distinct, unambiguous ids per
+  entity (`investment_in_subsidiary`/`common_stock`,
+  `intercompany_receivable`/`intercompany_payable`,
+  `intercompany_interest_income`/`intercompany_interest_expense`,
+  `intercompany_management_fee_revenue`/`intercompany_management_fee_expense`).
+
+`reference/accounting/consolidation.py`'s `EliminationPair` is one
+generic mechanism for every elimination this scope needs: a debit-normal
+balance (an asset or expense — investment, intercompany receivable,
+intercompany expense) that must exactly equal a credit-normal balance
+(equity, liability, or revenue — contributed capital, intercompany
+payable, intercompany revenue) across the combined group, with both
+removed from the consolidated figures. If the two sides don't match
+exactly, consolidation raises `AccountingError` rather than silently
+reporting a wrong number — release-gate rules 6/7 ("no cross-book
+contamination", "no reconciliation operation silently discards valid
+data") applied to a third context, alongside Phase 6's GnuCash and
+multi-book work.
+
+Each entity (`scenarios/multi-entity/multi-00{1,2}-{parent,
+subsidiary}.yaml`) is an ordinary, independently-loadable scenario —
+every event is a plain `manual_journal_entry`, so this work needed no new
+event type and no schema change. `runner/consolidation_runner.py` is a
+small, explicit, hardcoded registry mapping each group id to its entity
+file paths and `EliminationPair` list, not a new YAML schema — there are
+only two consolidation groups, ever planned.

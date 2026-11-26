@@ -1,0 +1,111 @@
+scenario:
+  id: multi-001-parent
+  name: "MULTI-001: Parent Co. (standalone)"
+  version: 1
+  category: multi-entity
+  description: >
+    Parent Co.'s own standalone books for MULTI-001 (docs/plan.md section
+    19): it forms a wholly-owned subsidiary with a cash contribution, and
+    separately lends that subsidiary cash intercompany at a fixed rate,
+    interest-only with a single balloon principal repayment at the end
+    of year two. Validated independently here exactly like any other
+    scenario; see scenarios/multi-entity/multi-001-subsidiary.yaml for
+    the other half of the group and docs/accounting-policy.md for how
+    the two are consolidated (MULTI-001's actual "Consolidation"
+    validation target).
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2027-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31", "2027-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: investment_in_subsidiary
+      name: Investment in Subsidiary
+      type: asset
+      cash_flow_category: investing
+    - id: intercompany_receivable
+      name: Intercompany Loan Receivable
+      type: asset
+      cash_flow_category: investing
+    - id: paid_in_capital
+      name: Paid-in Capital
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: intercompany_interest_income
+      name: Intercompany Interest Income
+      type: revenue
+
+  opening_balances:
+    - account_id: cash
+      debit: "200000.00"
+      credit: "0.00"
+    - account_id: paid_in_capital
+      debit: "0.00"
+      credit: "200000.00"
+
+  events:
+    - id: form-subsidiary
+      date: 2026-01-01
+      type: manual_journal_entry
+      lines:
+        - account_id: investment_in_subsidiary
+          debit: "100000.00"
+        - account_id: cash
+          credit: "100000.00"
+    - id: fund-intercompany-loan
+      date: 2026-01-01
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_receivable
+          debit: "50000.00"
+        - account_id: cash
+          credit: "50000.00"
+    - id: intercompany-interest-2026
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: intercompany-interest-2027
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: intercompany-loan-repaid
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "50000.00"
+        - account_id: intercompany_receivable
+          credit: "50000.00"
+
+  expected:
+    reports:
+      - period: "2026"
+      - period: "2027"

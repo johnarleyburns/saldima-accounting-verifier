@@ -1,0 +1,39 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "215000.00"
+    },
+    "common_stock": {
+      "credit": "100000.00",
+      "debit": "0.00"
+    },
+    "intercompany_interest_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "intercompany_management_fee_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "intercompany_payable": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "operating_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "115000.00",
+      "debit": "0.00"
+    },
+    "revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "multi-002-subsidiary",
+  "statement_type": "trial_balance"
+}

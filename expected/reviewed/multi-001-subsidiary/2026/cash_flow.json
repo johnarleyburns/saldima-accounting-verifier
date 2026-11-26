@@ -1,0 +1,28 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "0.00"
+    },
+    "common_stock": {
+      "ending_balance": "100000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "177000.00"
+    },
+    "financing_cash_flow": {
+      "ending_balance": "50000.00"
+    },
+    "intercompany_payable": {
+      "ending_balance": "50000.00"
+    },
+    "net_income": {
+      "ending_balance": "27000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "127000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "multi-001-subsidiary",
+  "statement_type": "cash_flow"
+}

@@ -158,9 +158,30 @@ set, with no change to observable behavior — see
 `tests/regression/` is intentionally still empty — see
 `docs/release-gates.md`'s regression-scenario template.
 
+Implemented (multi-entity accounting and consolidation — `MULTI-001`/
+`MULTI-002`, docs/plan.md section 19; out-of-roadmap follow-on work
+after Phase 7, not one of the 7 named phases): `reference/accounting/
+consolidation.py` (new, additive — combines several already-closed
+entities' books and eliminates intercompany balances/activity, reusing
+the existing `TrialBalance`/`IncomeStatement`/`BalanceSheet` dataclasses
+directly rather than inventing parallel "consolidated" types);
+`runner/consolidation_runner.py` (a small, explicit registry of the two
+known consolidation groups — entity file paths plus elimination pairs —
+rather than a new scenario schema, since there are only ever two of
+these planned); `scripts/generate_consolidated_expected.py`. Each entity
+(`scenarios/multi-entity/multi-00{1,2}-{parent,subsidiary}.yaml`) is an
+ordinary, independently-loadable scenario with its own reviewed fixtures,
+loaded through the completely unmodified `runner/scenario_runner.py`/
+`reference_runner.py` — no new event type, no schema change. The
+consolidated statements get their own reviewed fixtures too
+(`expected/reviewed/multi-00{1,2}-*/`). See `docs/accounting-policy.md`
+for the consolidation scope boundaries (wholly-owned subsidiary, cost
+method, no noncontrolling interest, fiscal-year-end-only, no consolidated
+cash flow).
+
 Scaffolded only (directory + README explaining what's planned, see
 `docs/plan.md` section 18 for phases): `adapters/{saldima,csv,ofx,qfx}/`,
 every scenario category besides `foundational/`, `accruals/`,
 `revenue-recognition/`, `fixed-assets/`, `inventory/`, `debt/`,
-`payroll/`, and `partnerships/`, `datasets/*`, and the `tests/regression`
-suite.
+`payroll/`, `partnerships/`, and `multi-entity/`, `datasets/*`, and the
+`tests/regression` suite.

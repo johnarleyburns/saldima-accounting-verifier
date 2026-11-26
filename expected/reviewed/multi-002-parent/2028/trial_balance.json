@@ -1,0 +1,35 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "89000.00"
+    },
+    "intercompany_interest_income": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "intercompany_management_fee_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "intercompany_receivable": {
+      "credit": "0.00",
+      "debit": "50000.00"
+    },
+    "investment_in_subsidiary": {
+      "credit": "0.00",
+      "debit": "100000.00"
+    },
+    "paid_in_capital": {
+      "credit": "200000.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "39000.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2028",
+  "scenario_id": "multi-002-parent",
+  "statement_type": "trial_balance"
+}

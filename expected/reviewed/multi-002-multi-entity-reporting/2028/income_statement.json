@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "36000.00"
+    },
+    "operating_expense": {
+      "ending_balance": "54000.00"
+    },
+    "revenue": {
+      "ending_balance": "90000.00"
+    }
+  },
+  "period": "2028",
+  "scenario_id": "multi-002-multi-entity-reporting",
+  "statement_type": "income_statement"
+}

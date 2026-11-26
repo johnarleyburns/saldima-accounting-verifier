@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "102000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "intercompany_receivable": {
+      "ending_balance": "50000.00"
+    },
+    "investment_in_subsidiary": {
+      "ending_balance": "100000.00"
+    },
+    "paid_in_capital": {
+      "ending_balance": "200000.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "52000.00"
+    }
+  },
+  "period": "2029",
+  "scenario_id": "multi-002-parent",
+  "statement_type": "balance_sheet"
+}

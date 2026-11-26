@@ -21,7 +21,10 @@ SCENARIOS = [
     REPO_ROOT / "scenarios" / "accruals" / "accr-001-accrued-payroll-and-utilities.yaml",
     REPO_ROOT / "scenarios" / "accruals" / "accr-002-prepaid-insurance-and-rent.yaml",
     REPO_ROOT / "scenarios" / "revenue-recognition" / "rev-001-advance-service-contract.yaml",
-    REPO_ROOT / "scenarios" / "revenue-recognition" / "rev-002-multiple-performance-obligations.yaml",
+    REPO_ROOT
+    / "scenarios"
+    / "revenue-recognition"
+    / "rev-002-multiple-performance-obligations.yaml",
     REPO_ROOT / "scenarios" / "fixed-assets" / "fa-001-straight-line-equipment-depreciation.yaml",
     REPO_ROOT / "scenarios" / "fixed-assets" / "fa-002-asset-disposal.yaml",
     REPO_ROOT / "scenarios" / "fixed-assets" / "fa-003-tax-vs-book-depreciation.yaml",
@@ -33,6 +36,10 @@ SCENARIOS = [
     REPO_ROOT / "scenarios" / "partnerships" / "part-002-partnership-debt-and-outside-basis.yaml",
     REPO_ROOT / "scenarios" / "partnerships" / "part-003-property-contribution-704c.yaml",
     REPO_ROOT / "scenarios" / "partnerships" / "part-004-partnership-liquidation.yaml",
+    REPO_ROOT / "scenarios" / "multi-entity" / "multi-001-parent.yaml",
+    REPO_ROOT / "scenarios" / "multi-entity" / "multi-001-subsidiary.yaml",
+    REPO_ROOT / "scenarios" / "multi-entity" / "multi-002-parent.yaml",
+    REPO_ROOT / "scenarios" / "multi-entity" / "multi-002-subsidiary.yaml",
 ]
 
 
@@ -113,7 +120,10 @@ def test_rev_002_covers_both_fiscal_years():
 
 def test_fa_001_covers_five_fiscal_years():
     loaded = load_scenario(
-        REPO_ROOT / "scenarios" / "fixed-assets" / "fa-001-straight-line-equipment-depreciation.yaml"
+        REPO_ROOT
+        / "scenarios"
+        / "fixed-assets"
+        / "fa-001-straight-line-equipment-depreciation.yaml"
     )
     assert set(loaded.report_periods) == {
         "2026-01",
@@ -156,7 +166,9 @@ def test_inv_001_covers_both_sale_months_and_fiscal_years():
 
 
 def test_inv_002_covers_both_sale_months_and_fiscal_years():
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "inventory" / "inv-002-inventory-write-down.yaml")
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "inventory" / "inv-002-inventory-write-down.yaml"
+    )
     assert set(loaded.report_periods) == {
         "2026-01",
         "2026-06",
@@ -195,7 +207,9 @@ def test_inv_001_fifo_cogs_corroborates_the_ledger_independently():
 
 
 def test_debt_001_covers_five_fiscal_years():
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml")
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml"
+    )
     assert set(loaded.report_periods) == {
         "2026-01",
         "2026-12",
@@ -209,18 +223,32 @@ def test_debt_001_covers_five_fiscal_years():
 
 
 def test_pay_001_covers_monthly_midyear_and_annual_periods():
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "payroll" / "pay-001-payroll-and-withholding.yaml")
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "payroll" / "pay-001-payroll-and-withholding.yaml"
+    )
     assert set(loaded.report_periods) == {"2026-01", "2026-06", "2026-12", "2026"}
 
 
 def test_part_001_covers_monthly_midyear_and_annual_periods():
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml")
-    assert set(loaded.report_periods) == {"2026-01", "2026-12", "2027-06", "2027-12", "2026", "2027"}
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml"
+    )
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-12",
+        "2027-06",
+        "2027-12",
+        "2026",
+        "2027",
+    }
 
 
 def test_part_002_covers_five_fiscal_years():
     loaded = load_scenario(
-        REPO_ROOT / "scenarios" / "partnerships" / "part-002-partnership-debt-and-outside-basis.yaml"
+        REPO_ROOT
+        / "scenarios"
+        / "partnerships"
+        / "part-002-partnership-debt-and-outside-basis.yaml"
     )
     assert set(loaded.report_periods) == {
         "2026-01",
@@ -251,7 +279,9 @@ def test_part_003_covers_five_fiscal_years():
 
 
 def test_part_004_covers_ten_fiscal_years():
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "partnerships" / "part-004-partnership-liquidation.yaml")
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "partnerships" / "part-004-partnership-liquidation.yaml"
+    )
     assert set(loaded.report_periods) == {
         "2026-01",
         "2030-12",
@@ -268,10 +298,15 @@ def test_part_001_closing_allocates_net_income_50_50_between_partners():
     independently hand-verified per-partner totals: both partners must end up
     with identical capital balances, since their ratios and the underlying net
     income are symmetric."""
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml")
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml"
+    )
     reference_runner.apply_closing_entries(loaded)
     balances = loaded.ledger.balances_as_of(date(2027, 12, 31))
-    assert balances["partner_a_capital"]["ending_balance"] == balances["partner_b_capital"]["ending_balance"]
+    assert (
+        balances["partner_a_capital"]["ending_balance"]
+        == balances["partner_b_capital"]["ending_balance"]
+    )
     assert balances["partner_a_capital"]["ending_balance"] == Decimal("49000.00")
 
 
@@ -284,7 +319,9 @@ def test_debt_001_amortization_schedule_corroborates_the_ledger_independently():
     cross-check above."""
     from reference.schedules import debt as debt_mod
 
-    loaded = load_scenario(REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml")
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml"
+    )
 
     schedule = debt_mod.build_amortization_schedule(
         Decimal("60000.00"), Decimal("0.06"), 60, date(2026, 1, 1)
@@ -314,12 +351,18 @@ def test_accr_001_payables_schedule_corroborates_accrued_liability_balances():
         accrual_date = period_mod.parse_period(f"2026-{month:02d}")[1]
         bills.append(
             payables.Bill(
-                id=f"payroll-{month}", vendor="payroll", bill_date=accrual_date, amount=Decimal("1200.00")
+                id=f"payroll-{month}",
+                vendor="payroll",
+                bill_date=accrual_date,
+                amount=Decimal("1200.00"),
             )
         )
         bills.append(
             payables.Bill(
-                id=f"utilities-{month}", vendor="utilities", bill_date=accrual_date, amount=Decimal("150.00")
+                id=f"utilities-{month}",
+                vendor="utilities",
+                bill_date=accrual_date,
+                amount=Decimal("150.00"),
             )
         )
         if month < 12:

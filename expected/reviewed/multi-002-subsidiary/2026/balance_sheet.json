@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "167000.00"
+    },
+    "common_stock": {
+      "ending_balance": "100000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "intercompany_payable": {
+      "ending_balance": "50000.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "17000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "multi-002-subsidiary",
+  "statement_type": "balance_sheet"
+}

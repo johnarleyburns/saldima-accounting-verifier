@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "30000.00"
+    },
+    "operating_expense": {
+      "ending_balance": "50000.00"
+    },
+    "revenue": {
+      "ending_balance": "80000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "multi-001-intercompany-transactions",
+  "statement_type": "income_statement"
+}
