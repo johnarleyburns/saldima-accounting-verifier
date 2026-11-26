@@ -1,0 +1,20 @@
+{
+  "scenario_id": "rev-002-multiple-performance-obligations",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 2 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": { "revenue_recognition": "point_in_time + straight_line, allocated across performance obligations" },
+  "review_date": "2026-11-25",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output. The full 24000.00 is received 2026-01-01 (debit cash, credit deferred_revenue). The reference model then recognizes the 6000.00 license obligation immediately (point_in_time, same day) and the 18000.00 support obligation straight-line over the full 24-month term: 18000.00 / 24 = 750.00/month exactly, no remainder.",
+    "2026-01 (January: the 24000.00 receipt, the immediate 6000.00 license recognition, and the first 750.00 support recognition all fall within January, plus the 300.00 support cost expense): revenue = 6000.00 (license) + 750.00 (support) = 6750.00; expense 300.00; net income 6450.00. deferred_revenue after January = 24000.00 − 6000.00 (license) − 750.00 (support) = 17250.00, which is exactly the remaining 18000.00 support obligation minus one month's recognition (18000.00 − 750.00 = 17250.00) — confirms the license is fully out of deferred revenue after its immediate recognition. Cash = 24000.00 − 300.00 = 23700.00. Balance sheet: assets 23700.00 = liabilities 17250.00 + equity (current_period_earnings 6450.00) 6450.00, total 23700.00. Cash flow: net_income 6450.00 + deferred_revenue +17250.00 (liability increase from 0, source) = 23700.00, matching ending_cash 23700.00 − beginning_cash 0.00.",
+    "Every month from February 2026 onward (23 months) has identical steady-state activity (no further license recognition, since it was fully recognized in January): support_revenue 750.00, support_cost_expense 300.00, net income 450.00, cash change −300.00/month, deferred_revenue decreasing 750.00/month.",
+    "2026-12 (December, standalone month, after the 2026-12-31 closing entry): same steady-state activity (revenue 750.00, expense 300.00, net income 450.00). By year end, deferred_revenue = 18000.00 − 12×750.00 = 9000.00 (half of the 24-month support obligation recognized). retained_earnings = 11400.00 (full year 1 net income, swept in by closing). Balance sheet: assets cash 20400.00 = liabilities 9000.00 + equity (retained_earnings 11400.00 + current_period_earnings 0.00) 11400.00, total 20400.00.",
+    "2027-01 and 2027-12 continue the same steady-state pattern; by 2027-12-31 (the second fiscal-year closing) deferred_revenue reaches exactly 0.00 (all 24 months of the support obligation fully recognized). retained_earnings = 11400.00 (year 1) + 5400.00 (year 2) = 16800.00. Balance sheet: assets cash 16800.00 = equity (retained_earnings 16800.00) 16800.00, no liabilities left.",
+    "2026 (full fiscal year 1): revenue = 6000.00 (license) + 12×750.00 (support) = 15000.00; expense 12×300.00=3600.00; net income 11400.00. Cash: 24000.00 (contract) − 3600.00 (12 monthly expense payments) = 20400.00. Cash flow: net_income 11400.00 + deferred_revenue +9000.00 (0 → 9000.00 over the year, source) = 20400.00, matching ending_cash 20400.00 − beginning_cash 0.00.",
+    "2027 (full fiscal year 2): revenue = 12×750.00 (support only, license already fully recognized in 2026) = 9000.00; expense 3600.00; net income 5400.00. Cash: 20400.00 (start of 2027) − 3600.00 = 16800.00. Cash flow: net_income 5400.00 + deferred_revenue −9000.00 (9000.00 → 0, use of cash) = −3600.00, matching ending_cash 16800.00 − beginning_cash 20400.00 = −3600.00."
+  ],
+  "periods_covered": ["2026-01", "2026-12", "2027-01", "2027-12", "2026", "2027"]
+}

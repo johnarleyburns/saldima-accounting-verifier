@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "20400.00"
+    },
+    "deferred_revenue": {
+      "ending_balance": "-9000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "16800.00"
+    },
+    "net_income": {
+      "ending_balance": "5400.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "-3600.00"
+    }
+  },
+  "period": "2027",
+  "scenario_id": "rev-002-multiple-performance-obligations",
+  "statement_type": "cash_flow"
+}

@@ -1,0 +1,279 @@
+scenario:
+  id: rev-002-multiple-performance-obligations
+  name: Multiple Performance Obligations — Software License and Support
+  version: 1
+  category: revenue-recognition
+  description: >
+    A software company signs a two-year contract on 2026-01-01 for a single
+    $24,000 up-front payment covering two distinct performance obligations:
+    a $6,000 software license, recognized immediately (point-in-time, on
+    delivery), and $18,000 of ongoing support, recognized straight-line
+    over the full 24-month term. One `customer_contract_payment` event with
+    two `obligations` entries models the ASC 606-style allocation of a
+    single contract price across obligations with different recognition
+    methods -- see docs/accounting-policy.md. A flat monthly cash support
+    cost is included so net income isn't purely the recognition schedule.
+    Validates deferred revenue flowing through the trial balance, balance
+    sheet, and cash flow reconciliation across two fiscal-year closings.
+    See docs/plan.md Phase 2, scenario REV-002.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2027-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31", "2027-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: deferred_revenue
+      name: Deferred Revenue
+      type: liability
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: license_revenue
+      name: Software License Revenue
+      type: revenue
+    - id: support_revenue
+      name: Support Revenue
+      type: revenue
+    - id: support_cost_expense
+      name: Support Cost Expense
+      type: expense
+
+  events:
+    - id: contract-001
+      date: 2026-01-01
+      type: customer_contract_payment
+      customer: customer-001
+      cash_account_id: cash
+      deferred_revenue_account_id: deferred_revenue
+      obligations:
+        - id: license
+          amount: "6000.00"
+          revenue_account_id: license_revenue
+          recognition_method: point_in_time
+          recognition_date: 2026-01-01
+        - id: support
+          amount: "18000.00"
+          revenue_account_id: support_revenue
+          recognition_method: straight_line
+          service_start: 2026-01-01
+          service_end: 2027-12-31
+
+    - id: support-cost-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-01
+      date: 2027-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-02
+      date: 2027-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-03
+      date: 2027-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-04
+      date: 2027-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-05
+      date: 2027-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-06
+      date: 2027-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-07
+      date: 2027-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-08
+      date: 2027-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-09
+      date: 2027-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-10
+      date: 2027-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-11
+      date: 2027-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+    - id: support-cost-2027-12
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: support_cost_expense
+          debit: "300.00"
+        - account_id: cash
+          credit: "300.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-12"
+      - period: "2027-01"
+      - period: "2027-12"
+      - period: "2026"
+      - period: "2027"

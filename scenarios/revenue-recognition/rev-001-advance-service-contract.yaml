@@ -1,0 +1,172 @@
+scenario:
+  id: rev-001-advance-service-contract
+  name: Advance Service Contract — Deferred Revenue
+  version: 1
+  category: revenue-recognition
+  description: >
+    A services company receives a single $12,000 up-front payment on
+    2026-01-01 for one year of service (2026-01-01 through 2026-12-31),
+    recognized straight-line over the contract term, alongside a flat
+    monthly cash operating expense. This is the worked example from
+    docs/plan.md section 2.2: the `customer_contract_payment` event
+    describes the business fact (a customer paid for a contract with a
+    stated recognition method), and the reference model itself derives the
+    deferred-revenue liability and the monthly recognition entries -- see
+    docs/accounting-policy.md. Validates deferred revenue flowing through
+    the trial balance, balance sheet, and cash flow reconciliation.
+    See docs/plan.md Phase 2, scenario REV-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2026-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: deferred_revenue
+      name: Deferred Revenue
+      type: liability
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: service_delivery_expense
+      name: Service Delivery Expense
+      type: expense
+
+  events:
+    - id: contract-001
+      date: 2026-01-01
+      type: customer_contract_payment
+      customer: customer-001
+      cash_account_id: cash
+      deferred_revenue_account_id: deferred_revenue
+      obligations:
+        - id: support
+          amount: "12000.00"
+          revenue_account_id: service_revenue
+          recognition_method: straight_line
+          service_start: 2026-01-01
+          service_end: 2026-12-31
+
+    - id: expense-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+    - id: expense-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: service_delivery_expense
+          debit: "400.00"
+        - account_id: cash
+          credit: "400.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-06"
+      - period: "2026-12"
+      - period: "2026"

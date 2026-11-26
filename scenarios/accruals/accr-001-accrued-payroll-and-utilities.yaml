@@ -1,0 +1,541 @@
+scenario:
+  id: accr-001-accrued-payroll-and-utilities
+  name: Accrued Payroll and Utilities
+  version: 1
+  category: accruals
+  description: >
+    A service business operates for one full fiscal year on the accrual
+    basis: cash service revenue each month, and payroll/utilities expense
+    accrued at month-end (incurred before cash payment) and paid in cash at
+    the start of the following month. Validates that accrued liabilities
+    (accounts payable-style open items) flow correctly through the trial
+    balance, income statement, balance sheet, and indirect-method cash flow
+    reconciliation, and that income-statement activity is identical every
+    month while cash timing lags by one month. See docs/plan.md Phase 2,
+    scenario ACCR-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2026-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: salaries_expense
+      name: Salaries Expense
+      type: expense
+    - id: utilities_expense
+      name: Utilities Expense
+      type: expense
+    - id: accrued_payroll_payable
+      name: Accrued Payroll Payable
+      type: liability
+    - id: accrued_utilities_payable
+      name: Accrued Utilities Payable
+      type: liability
+
+  opening_balances:
+    - account_id: cash
+      debit: "10000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "10000.00"
+
+  events:
+    - id: revenue-2026-01
+      date: 2026-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-02
+      date: 2026-02-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-02
+      date: 2026-02-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-02
+      date: 2026-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-03
+      date: 2026-03-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-03
+      date: 2026-03-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-03
+      date: 2026-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-04
+      date: 2026-04-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-04
+      date: 2026-04-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-04
+      date: 2026-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-05
+      date: 2026-05-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-05
+      date: 2026-05-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-05
+      date: 2026-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-06
+      date: 2026-06-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-06
+      date: 2026-06-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-06
+      date: 2026-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-07
+      date: 2026-07-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-07
+      date: 2026-07-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-07
+      date: 2026-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-08
+      date: 2026-08-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-08
+      date: 2026-08-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-08
+      date: 2026-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-09
+      date: 2026-09-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-09
+      date: 2026-09-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-09
+      date: 2026-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-10
+      date: 2026-10-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-10
+      date: 2026-10-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-10
+      date: 2026-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-11
+      date: 2026-11-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-11
+      date: 2026-11-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-11
+      date: 2026-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+    - id: pay-payroll-2026-12
+      date: 2026-12-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_payroll_payable
+          debit: "1200.00"
+        - account_id: cash
+          credit: "1200.00"
+    - id: pay-utilities-2026-12
+      date: 2026-12-01
+      type: manual_journal_entry
+      lines:
+        - account_id: accrued_utilities_payable
+          debit: "150.00"
+        - account_id: cash
+          credit: "150.00"
+    - id: revenue-2026-12
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: accrue-payroll-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: salaries_expense
+          debit: "1200.00"
+        - account_id: accrued_payroll_payable
+          credit: "1200.00"
+    - id: accrue-utilities-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "150.00"
+        - account_id: accrued_utilities_payable
+          credit: "150.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-06"
+      - period: "2026-12"
+      - period: "2026"

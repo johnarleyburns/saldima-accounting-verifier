@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "600.00"
+    },
+    "service_delivery_expense": {
+      "ending_balance": "400.00"
+    },
+    "service_revenue": {
+      "ending_balance": "1000.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "rev-001-advance-service-contract",
+  "statement_type": "income_statement"
+}

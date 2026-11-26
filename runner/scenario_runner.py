@@ -1,11 +1,14 @@
 """Loads a scenario YAML file, validates it, and builds a posted Ledger.
 
-Phase 1 supports a single event type, `manual_journal_entry`: the scenario
-author supplies explicit debit/credit lines directly. This is intentionally
-honest about scope -- translating higher-level business events (e.g.
-`customer_contract_payment`) into journal entries is the job of the
-accounting engine under test, and arrives with the Phase 2+ scenario
-categories (see docs/plan.md section 2.2 and section 18).
+Phase 1 implements a single event type, `manual_journal_entry`: the
+scenario author supplies explicit debit/credit lines directly. Phase 2 adds
+`customer_contract_payment`, the first event type where the reference model
+itself must derive journal entries from a declared accounting policy
+(straight-line or point-in-time revenue recognition) rather than just
+posting author-supplied numbers -- see docs/accounting-policy.md's "Event
+model: Phase 1 vs Phase 2" for why accruals/prepayments stayed on
+`manual_journal_entry` while revenue recognition did not, and
+docs/plan.md section 2.2 for the original design intent.
 """
 
 from __future__ import annotations
@@ -29,6 +32,8 @@ from reference.accounting.journal import (
     make_line,
 )
 from reference.accounting.ledger import Ledger
+from reference.accounting.rounding import ZERO, money
+from reference.schedules import deferred_revenue
 
 SCHEMAS_DIR = Path(__file__).resolve().parent.parent / "schemas"
 
@@ -136,23 +141,27 @@ def load_scenario(path: Path) -> LoadedScenario:
             raise AccountingError(f"Duplicate event id: {event['id']!r}")
         seen_event_ids.add(event["id"])
 
-        if event["type"] != "manual_journal_entry":
+        if event["type"] == "manual_journal_entry":
+            lines = tuple(
+                make_line(line["account_id"], debit=line.get("debit", "0.00"), credit=line.get("credit", "0.00"))
+                for line in event["lines"]
+            )
+            ledger.post(
+                JournalEntry(
+                    id=f"event-{event['id']}",
+                    date=date.fromisoformat(event["date"]),
+                    lines=lines,
+                    source_event_id=event["id"],
+                )
+            )
+        elif event["type"] == "customer_contract_payment":
+            for entry in _translate_customer_contract_payment(event):
+                ledger.post(entry)
+        else:
             raise NotImplementedError(
-                f"Event type {event['type']!r} is not supported in Phase 1 "
-                "(only 'manual_journal_entry' is implemented so far)"
+                f"Event type {event['type']!r} is not supported "
+                "(supported: 'manual_journal_entry', 'customer_contract_payment')"
             )
-        lines = tuple(
-            make_line(line["account_id"], debit=line.get("debit", "0.00"), credit=line.get("credit", "0.00"))
-            for line in event["lines"]
-        )
-        ledger.post(
-            JournalEntry(
-                id=f"event-{event['id']}",
-                date=date.fromisoformat(event["date"]),
-                lines=lines,
-                source_event_id=event["id"],
-            )
-        )
 
     return LoadedScenario(raw=raw, chart=chart, ledger=ledger)
 
@@ -163,3 +172,75 @@ def _balance_opening_entries(opening_balances: list[dict[str, Any]], start_date:
         for ob in opening_balances
     )
     return JournalEntry(id="opening-balances", date=date.fromisoformat(start_date), lines=lines, memo="Opening balances")
+
+
+def _translate_customer_contract_payment(event: dict[str, Any]) -> list[JournalEntry]:
+    """Translate one `customer_contract_payment` event into its journal entries.
+
+    This is the reference model's own application of a revenue-recognition
+    policy (see docs/accounting-policy.md), not just a restatement of
+    author-supplied numbers: it derives the straight-line monthly schedule
+    (via reference/schedules/deferred_revenue.py) and the point-in-time
+    recognition entries for each performance obligation.
+    """
+    event_id = event["id"]
+    event_date = date.fromisoformat(event["date"])
+    cash_account_id = event["cash_account_id"]
+    deferred_revenue_account_id = event["deferred_revenue_account_id"]
+    obligations = event["obligations"]
+
+    total = sum((money(ob["amount"]) for ob in obligations), ZERO)
+    entries = [
+        JournalEntry(
+            id=f"event-{event_id}-payment",
+            date=event_date,
+            lines=(
+                make_line(cash_account_id, debit=str(total)),
+                make_line(deferred_revenue_account_id, credit=str(total)),
+            ),
+            source_event_id=event_id,
+        )
+    ]
+
+    for obligation in obligations:
+        obligation_id = obligation["id"]
+        amount = money(obligation["amount"])
+        revenue_account_id = obligation["revenue_account_id"]
+        method = obligation["recognition_method"]
+
+        if method == "point_in_time":
+            recognition_date = date.fromisoformat(obligation["recognition_date"])
+            entries.append(
+                JournalEntry(
+                    id=f"event-{event_id}-{obligation_id}-recognition",
+                    date=recognition_date,
+                    lines=(
+                        make_line(deferred_revenue_account_id, debit=str(amount)),
+                        make_line(revenue_account_id, credit=str(amount)),
+                    ),
+                    source_event_id=event_id,
+                )
+            )
+        elif method == "straight_line":
+            service_start = date.fromisoformat(obligation["service_start"])
+            service_end = date.fromisoformat(obligation["service_end"])
+            schedule = deferred_revenue.build_straight_line_schedule(amount, service_start, service_end)
+            for period_end, period_amount in schedule:
+                entries.append(
+                    JournalEntry(
+                        id=f"event-{event_id}-{obligation_id}-recognition-{period_end.isoformat()}",
+                        date=period_end,
+                        lines=(
+                            make_line(deferred_revenue_account_id, debit=str(period_amount)),
+                            make_line(revenue_account_id, credit=str(period_amount)),
+                        ),
+                        source_event_id=event_id,
+                    )
+                )
+        else:
+            raise AccountingError(
+                f"Unknown recognition_method {method!r} for obligation {obligation_id!r} "
+                f"on event {event_id!r}"
+            )
+
+    return entries

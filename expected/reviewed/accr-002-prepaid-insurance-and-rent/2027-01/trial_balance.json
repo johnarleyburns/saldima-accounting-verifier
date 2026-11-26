@@ -1,0 +1,39 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "19900.00"
+    },
+    "insurance_expense": {
+      "credit": "0.00",
+      "debit": "100.00"
+    },
+    "owner_equity": {
+      "credit": "6000.00",
+      "debit": "0.00"
+    },
+    "prepaid_insurance": {
+      "credit": "0.00",
+      "debit": "1100.00"
+    },
+    "prepaid_rent": {
+      "credit": "0.00",
+      "debit": "600.00"
+    },
+    "rent_expense": {
+      "credit": "0.00",
+      "debit": "300.00"
+    },
+    "retained_earnings": {
+      "credit": "14400.00",
+      "debit": "0.00"
+    },
+    "service_revenue": {
+      "credit": "1600.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2027-01",
+  "scenario_id": "accr-002-prepaid-insurance-and-rent",
+  "statement_type": "trial_balance"
+}

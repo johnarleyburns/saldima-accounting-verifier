@@ -1,0 +1,39 @@
+{
+  "lines": {
+    "accrued_payroll_payable": {
+      "credit": "1200.00",
+      "debit": "0.00"
+    },
+    "accrued_utilities_payable": {
+      "credit": "150.00",
+      "debit": "0.00"
+    },
+    "cash": {
+      "credit": "0.00",
+      "debit": "19150.00"
+    },
+    "owner_equity": {
+      "credit": "10000.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "7800.00",
+      "debit": "0.00"
+    },
+    "salaries_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "service_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "utilities_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026-12",
+  "scenario_id": "accr-001-accrued-payroll-and-utilities",
+  "statement_type": "trial_balance"
+}

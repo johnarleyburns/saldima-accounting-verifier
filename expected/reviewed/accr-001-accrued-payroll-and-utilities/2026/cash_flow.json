@@ -1,0 +1,28 @@
+{
+  "lines": {
+    "accrued_payroll_payable": {
+      "ending_balance": "1200.00"
+    },
+    "accrued_utilities_payable": {
+      "ending_balance": "150.00"
+    },
+    "beginning_cash": {
+      "ending_balance": "0.00"
+    },
+    "ending_cash": {
+      "ending_balance": "19150.00"
+    },
+    "net_income": {
+      "ending_balance": "7800.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "19150.00"
+    },
+    "owner_equity": {
+      "ending_balance": "10000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "accr-001-accrued-payroll-and-utilities",
+  "statement_type": "cash_flow"
+}

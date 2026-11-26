@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "20400.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "owner_equity": {
+      "ending_balance": "6000.00"
+    },
+    "prepaid_insurance": {
+      "ending_balance": "0.00"
+    },
+    "prepaid_rent": {
+      "ending_balance": "0.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "14400.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "accr-002-prepaid-insurance-and-rent",
+  "statement_type": "balance_sheet"
+}
