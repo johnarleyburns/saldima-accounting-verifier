@@ -1,8 +1,10 @@
 # Architecture
 
 See `docs/plan.md` section 3 for the full directory layout and section 11
-for the adapter contract. This document covers the pieces that are actually
-implemented as of Phase 1.
+for the adapter contract. This document covers the pieces that are
+actually implemented, progressively through Phase 6 as of this writing —
+see "What's implemented vs. scaffolded" below for the phase-by-phase
+breakdown.
 
 ## Data flow
 
@@ -24,10 +26,11 @@ balance_sheet,cash_flow}.py, normalized by reference/reporting/statements.py)
                                   result governance")
 
 runner/compare.py compares *any* two normalized statement dicts in the same
-shape -- reference-model output, a reviewed fixture, or (once implemented)
-a real adapters/saldima or adapters/gnucash_xml adapter's output -- and
-produces a comparison.schema.json result. runner/report.py renders that
-result as text; runner/cli.py wires it all together.
+shape -- reference-model output, a reviewed fixture, or a real adapter's
+output (adapters/gnucash_xml, implemented as of Phase 6; adapters/saldima,
+still not implemented -- see docs/accounting-policy.md) -- and produces a
+comparison.schema.json result. runner/report.py renders that result as
+text; runner/cli.py wires it all together.
 ```
 
 ## Independence boundary
@@ -109,9 +112,26 @@ prior phase, now for multiple equity accounts). **No**
 `reference/tax/capital_accounts.py` exists — see
 `docs/accounting-policy.md` for why.
 
+Implemented (Phase 6 — compatibility and multi-book integration; see
+`docs/plan.md` section 18): `adapters/gnucash_xml/{xml_format,
+adapter}.py` — the first real `adapters/*` implementation, a
+self-contained engine backed by GnuCash's own data model (not a live
+Saldima driver; `adapters/saldima/` stays unimplemented, since there's no
+actual Saldima engine available here) — and `reference/sync/merge.py`, a
+new reference-model subpackage for multi-book branch merge semantics.
+Scenario `GNC-001` (`tests/compatibility/test_gnc_001_round_trip.py`,
+round-tripping the already-reviewed `FA-001` through real GnuCash v2
+XML) and `SYNC-001`/`SYNC-002` (`tests/multi_book/`, the first two
+scenarios validated by a dedicated test module instead of a
+`scenarios/*.yaml` + reviewed-fixture pair). No change to any
+`reference/accounting/*.py`, `reference/schedules/*.py`, or
+`reference/tax/*.py` — see `docs/accounting-policy.md` for the two
+documented, schema-conformant GnuCash round-trip conventions this phase
+needed and the merge algorithm's conflict semantics.
+
 Scaffolded only (directory + README explaining what's planned, see
-`docs/plan.md` section 18 for phases): every `adapters/*` implementation,
+`docs/plan.md` section 18 for phases): `adapters/{saldima,csv,ofx,qfx}/`,
 every scenario category besides `foundational/`, `accruals/`,
 `revenue-recognition/`, `fixed-assets/`, `inventory/`, `debt/`,
 `payroll/`, and `partnerships/`, `datasets/*`, and the `property`,
-`regression`, `compatibility`, and `performance` test suites.
+`regression`, and `performance` test suites.

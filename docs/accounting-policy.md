@@ -358,3 +358,110 @@ scenario yet: none of Phase 2's four target scenarios (`ACCR-001/002`,
 credit sale), and `docs/plan.md` section 19 doesn't list a dedicated AR
 scenario in this batch. It's unit-tested directly
 (`tests/unit/test_receivables.py`) pending a future credit-sales scenario.
+
+## `adapters/gnucash_xml` is a real adapter; `adapters/saldima` stays unimplemented (Phase 6)
+
+`docs/plan.md` section 2.1's independence rule is one-directional:
+`reference/` must never import `adapters/`, but an adapter *using*
+`reference/`/`runner/` as a library is exactly how an adapter is meant to
+work — it's compared against the reference model's output, never used to
+produce it. `GnuCashXmlAdapter` (`adapters/gnucash_xml/adapter.py`) builds
+its book via `runner/scenario_runner.py`'s `build_ledger` (the "build a
+chart + post every event" body factored out of `load_scenario` for this
+purpose — no behavior change for `load_scenario`'s existing callers,
+confirmed by rerunning all seventeen pre-Phase-6 scenarios' fixtures
+unchanged) plus `runner/reference_runner.py`'s `apply_closing_entries`,
+then answers queries through `reference/accounting/*` the same way
+`reference_runner.py` does. This is honest: it's a self-contained engine
+backed by GnuCash's own data model, not a stand-in for a real Saldima
+engine, which doesn't exist in this repository.
+
+`apply_event`/`run_adjustments` on `GnuCashXmlAdapter` are documented
+no-ops: GnuCash's native file format has no concept of incrementally
+applying one event to an already-saved book — it's a batch/snapshot
+format. `create_book` already processes every event in the scenario in
+one pass; an artificial per-event protocol here would be less honest
+about what a file-format adapter's real job is, not more correct.
+
+`adapters/saldima/`, `adapters/csv/`, `adapters/ofx/`, `adapters/qfx/`
+remain exactly as scaffolded as they've always been — implementing any of
+them for real would require an actual external system or file-format
+authority this repository doesn't have (or, for `adapters/saldima/`
+specifically, would require claiming to drive a production engine that
+isn't present here at all).
+
+## GnuCash XML round-trip conventions (Phase 6, `GNC-001`)
+
+`adapters/gnucash_xml/xml_format.py` is grounded against the actual GnuCash
+v2 XML RELAX NG schema (`libgnucash/backend/xml/DTD/gnucash-v2.rnc` in
+`Gnucash/gnucash`, fetched directly — nothing about the GnuCash XML format
+existed anywhere in this repository before this phase, so guessing it
+from memory would have been dishonest). Three reference-model concepts
+have no native GnuCash representation, so they round-trip via GnuCash's
+own KVP slot extensibility (`act:slots`/`trn:slots`, already part of the
+real schema) — documented conventions, not native GnuCash semantics:
+
+- **The original reference-model account/entry id.** This module's GUIDs
+  (`account_guid`/`entry_guid`/`split_guid` in `xml_format.py`) are
+  one-way MD5 hashes of those ids — deterministic (same id always maps to
+  the same GUID, required by `docs/plan.md` section 2.3), but not
+  invertible. Every account gets a `saldima_account_id` slot and every
+  transaction a `saldima_entry_id` slot carrying the true original id,
+  recovered directly on import rather than attempting to reverse a hash.
+- **`cash_flow_category`** (non-`"operating"` only): not a GnuCash
+  concept at all. Stored as an account-level slot; without it, a
+  round-tripped investing/financing-tagged account would silently
+  reclassify as operating.
+- **`JournalEntry.is_closing`** needs no extra slot: `closing.py` already
+  gives every closing entry a distinctive `trn:description` (its memo,
+  `f"Closing entry for {period_start}..{period_end}"`); import just
+  detects that exact prefix. Without this, a re-imported book would
+  misclassify every closing entry as ordinary period activity, breaking
+  `income_statement.py`'s period-activity exclusion for any period at or
+  spanning a closing date — a real finding (confirmed while implementing
+  `GNC-001`), not a hypothetical.
+
+`GNC-001` round-trips `FA-001` (5 years, already reviewed) rather than
+inventing new numbers: export → re-import → recompute `FA-001`'s own
+reported periods from the re-imported book → compare against `FA-001`'s
+*existing* `expected/reviewed/` fixtures via `runner/compare.py`. This
+reuses trusted ground truth the same way `FA-003` did for its MACRS side,
+and additionally checks structural/semantic equivalence (every account's
+id/name/type/parent/`cash_flow_category`, every entry's date/
+`is_closing`/line account+amount) directly against the in-memory book,
+never against XML text — matching `docs/plan.md` section 10's own wording
+("semantic equivalence... not byte-for-byte XML equality").
+
+## Multi-book merge semantics (Phase 6, `SYNC-001`/`SYNC-002`)
+
+`reference/sync/merge.py` is new: multi-book branch merge didn't exist
+anywhere before this phase. Per `docs/plan.md` section 14's own framing
+("without duplicating the production cryptographic/sync implementation...
+at the accounting-semantics level"), this is the semantic algorithm, not
+a real sync protocol. A **book** is just a `(ChartOfAccounts,
+list[JournalEntry])` pair — the existing primitives, no new class. A
+**branch** is one device's local view: entries inherited from a common
+base, plus *edits* (a `{original_entry_id: replacement_entry}` mapping —
+`JournalEntry` stays immutable once posted per invariant 6, so an "edit"
+is modeled as a locally-tracked replacement, never an in-place mutation)
+and *new entries* that don't correct anything.
+
+`merge_branches`'s conflict rule, directly implementing release-gate rule
+7 ("no reconciliation operation silently discards valid accounting
+data" — `docs/release-gates.md`): a base entry edited identically on both
+branches, or on only one, applies cleanly with no conflict; edited
+*differently* on both branches records an `EditConflict` and **keeps the
+original entry, untouched**, in the merged result — neither proposed
+correction silently wins, and nothing is dropped. Two branches (or a
+branch and the base) independently using the same id for two different
+new entries is a different, simpler problem this reference model only
+needs to *detect* (raising `AccountingError`), not resolve.
+
+`SYNC-001`/`SYNC-002` are the first two scenarios in `docs/plan.md`
+section 19 validated by a dedicated test module
+(`tests/multi_book/test_sync_00{1,2}_*.py`) instead of a
+`scenarios/*.yaml` + `expected/reviewed/` fixture pair — a deliberate,
+documented deviation: "Duration: Multiple branches" doesn't fit the
+calendar-period reporting convention any other scenario uses, and there's
+no financial-statement baseline to hand-verify, since the correctness bar
+is the merge algorithm's own behavior, not a business's books.

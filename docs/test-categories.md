@@ -7,8 +7,9 @@
 | `tests/integration` | End-to-end: load a scenario, run the reference model, compare to its reviewed fixtures | Implemented (CORE-001/002, ACCR-001/002, REV-001/002, FA-001/002/003, INV-001/002, DEBT-001, PAY-001, PART-001/002/003/004) |
 | `tests/property` | Hypothesis-based randomized invariant testing across generated books | Planned (Phase 7) |
 | `tests/regression` | One test per fixed accounting defect, kept forever (docs/plan.md section 21) | Planned (empty until the first defect is fixed) |
-| `tests/compatibility` | GnuCash XML semantic round-trip tests | Planned (Phase 6) |
+| `tests/compatibility` | GnuCash XML semantic round-trip tests | Implemented (GNC-001) |
 | `tests/multi_period` | Multi-year carryforward, fiscal-year-boundary, prior-period-adjustment tests | Implemented (partial — multi-year closing carryforward via ACCR-002's two fiscal years; CORE-002's single-year cycle is still covered under `tests/integration`) |
+| `tests/multi_book` | Multi-book isolation and merge/reconciliation semantics (docs/plan.md section 14) | Implemented (SYNC-001/002) |
 | `tests/performance` | Generated-book-size benchmarks and regression thresholds | Planned (Phase 7) |
 
 See `docs/plan.md` sections 13–15 for what each category is meant to cover

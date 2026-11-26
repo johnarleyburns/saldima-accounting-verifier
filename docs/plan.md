@@ -335,7 +335,7 @@ Pull-request, main-branch, nightly, and release-candidate CI stages of increasin
 - **Phase 6 — Compatibility and multi-book integration:** GnuCash XML fixtures, semantic round-trips, multi-book isolation, multi-device merge.
 - **Phase 7 — Scale and long-running regression:** large datasets, million-transaction stress tests, extended multi-year simulations, performance regression tracking, randomized property tests.
 
-This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002). **Phase 3** (fixed assets and inventory) follows, with five more (FA-001/002/003, INV-001/002). **Phase 4** (debt and payroll) follows that, with two more (DEBT-001, PAY-001). **Phase 5** (partnership accounting) follows that, with four more (PART-001/002/003/004) — see section 19 and `docs/architecture.md`.
+This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002). **Phase 3** (fixed assets and inventory) follows, with five more (FA-001/002/003, INV-001/002). **Phase 4** (debt and payroll) follows that, with two more (DEBT-001, PAY-001). **Phase 5** (partnership accounting) follows that, with four more (PART-001/002/003/004). **Phase 6** (compatibility and multi-book integration) follows that, with GNC-001 and SYNC-001/002 — the first phase whose scenarios aren't all backed by a `scenarios/*.yaml` + reviewed-fixture pair (SYNC-001/002 are validated by a dedicated test module instead; see `docs/accounting-policy.md`) — see section 19 and `docs/architecture.md`.
 
 ## 19. Initial Gold-Standard Scenario Corpus
 
@@ -361,9 +361,9 @@ This repository's first commits implement **Phase 1** end-to-end (working refere
 | PART-004 | Partnership liquidation | 10 years | Final basis and distributions | Implemented |
 | MULTI-001 | Intercompany transactions | 2 years | Consolidation | Planned |
 | MULTI-002 | Multi-entity reporting | 5 years | Consolidated statements | Planned |
-| SYNC-001 | Concurrent independent transactions | Multiple branches | Reconciliation | Planned |
-| SYNC-002 | Conflicting transaction edits | Multiple branches | Conflict preservation | Planned |
-| GNC-001 | GnuCash XML round trip | Multiple years | Compatibility | Planned |
+| SYNC-001 | Concurrent independent transactions | Multiple branches | Reconciliation | Implemented |
+| SYNC-002 | Conflicting transaction edits | Multiple branches | Conflict preservation | Implemented |
+| GNC-001 | GnuCash XML round trip | Multiple years | Compatibility | Implemented |
 
 ## 20. Quality and Acceptance Criteria / Release Gate
 
