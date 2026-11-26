@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "43000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "43000.00"
+    },
+    "net_income": {
+      "ending_balance": "0.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "0.00"
+    }
+  },
+  "period": "2030-12",
+  "scenario_id": "fa-002-asset-disposal",
+  "statement_type": "cash_flow"
+}

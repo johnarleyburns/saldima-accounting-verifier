@@ -1,0 +1,144 @@
+scenario:
+  id: fa-002-asset-disposal
+  name: Asset Disposal — Gain and Loss
+  version: 1
+  category: fixed-assets
+  description: >
+    A business buys two pieces of equipment on day one -- Equipment A
+    ($60,000, 60-month life) and Equipment B ($24,000, 24-month life),
+    both straight-line, zero salvage -- then disposes of each early.
+    Equipment B is sold at the end of its first year for less than its
+    book value (a loss); Equipment A is sold halfway through its life for
+    more than its book value (a gain). The `fixed_asset_disposal` event
+    only states the business fact (asset, date, proceeds); the reference
+    model derives accumulated depreciation and the gain/loss itself from
+    the matching `fixed_asset_purchase` event (see
+    docs/accounting-policy.md). Deliberately has no other business
+    activity, so every number on every statement traces directly to the
+    two assets' purchase/depreciation/disposal arithmetic. See
+    docs/plan.md Phase 3, scenario FA-002.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2030-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates:
+      - "2026-12-31"
+      - "2027-12-31"
+      - "2028-12-31"
+      - "2029-12-31"
+      - "2030-12-31"
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: equipment_a
+      name: Equipment A
+      type: asset
+      subtype: noncurrent_asset
+      cash_flow_category: investing
+    - id: accumulated_depreciation_equipment_a
+      name: Accumulated Depreciation — Equipment A
+      type: asset
+      subtype: contra_asset
+    - id: equipment_b
+      name: Equipment B
+      type: asset
+      subtype: noncurrent_asset
+      cash_flow_category: investing
+    - id: accumulated_depreciation_equipment_b
+      name: Accumulated Depreciation — Equipment B
+      type: asset
+      subtype: contra_asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: gain_on_disposal
+      name: Gain on Disposal of Equipment
+      type: revenue
+    - id: depreciation_expense
+      name: Depreciation Expense
+      type: expense
+    - id: loss_on_disposal
+      name: Loss on Disposal of Equipment
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "84000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "84000.00"
+
+  events:
+    - id: equip-a-purchase
+      date: 2026-01-01
+      type: fixed_asset_purchase
+      asset_id: equip-a
+      asset_account_id: equipment_a
+      accumulated_depreciation_account_id: accumulated_depreciation_equipment_a
+      depreciation_expense_account_id: depreciation_expense
+      cash_account_id: cash
+      cost: "60000.00"
+      salvage_value: "0.00"
+      useful_life_months: 60
+
+    - id: equip-b-purchase
+      date: 2026-01-01
+      type: fixed_asset_purchase
+      asset_id: equip-b
+      asset_account_id: equipment_b
+      accumulated_depreciation_account_id: accumulated_depreciation_equipment_b
+      depreciation_expense_account_id: depreciation_expense
+      cash_account_id: cash
+      cost: "24000.00"
+      salvage_value: "0.00"
+      useful_life_months: 24
+
+    - id: equip-b-disposal
+      date: 2026-12-31
+      type: fixed_asset_disposal
+      asset_id: equip-b
+      proceeds: "8000.00"
+      cash_account_id: cash
+      gain_account_id: gain_on_disposal
+      loss_account_id: loss_on_disposal
+
+    - id: equip-a-disposal
+      date: 2028-06-30
+      type: fixed_asset_disposal
+      asset_id: equip-a
+      proceeds: "35000.00"
+      cash_account_id: cash
+      gain_account_id: gain_on_disposal
+      loss_account_id: loss_on_disposal
+
+  expected:
+    reports:
+      - period: "2026-12"
+      - period: "2027-12"
+      - period: "2028-06"
+      - period: "2028-12"
+      - period: "2030-12"
+      - period: "2026"
+      - period: "2027"
+      - period: "2028"
+      - period: "2030"

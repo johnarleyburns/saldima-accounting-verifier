@@ -1,0 +1,47 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment_a": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "accumulated_depreciation_equipment_b": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "cash": {
+      "credit": "0.00",
+      "debit": "43000.00"
+    },
+    "depreciation_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "equipment_a": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "equipment_b": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "gain_on_disposal": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "loss_on_disposal": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "owner_equity": {
+      "credit": "84000.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "0.00",
+      "debit": "41000.00"
+    }
+  },
+  "period": "2030-12",
+  "scenario_id": "fa-002-asset-disposal",
+  "statement_type": "trial_balance"
+}

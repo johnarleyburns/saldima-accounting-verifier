@@ -1,0 +1,120 @@
+scenario:
+  id: inv-001-fifo-retail
+  name: FIFO Retail Inventory
+  version: 1
+  category: inventory
+  description: >
+    A small retailer buys and resells one product over two fiscal years,
+    at different unit costs each time it restocks, so FIFO layering
+    actually matters: cost of goods sold must come from the *oldest*
+    open lot first, not an average cost. `inventory_purchase` records
+    each lot; `inventory_sale` states only the quantity and sale price --
+    the reference model itself derives the cost of goods sold by
+    consuming FIFO lots (reference/schedules/inventory.py), which is the
+    actual engine-under-test behavior being validated (the sale/purchase
+    dollar totals are plain multiplication once quantities are known).
+    See docs/accounting-policy.md and docs/plan.md Phase 3, scenario
+    INV-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2027-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31", "2027-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: inventory
+      name: Inventory
+      type: asset
+      subtype: current_asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: sales_revenue
+      name: Sales Revenue
+      type: revenue
+    - id: cost_of_goods_sold
+      name: Cost of Goods Sold
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "2200.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "2200.00"
+
+  events:
+    - id: purchase-2026-01
+      date: 2026-01-01
+      type: inventory_purchase
+      inventory_account_id: inventory
+      cash_account_id: cash
+      quantity: "100"
+      unit_cost: "10.00"
+
+    - id: purchase-2026-04
+      date: 2026-04-01
+      type: inventory_purchase
+      inventory_account_id: inventory
+      cash_account_id: cash
+      quantity: "100"
+      unit_cost: "12.00"
+
+    - id: sale-2026-06
+      date: 2026-06-01
+      type: inventory_sale
+      inventory_account_id: inventory
+      cogs_account_id: cost_of_goods_sold
+      revenue_account_id: sales_revenue
+      cash_account_id: cash
+      quantity: "150"
+      unit_price: "20.00"
+
+    - id: purchase-2027-01
+      date: 2027-01-01
+      type: inventory_purchase
+      inventory_account_id: inventory
+      cash_account_id: cash
+      quantity: "100"
+      unit_cost: "15.00"
+
+    - id: sale-2027-06
+      date: 2027-06-01
+      type: inventory_sale
+      inventory_account_id: inventory
+      cogs_account_id: cost_of_goods_sold
+      revenue_account_id: sales_revenue
+      cash_account_id: cash
+      quantity: "100"
+      unit_price: "25.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-06"
+      - period: "2026-12"
+      - period: "2027-06"
+      - period: "2027-12"
+      - period: "2026"
+      - period: "2027"

@@ -1,0 +1,31 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "1200.00"
+    },
+    "cost_of_goods_sold": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "inventory": {
+      "credit": "0.00",
+      "debit": "1000.00"
+    },
+    "owner_equity": {
+      "credit": "2200.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "sales_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "inv-001-fifo-retail",
+  "statement_type": "trial_balance"
+}

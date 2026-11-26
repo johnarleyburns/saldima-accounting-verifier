@@ -22,6 +22,11 @@ SCENARIOS = [
     REPO_ROOT / "scenarios" / "accruals" / "accr-002-prepaid-insurance-and-rent.yaml",
     REPO_ROOT / "scenarios" / "revenue-recognition" / "rev-001-advance-service-contract.yaml",
     REPO_ROOT / "scenarios" / "revenue-recognition" / "rev-002-multiple-performance-obligations.yaml",
+    REPO_ROOT / "scenarios" / "fixed-assets" / "fa-001-straight-line-equipment-depreciation.yaml",
+    REPO_ROOT / "scenarios" / "fixed-assets" / "fa-002-asset-disposal.yaml",
+    REPO_ROOT / "scenarios" / "fixed-assets" / "fa-003-tax-vs-book-depreciation.yaml",
+    REPO_ROOT / "scenarios" / "inventory" / "inv-001-fifo-retail.yaml",
+    REPO_ROOT / "scenarios" / "inventory" / "inv-002-inventory-write-down.yaml",
 ]
 
 
@@ -98,6 +103,89 @@ def test_rev_002_covers_both_fiscal_years():
         "2026",
         "2027",
     }
+
+
+def test_fa_001_covers_five_fiscal_years():
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "fixed-assets" / "fa-001-straight-line-equipment-depreciation.yaml"
+    )
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-12",
+        "2028-06",
+        "2030-01",
+        "2030-12",
+        "2026",
+        "2028",
+        "2030",
+    }
+
+
+def test_fa_002_covers_both_disposal_months_and_surrounding_years():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "fixed-assets" / "fa-002-asset-disposal.yaml")
+    assert set(loaded.report_periods) == {
+        "2026-12",
+        "2027-12",
+        "2028-06",
+        "2028-12",
+        "2030-12",
+        "2026",
+        "2027",
+        "2028",
+        "2030",
+    }
+
+
+def test_inv_001_covers_both_sale_months_and_fiscal_years():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "inventory" / "inv-001-fifo-retail.yaml")
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-06",
+        "2026-12",
+        "2027-06",
+        "2027-12",
+        "2026",
+        "2027",
+    }
+
+
+def test_inv_002_covers_both_sale_months_and_fiscal_years():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "inventory" / "inv-002-inventory-write-down.yaml")
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-06",
+        "2026-12",
+        "2027-06",
+        "2027-12",
+        "2026",
+        "2027",
+    }
+
+
+def test_inv_001_fifo_cogs_corroborates_the_ledger_independently():
+    """reference/schedules/inventory.py's consume_fifo, applied to INV-001's own
+    purchase/sale quantities independently of the ledger, must agree with the
+    cost_of_goods_sold entries the reference model actually posted -- the same
+    "independent schedule corroborates the ledger" pattern as the ACCR-001
+    payables cross-check above."""
+    from reference.schedules import inventory as inventory_mod
+
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "inventory" / "inv-001-fifo-retail.yaml")
+
+    lots = [
+        inventory_mod.Lot(quantity=Decimal(100), unit_cost=Decimal("10.00")),
+        inventory_mod.Lot(quantity=Decimal(100), unit_cost=Decimal("12.00")),
+    ]
+    cogs_1, lots = inventory_mod.consume_fifo(lots, Decimal(150))
+    assert cogs_1 == Decimal("1600.00")
+
+    lots.append(inventory_mod.Lot(quantity=Decimal(100), unit_cost=Decimal("15.00")))
+    cogs_2, lots = inventory_mod.consume_fifo(lots, Decimal(100))
+    assert cogs_2 == Decimal("1350.00")
+
+    balances = loaded.ledger.balances_as_of(date(2027, 12, 31))
+    ledger_cogs_total = balances["cost_of_goods_sold"]["ending_balance"]
+    assert cogs_1 + cogs_2 == ledger_cogs_total
 
 
 def test_accr_001_payables_schedule_corroborates_accrued_liability_balances():

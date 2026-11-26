@@ -25,6 +25,20 @@ class AccountType(str, Enum):
     EXPENSE = "expense"
 
 
+class CashFlowCategory(str, Enum):
+    """Which section of the statement of cash flows an account's balance
+    changes belong in (reference/accounting/cash_flow.py). Defaults to
+    OPERATING, which is the only category Phase 1/2 ever needed -- see
+    docs/reference-model.md's "Phase 3 adds investing/financing
+    classification" section for why Phase 3 (fixed assets) is the first
+    phase to need the other two.
+    """
+
+    OPERATING = "operating"
+    INVESTING = "investing"
+    FINANCING = "financing"
+
+
 # Normal balance side for each account type: debit-normal types increase with
 # debits, credit-normal types increase with credits.
 DEBIT_NORMAL = {AccountType.ASSET, AccountType.EXPENSE}
@@ -44,6 +58,7 @@ class Account:
     name: str
     type: AccountType
     parent_id: str | None = None
+    cash_flow_category: CashFlowCategory = CashFlowCategory.OPERATING
 
     def is_debit_normal(self) -> bool:
         return self.type in DEBIT_NORMAL

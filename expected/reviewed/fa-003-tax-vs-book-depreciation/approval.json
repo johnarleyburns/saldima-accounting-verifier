@@ -1,0 +1,17 @@
+{
+  "scenario_id": "fa-003-tax-vs-book-depreciation",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 3 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": { "depreciation": "straight_line (book); MACRS 5-year half-year convention compared separately, see test_fa_003_tax_vs_book_depreciation.py" },
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "This fixture covers only the BOOK (straight-line) side; see docs/accounting-policy.md's Phase 3 scope boundary for why the MACRS side isn't posted to this ledger, and tests/integration/test_fa_003_tax_vs_book_depreciation.py for the hand-verified tax-vs-book comparison itself.",
+    "Book side: $60,000 / 60 months = $1,000.00/month, no salvage, no other business activity. Opening cash 60000.00 − 60000.00 (purchase) = 0.00 forever (depreciation is non-cash and there is nothing else in this scenario).",
+    "Every full fiscal year: depreciation_expense 12000.00 (12 × 1000.00), net income −12000.00. December standalone, every year except the asset's final month, is just that month's own 1000.00 depreciation, net income −1000.00 (2026-12 and 2030-12 are both the same, since there is no other activity to differ between a 'first' and 'last' standalone month here).",
+    "Accumulated depreciation at the end of year N is 12000.00×N: 12000.00 (2026), 24000.00 (2027), 36000.00 (2028), 48000.00 (2029), 60000.00 (2030, fully depreciated — net book value 60000.00 − 60000.00 = 0.00 exactly). Balance sheet balances trivially every year since cash is always 0.00: assets (0.00 + 60000.00 − accumulated depreciation) = equity (60000.00 owner_equity + retained_earnings, which is exactly −(accumulated depreciation) since depreciation is the only expense ever posted)."
+  ],
+  "periods_covered": ["2026-12", "2030-12", "2026", "2027", "2028", "2029", "2030"]
+}

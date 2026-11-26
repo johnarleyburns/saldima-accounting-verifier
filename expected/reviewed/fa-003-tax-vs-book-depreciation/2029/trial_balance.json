@@ -1,0 +1,31 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "credit": "48000.00",
+      "debit": "0.00"
+    },
+    "cash": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "depreciation_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "equipment": {
+      "credit": "0.00",
+      "debit": "60000.00"
+    },
+    "owner_equity": {
+      "credit": "60000.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "0.00",
+      "debit": "48000.00"
+    }
+  },
+  "period": "2029",
+  "scenario_id": "fa-003-tax-vs-book-depreciation",
+  "statement_type": "trial_balance"
+}

@@ -71,14 +71,43 @@ exclude-closing basis throughout; `trial_balance.py` and `balance_sheet.py`
 use the real (including-closing) basis throughout. Mixing the two bases
 within one calculation is exactly the bug described above.
 
-## Phase 1 cash flow is operating-only
+## Phase 1/2 cash flow was operating-only; Phase 3 adds investing/financing classification
 
-There is no investing/financing classification yet — every non-cash
-balance-sheet account's change is reported as an "operating" adjustment.
-This is accurate (the reconciliation still ties to actual cash movement)
-but not a GAAP-presentable statement of cash flows. Classification arrives
-with Phase 3 (fixed assets) and Phase 4 (debt), which are the first phases
-where investing/financing activity actually exists in a scenario.
+Through Phase 2, every non-cash balance-sheet account's change was
+reported as an "operating" adjustment — accurate (the reconciliation still
+tied to actual cash movement) but not a GAAP-presentable statement of cash
+flows, since there was no investing/financing activity in any scenario to
+classify. Phase 3 (fixed assets) is the first phase where that activity
+actually exists (an equipment purchase/disposal), so `Account` gained an
+optional `cash_flow_category` field (`reference/accounting/journal.py`'s
+`CashFlowCategory`, defaulting to `OPERATING`), and `cash_flow.py` now
+buckets each account's delta by it into `operating_adjustments`,
+`investing_activities`, or `financing_activities` instead of always the
+first. See `docs/accounting-policy.md`'s `cash_flow_category` section for
+how scenarios opt an account into a category, and its noted coarseness
+(whole-account-delta classification, not per-transaction).
+
+This is additive, not a behavior change for Phase 1/2 scenarios: the
+reconciliation identity above still holds term-for-term, just partitioned
+three ways instead of one --
+`operating_cash_flow + investing_cash_flow + financing_cash_flow ==
+ending_cash - beginning_cash`. Since every Phase 1/2 account defaults to
+`OPERATING`, `investing_activities`/`financing_activities` are empty dicts
+for all six of those scenarios at every reported period, and
+`runner/reference_runner.py` only emits the `investing_cash_flow`/
+`financing_cash_flow` lines when the corresponding dict is non-empty — so
+all six scenarios' reviewed fixtures are byte-for-byte unchanged by this.
+Fixed-asset depreciation also gets its classic "added back to net income"
+indirect-method treatment for free: a contra-asset like accumulated
+depreciation defaults to `OPERATING`, and its delta (which goes more
+*negative* as depreciation accrues, since it only ever receives credits)
+produces a *positive* operating adjustment via the same generic asset-delta
+formula already in place — see the next section and
+`docs/accounting-policy.md`'s "Contra-asset and gain/loss accounts"
+section.
+
+Debt (Phase 4) is expected to be the next phase to populate
+`financing_activities` (loan proceeds/principal repayments).
 
 ## Phase 2 confirms (not just assumes) that AR/AP/prepaid/deferred-revenue flow correctly
 
@@ -96,6 +125,23 @@ proves this directly on a small hand-built ledger, independent of any
 scenario's specific bookkeeping — see `docs/accounting-policy.md` for the
 full writeup.
 
+## Phase 3 confirms the same genericity for contra-assets, gain/loss, and FIFO COGS
+
+Phase 3 (`FA-001/002/003`, `INV-001/002`) exercises a contra-asset
+(accumulated depreciation), gain/loss-on-disposal accounts, and FIFO cost
+of goods sold for the first time, and -- like Phase 2's AR/AP/deferred-
+revenue finding -- none of it required changes to `trial_balance.py`,
+`income_statement.py`, or `balance_sheet.py`. A contra-asset declared
+`type: asset` naturally carries a negative signed balance (it only ever
+receives credits), which nets against the gross asset account in
+`total_assets` to produce net book value; gain/loss accounts are ordinary
+`revenue`/`expense`-type accounts. `tests/invariants/
+test_fixed_asset_accounts_flow_through.py` proves the contra-asset and
+cash-flow-classification claims directly; `tests/integration/
+test_core_scenarios.py`'s `test_inv_001_fifo_cogs_corroborates_the_ledger_independently`
+cross-checks FIFO COGS the same way the ACCR-001 payables cross-check
+corroborates accrued liabilities.
+
 ## Straight-line revenue recognition's rounding remainder goes to the last period
 
 `reference/schedules/deferred_revenue.py`'s `build_straight_line_schedule`
@@ -107,3 +153,11 @@ absorb the remainder into the *last* period, so the per-period amounts
 always sum to exactly the contract total instead of silently drifting a
 cent short or over. See `tests/unit/test_deferred_revenue.py`'s
 `test_straight_line_schedule_absorbs_rounding_remainder_into_last_month`.
+
+`reference/schedules/depreciation.py`'s `build_straight_line_schedule`
+(Phase 3) uses the identical convention for the same reason, including
+when a `fixed_asset_disposal` truncates the schedule early -- truncation
+only ever removes trailing months, so an early disposal never actually
+reaches the remainder month, and every truncated amount is the plain even
+per-month figure (see `tests/unit/test_depreciation.py`'s
+`test_schedule_truncated_by_disposal_before_the_final_month`).

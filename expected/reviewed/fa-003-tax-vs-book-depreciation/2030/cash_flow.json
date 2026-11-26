@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "ending_balance": "12000.00"
+    },
+    "beginning_cash": {
+      "ending_balance": "0.00"
+    },
+    "ending_cash": {
+      "ending_balance": "0.00"
+    },
+    "net_income": {
+      "ending_balance": "-12000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "0.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "fa-003-tax-vs-book-depreciation",
+  "statement_type": "cash_flow"
+}

@@ -1,0 +1,134 @@
+scenario:
+  id: inv-002-inventory-write-down
+  name: Inventory Write-Down
+  version: 1
+  category: inventory
+  description: >
+    The same FIFO retail business as INV-001 (identical purchases and
+    sales, so every figure through 2027-06 matches INV-001's exactly),
+    plus one additional event at the end of the second fiscal year:
+    management determines the 50 units of remaining inventory (carried
+    at FIFO cost, $15.00/unit) are only worth $10.00/unit on the market,
+    and writes the balance down by $250.00. Like Phase 2's accruals, the
+    write-down amount is a stated business fact (management's own
+    valuation judgment), not something the reference model derives from
+    a schedule -- it stays on `manual_journal_entry`; see
+    docs/accounting-policy.md. Validates that a lower-of-cost-or-market
+    write-down flows correctly through the income statement and balance
+    sheet on top of the FIFO-costed inventory balance. See docs/plan.md
+    Phase 3, scenario INV-002.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2027-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31", "2027-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: inventory
+      name: Inventory
+      type: asset
+      subtype: current_asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: sales_revenue
+      name: Sales Revenue
+      type: revenue
+    - id: cost_of_goods_sold
+      name: Cost of Goods Sold
+      type: expense
+    - id: inventory_write_down_expense
+      name: Inventory Write-Down Expense
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "2200.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "2200.00"
+
+  events:
+    - id: purchase-2026-01
+      date: 2026-01-01
+      type: inventory_purchase
+      inventory_account_id: inventory
+      cash_account_id: cash
+      quantity: "100"
+      unit_cost: "10.00"
+
+    - id: purchase-2026-04
+      date: 2026-04-01
+      type: inventory_purchase
+      inventory_account_id: inventory
+      cash_account_id: cash
+      quantity: "100"
+      unit_cost: "12.00"
+
+    - id: sale-2026-06
+      date: 2026-06-01
+      type: inventory_sale
+      inventory_account_id: inventory
+      cogs_account_id: cost_of_goods_sold
+      revenue_account_id: sales_revenue
+      cash_account_id: cash
+      quantity: "150"
+      unit_price: "20.00"
+
+    - id: purchase-2027-01
+      date: 2027-01-01
+      type: inventory_purchase
+      inventory_account_id: inventory
+      cash_account_id: cash
+      quantity: "100"
+      unit_cost: "15.00"
+
+    - id: sale-2027-06
+      date: 2027-06-01
+      type: inventory_sale
+      inventory_account_id: inventory
+      cogs_account_id: cost_of_goods_sold
+      revenue_account_id: sales_revenue
+      cash_account_id: cash
+      quantity: "100"
+      unit_price: "25.00"
+
+    - id: write-down-2027-12
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: inventory_write_down_expense
+          debit: "250.00"
+        - account_id: inventory
+          credit: "250.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-06"
+      - period: "2026-12"
+      - period: "2027-06"
+      - period: "2027-12"
+      - period: "2026"
+      - period: "2027"

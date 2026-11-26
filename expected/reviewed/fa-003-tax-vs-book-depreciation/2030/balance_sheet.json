@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "ending_balance": "-60000.00"
+    },
+    "cash": {
+      "ending_balance": "0.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "equipment": {
+      "ending_balance": "60000.00"
+    },
+    "owner_equity": {
+      "ending_balance": "60000.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "-60000.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "fa-003-tax-vs-book-depreciation",
+  "statement_type": "balance_sheet"
+}

@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "depreciation_expense": {
+      "ending_balance": "6000.00"
+    },
+    "gain_on_disposal": {
+      "ending_balance": "5000.00"
+    },
+    "loss_on_disposal": {
+      "ending_balance": "0.00"
+    },
+    "net_income": {
+      "ending_balance": "-1000.00"
+    }
+  },
+  "period": "2028",
+  "scenario_id": "fa-002-asset-disposal",
+  "statement_type": "income_statement"
+}

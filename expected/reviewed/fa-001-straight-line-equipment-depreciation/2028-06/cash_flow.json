@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "ending_balance": "1000.00"
+    },
+    "beginning_cash": {
+      "ending_balance": "82500.00"
+    },
+    "ending_cash": {
+      "ending_balance": "85000.00"
+    },
+    "net_income": {
+      "ending_balance": "1500.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "2500.00"
+    }
+  },
+  "period": "2028-06",
+  "scenario_id": "fa-001-straight-line-equipment-depreciation",
+  "statement_type": "cash_flow"
+}

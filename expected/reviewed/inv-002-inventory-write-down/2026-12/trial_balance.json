@@ -1,0 +1,35 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "3000.00"
+    },
+    "cost_of_goods_sold": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "inventory": {
+      "credit": "0.00",
+      "debit": "600.00"
+    },
+    "inventory_write_down_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "owner_equity": {
+      "credit": "2200.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "1400.00",
+      "debit": "0.00"
+    },
+    "sales_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026-12",
+  "scenario_id": "inv-002-inventory-write-down",
+  "statement_type": "trial_balance"
+}

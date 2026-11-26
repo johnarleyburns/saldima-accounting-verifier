@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "depreciation_expense": {
+      "ending_balance": "12000.00"
+    },
+    "net_income": {
+      "ending_balance": "18000.00"
+    },
+    "operating_expense": {
+      "ending_balance": "6000.00"
+    },
+    "service_revenue": {
+      "ending_balance": "36000.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "fa-001-straight-line-equipment-depreciation",
+  "statement_type": "income_statement"
+}

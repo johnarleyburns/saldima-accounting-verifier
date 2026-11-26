@@ -54,20 +54,35 @@ def generate_period_reports(scenario: LoadedScenario, period: str) -> dict[str, 
         cf = cash_flow.generate(
             scenario.ledger, scenario.chart, start, end, scenario.cash_account_ids, scenario.id, period
         )
+        lines = {
+            "net_income": {"ending_balance": f"{cf.net_income:.2f}"},
+            **{aid: {"ending_balance": f"{v:.2f}"} for aid, v in cf.operating_adjustments.items()},
+            "operating_cash_flow": {"ending_balance": f"{cf.operating_cash_flow:.2f}"},
+        }
+        # investing_activities/financing_activities are empty dicts for any
+        # scenario with no account tagged that CashFlowCategory (every
+        # Phase 1/2 scenario), so these lines only appear once a scenario
+        # actually has investing/financing activity -- see
+        # docs/reference-model.md's "Phase 3 adds investing/financing
+        # classification" section. This keeps Phase 1/2's reviewed fixtures
+        # byte-for-byte unchanged.
+        if cf.investing_activities:
+            lines.update(
+                {aid: {"ending_balance": f"{v:.2f}"} for aid, v in cf.investing_activities.items()}
+            )
+            lines["investing_cash_flow"] = {"ending_balance": f"{cf.investing_cash_flow:.2f}"}
+        if cf.financing_activities:
+            lines.update(
+                {aid: {"ending_balance": f"{v:.2f}"} for aid, v in cf.financing_activities.items()}
+            )
+            lines["financing_cash_flow"] = {"ending_balance": f"{cf.financing_cash_flow:.2f}"}
+        lines["beginning_cash"] = {"ending_balance": f"{cf.beginning_cash:.2f}"}
+        lines["ending_cash"] = {"ending_balance": f"{cf.ending_cash:.2f}"}
         result["cash_flow"] = {
             "scenario_id": cf.scenario_id,
             "period": cf.period,
             "statement_type": "cash_flow",
-            "lines": {
-                "net_income": {"ending_balance": f"{cf.net_income:.2f}"},
-                **{
-                    aid: {"ending_balance": f"{v:.2f}"}
-                    for aid, v in cf.operating_adjustments.items()
-                },
-                "operating_cash_flow": {"ending_balance": f"{cf.operating_cash_flow:.2f}"},
-                "beginning_cash": {"ending_balance": f"{cf.beginning_cash:.2f}"},
-                "ending_cash": {"ending_balance": f"{cf.ending_cash:.2f}"},
-            },
+            "lines": lines,
         }
 
     return result

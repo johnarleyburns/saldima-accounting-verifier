@@ -1,0 +1,22 @@
+{
+  "scenario_id": "fa-001-straight-line-equipment-depreciation",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 3 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": { "depreciation": "straight_line" },
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output. $60,000 of equipment, $0 salvage, 60-month useful life: depreciable base 60000.00 / 60 months = 1000.00/month exactly, no rounding remainder.",
+    "Every month has identical income-statement activity: service_revenue 3000.00, operating_expense 500.00 (cash), depreciation_expense 1000.00 (non-cash), net income 1500.00. Cash changes by +2500.00/month (3000.00 revenue − 500.00 expense; depreciation is non-cash) except January 2026, which also has the one-time −60000.00 equipment purchase.",
+    "Running cash at the end of month m (m≥1): 70000.00 (opening) − 60000.00 (equipment, month 1 only) + 2500.00×m = 10000.00 + 2500.00×m.",
+    "2026-01 (month 1): cash = 10000.00 + 2500.00 = 12500.00. accumulated_depreciation_equipment = −1000.00 (one month). Balance sheet: assets (cash 12500.00 + equipment 60000.00 − 1000.00) 71500.00 = equity (owner_equity 70000.00 + current_period_earnings 1500.00) 71500.00. Cash flow: operating_cash_flow = net_income 1500.00 + accumulated_depreciation_equipment +1000.00 (the depreciation add-back, an operating adjustment since it defaults to that category) + owner_equity +70000.00 (the opening contribution, also operating) = 72500.00; investing_cash_flow = equipment −60000.00 (tagged cash_flow_category: investing in the chart); total 12500.00 = ending_cash 12500.00 − beginning_cash 0.00.",
+    "2026-12 (month 12, standalone, after the first of five fiscal-year closings, same day): December's own activity is identical to every other month (closing entries are excluded from period activity). cash = 10000.00 + 2500.00×12 = 40000.00. accumulated_depreciation_equipment = −12000.00. retained_earnings = 18000.00 (the full year's net income, swept in by the closing). Cash flow (no investing activity this month): operating_cash_flow = 1500.00 + 1000.00 = 2500.00 = ending_cash 40000.00 − beginning_cash 37500.00 (cash at the end of November, m=11: 10000.00+27500.00).",
+    "2028-06 (month 30 of 60, mid-run): cash = 10000.00 + 2500.00×30 = 85000.00. accumulated_depreciation_equipment = −30000.00 (half the asset's life). retained_earnings = 36000.00 (2026 + 2027, 18000.00 each). current_period_earnings = 9000.00 (January–June 2028, 1500.00×6).",
+    "2030-01 (month 49): cash = 10000.00 + 2500.00×49 = 132500.00. accumulated_depreciation_equipment = −49000.00. retained_earnings = 72000.00 (2026–2029, 18000.00×4).",
+    "2030-12 (month 60, the asset's final depreciation month, after the fifth and final closing): accumulated_depreciation_equipment reaches exactly −60000.00 — the equipment is now fully depreciated, net book value 60000.00 + (−60000.00) = 0.00 exactly. cash = 10000.00 + 2500.00×60 = 160000.00. retained_earnings = 90000.00 (five years × 18000.00).",
+    "2026/2028/2030 (full fiscal years, identical to each other): revenue 36000.00 (12×3000.00), operating_expense 6000.00, depreciation_expense 12000.00, net income 18000.00. 2026's cash flow includes the one-time −60000.00 investing activity (operating_cash_flow 100000.00 = net_income 18000.00 + accumulated_depreciation +12000.00 + owner_equity +70000.00; total with investing_cash_flow −60000.00 = 40000.00 = ending_cash 40000.00 − beginning_cash 0.00). 2028 and 2030 have no investing activity (operating_cash_flow 30000.00 = 18000.00 + 12000.00, matching their own 30000.00 cash change)."
+  ],
+  "periods_covered": ["2026-01", "2026-12", "2028-06", "2030-01", "2030-12", "2026", "2028", "2030"]
+}

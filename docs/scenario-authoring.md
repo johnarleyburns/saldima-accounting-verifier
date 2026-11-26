@@ -20,9 +20,13 @@ core-002-basic-service-business.yaml` for a fully worked example.
   closings only (fiscal year == calendar year).
 - `policies`, `rounding`: see `docs/accounting-policy.md`.
 
+Per-account (under `accounts[]`): `cash_flow_category`
+(`operating`/`investing`/`financing`, default `operating`) — see
+`docs/accounting-policy.md`.
+
 ## Events
 
-Two event types are implemented. Adding a new one means:
+Six event types are implemented. Adding a new one means:
 
 1. Add it to `schemas/event.schema.json`.
 2. Teach `runner/scenario_runner.py` how to translate it into
@@ -66,6 +70,64 @@ single-obligation example and
 `scenarios/revenue-recognition/rev-002-multiple-performance-obligations.yaml`
 for one contract allocated across a `point_in_time` and a `straight_line`
 obligation.
+
+### `fixed_asset_purchase` (Phase 3)
+
+The scenario author states the asset's cost/salvage/useful-life policy;
+the reference model derives the purchase entry and the full monthly
+straight-line depreciation schedule itself
+(`reference/schedules/depreciation.py`).
+
+Fields: `asset_id` (links a later `fixed_asset_disposal` to this asset),
+`asset_account_id`, `accumulated_depreciation_account_id`,
+`depreciation_expense_account_id`, `cash_account_id`, `cost`,
+`salvage_value`, `useful_life_months` (the purchase `date` is the
+in-service date, and must be the first day of its month). If a
+`fixed_asset_disposal` for the same `asset_id` exists anywhere in the
+scenario's `events`, the depreciation schedule stops at the last full
+month on or before the disposal date instead of running the full
+`useful_life_months`. `accumulated_depreciation_account_id` should be
+declared `type: asset` in `accounts[]` (a contra-asset — see
+`docs/accounting-policy.md`), and `asset_account_id` should set
+`cash_flow_category: investing` so the purchase shows as investing
+activity rather than operating.
+
+### `fixed_asset_disposal` (Phase 3)
+
+Fields: `asset_id` (matching a `fixed_asset_purchase` elsewhere in the
+scenario), `proceeds`, `cash_account_id`, `gain_account_id` (a
+`revenue`-type account), `loss_account_id` (an `expense`-type account).
+The reference model computes accumulated depreciation and book value at
+the disposal date from the matching purchase event's own declared
+cost/salvage/useful-life (no ledger lookups) and posts one entry: debit
+cash for `proceeds`, debit the accumulated-depreciation account to clear
+it, credit the asset account to remove its cost, and plug the gain or
+loss. See `scenarios/fixed-assets/fa-002-asset-disposal.yaml` for both
+directions (one disposal at a gain, one at a loss).
+
+### `inventory_purchase` / `inventory_sale` (Phase 3)
+
+`inventory_purchase` fields: `inventory_account_id`, `cash_account_id`,
+`quantity`, `unit_cost`. Posts one entry (debit inventory, credit cash)
+and records a new FIFO lot.
+
+`inventory_sale` fields: `inventory_account_id`, `cogs_account_id`,
+`revenue_account_id`, `cash_account_id`, `quantity`, `unit_price`. The
+sale/revenue dollar total is plain multiplication, but the cost of goods
+sold is derived by consuming FIFO lots oldest-first
+(`reference/schedules/inventory.py`) from the running list of open lots
+for that `inventory_account_id`, built up by every prior
+`inventory_purchase` in the scenario's `events` — which means, unlike
+every other event type, `inventory_purchase`/`inventory_sale` events for
+the same account **must be authored in chronological order** in the YAML
+(the existing convention for every scenario's events, just load-bearing
+here specifically). Raises `AccountingError` if a sale's quantity exceeds
+what's on hand. See `scenarios/inventory/inv-001-fifo-retail.yaml`.
+
+A **write-down** (`INV-002`) is not a separate event type — it's a plain
+`manual_journal_entry` (debit a write-down expense account, credit
+inventory), since the write-down amount is a stated business judgment,
+not something derived from a schedule.
 
 ## Reporting periods
 

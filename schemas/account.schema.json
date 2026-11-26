@@ -21,6 +21,11 @@
       ]
     },
     "parent_id": { "type": "string" },
-    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "cash_flow_category": {
+      "type": "string",
+      "enum": ["operating", "investing", "financing"],
+      "description": "Which section of the statement of cash flows this account's balance changes belong in. Defaults to 'operating' (reference/accounting/cash_flow.py) -- only Phase 3+ scenarios with real investing/financing activity need to set this."
+    }
   }
 }

@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "1200.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "inventory": {
+      "ending_balance": "1000.00"
+    },
+    "owner_equity": {
+      "ending_balance": "2200.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "0.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "inv-001-fifo-retail",
+  "statement_type": "balance_sheet"
+}

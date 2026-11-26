@@ -1,0 +1,100 @@
+scenario:
+  id: fa-003-tax-vs-book-depreciation
+  name: Tax versus Book Depreciation
+  version: 1
+  category: fixed-assets
+  description: >
+    The same $60,000, zero-salvage equipment as FA-001, held for its full
+    5-year (60-month) book useful life with no other business activity.
+    This scenario's financial statements (generated the same way as every
+    other scenario, via `fixed_asset_purchase`) are the *book* side of the
+    tax-vs-book comparison: straight-line, evenly spread across exactly 5
+    years. The *tax* side (MACRS, 5-year property, half-year convention --
+    reference/tax/macrs.py) is not posted to this ledger at all -- per
+    docs/accounting-policy.md's Phase 3 scope boundary, this repository
+    validates the MACRS schedule computation itself (see
+    tests/integration/test_fa_003_tax_vs_book_depreciation.py), not a
+    book/tax deferred-tax journal entry, which is out of scope for "fixed
+    assets and inventory." The point this scenario and its paired test
+    make concrete: MACRS accelerates depreciation into early years and
+    spans 6 tax years (the half-year convention), while book depreciation
+    is flat and spans exactly 5 years -- same asset, same $60,000, very
+    different schedules. See docs/plan.md Phase 3, scenario FA-003.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2030-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates:
+      - "2026-12-31"
+      - "2027-12-31"
+      - "2028-12-31"
+      - "2029-12-31"
+      - "2030-12-31"
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: equipment
+      name: Equipment
+      type: asset
+      subtype: noncurrent_asset
+      cash_flow_category: investing
+    - id: accumulated_depreciation_equipment
+      name: Accumulated Depreciation — Equipment
+      type: asset
+      subtype: contra_asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: depreciation_expense
+      name: Depreciation Expense (Book, Straight-Line)
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "60000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "60000.00"
+
+  events:
+    - id: equip-purchase
+      date: 2026-01-01
+      type: fixed_asset_purchase
+      asset_id: equip-1
+      asset_account_id: equipment
+      accumulated_depreciation_account_id: accumulated_depreciation_equipment
+      depreciation_expense_account_id: depreciation_expense
+      cash_account_id: cash
+      cost: "60000.00"
+      salvage_value: "0.00"
+      useful_life_months: 60
+
+  expected:
+    reports:
+      - period: "2026-12"
+      - period: "2030-12"
+      - period: "2026"
+      - period: "2027"
+      - period: "2028"
+      - period: "2029"
+      - period: "2030"
