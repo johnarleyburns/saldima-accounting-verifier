@@ -118,6 +118,20 @@ def load_scenario(path: Path) -> LoadedScenario:
     validate_scenario_document(document)
     raw = document["scenario"]
 
+    chart, ledger = build_ledger(raw)
+    return LoadedScenario(raw=raw, chart=chart, ledger=ledger)
+
+
+def build_ledger(raw: dict[str, Any]) -> tuple[ChartOfAccounts, Ledger]:
+    """Build a chart of accounts and a fully-posted ledger from an already-
+    parsed (and, for file-based scenarios, already schema-validated) raw
+    scenario dict -- the shared body `load_scenario` (file path in) and
+    `adapters/gnucash_xml`'s `GnuCashXmlAdapter.create_book` (already-parsed
+    dict in) both call, so the adapter drives a scenario through the exact
+    same translation the reference run itself uses (see
+    docs/accounting-policy.md). No behavior change for `load_scenario`'s
+    existing callers.
+    """
     chart = ChartOfAccounts()
     for acct in raw["accounts"]:
         chart.add(
@@ -203,7 +217,7 @@ def load_scenario(path: Path) -> LoadedScenario:
                 "'inventory_sale', 'loan_origination')"
             )
 
-    return LoadedScenario(raw=raw, chart=chart, ledger=ledger)
+    return chart, ledger
 
 
 def _balance_opening_entries(opening_balances: list[dict[str, Any]], start_date: str) -> JournalEntry:

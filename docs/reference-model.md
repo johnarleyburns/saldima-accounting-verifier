@@ -238,3 +238,19 @@ doesn't split evenly by ratio across partners -- see
 convention, generalized to an arbitrary number of named targets rather
 than a fixed time sequence, is also what `closing.py`'s new
 `partner_allocations` path uses (see the Phase 5 section above).
+
+## `reference/sync/merge.py` models an "edit" as a replacement, never a mutation (Phase 6)
+
+Invariant 6 (docs/plan.md section 13; `tests/invariants/
+test_double_entry_invariants.py`'s
+`test_invariant_6_posted_transactions_are_immutable`) means a posted
+`JournalEntry` is frozen and `Ledger` is append-only -- there is no
+in-place "edit" API anywhere in this reference model, by design. So when
+`reference/sync/merge.py` needs to represent "a device corrected an
+existing posted entry while offline," it does so as a `BranchState.edits`
+mapping (`{original_entry_id: replacement_entry}`) that lives entirely
+outside any `Ledger` -- the original entry is never touched, only ever
+superseded in a *merge result*, and only when the merge can actually
+resolve which replacement (if any) should apply. See
+docs/accounting-policy.md's "Multi-book merge semantics" section for the
+conflict rule itself.
