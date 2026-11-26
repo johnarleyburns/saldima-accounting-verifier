@@ -56,9 +56,28 @@ closings). No Phase 2 code changes were needed in
 `reference/accounting/*` — see `docs/reference-model.md` and
 `docs/accounting-policy.md` for why it was already generic enough.
 
+Implemented (Phase 3 — fixed assets and inventory; see `docs/plan.md`
+section 18): `reference/schedules/{depreciation,inventory}.py`,
+`reference/tax/macrs.py`; four new event types (`fixed_asset_purchase`,
+`fixed_asset_disposal`, `inventory_purchase`, `inventory_sale` —
+`runner/scenario_runner.py`, `schemas/event.schema.json`); scenarios
+`FA-001`/`FA-002`/`FA-003` (`scenarios/fixed-assets/`) and `INV-001`/
+`INV-002` (`scenarios/inventory/`), their reviewed fixtures, and the
+corresponding unit/integration/invariant tests. Unlike Phase 2, this phase
+*did* require a small, additive change to Phase 1 code: `Account` gained
+an optional `cash_flow_category` field (default `operating`, so Phase 1/2
+scenarios' output is byte-for-byte unchanged) and `cash_flow.py` now
+classifies by it into operating/investing/financing sections instead of
+one — see `docs/reference-model.md`'s "Phase 3 adds investing/financing
+classification" section. `reference/accounting/{trial_balance,
+income_statement,balance_sheet,closing}.py` needed no changes (same
+"already generic" finding as Phase 2, now for contra-assets and gain/loss
+accounts too).
+
 Scaffolded only (directory + README explaining what's planned, see
-`docs/plan.md` section 18 for phases): `reference/schedules/{depreciation,
-inventory,debt}.py`, `reference/tax/`, every `adapters/*` implementation,
-every scenario category besides `foundational/`, `accruals/`, and
-`revenue-recognition/`, `datasets/*`, and the `property`, `regression`,
-`compatibility`, and `performance` test suites.
+`docs/plan.md` section 18 for phases): `reference/schedules/debt.py`,
+`reference/tax/{partnership_basis,capital_accounts,liabilities,
+section_704c}.py`, every `adapters/*` implementation, every scenario
+category besides `foundational/`, `accruals/`, `revenue-recognition/`,
+`fixed-assets/`, and `inventory/`, `datasets/*`, and the `property`,
+`regression`, `compatibility`, and `performance` test suites.

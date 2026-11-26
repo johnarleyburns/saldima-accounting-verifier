@@ -1,0 +1,31 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment_a": {
+      "ending_balance": "-24000.00"
+    },
+    "accumulated_depreciation_equipment_b": {
+      "ending_balance": "0.00"
+    },
+    "cash": {
+      "ending_balance": "8000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "equipment_a": {
+      "ending_balance": "60000.00"
+    },
+    "equipment_b": {
+      "ending_balance": "0.00"
+    },
+    "owner_equity": {
+      "ending_balance": "84000.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "-40000.00"
+    }
+  },
+  "period": "2027-12",
+  "scenario_id": "fa-002-asset-disposal",
+  "statement_type": "balance_sheet"
+}

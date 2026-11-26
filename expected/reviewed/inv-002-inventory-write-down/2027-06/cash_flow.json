@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "1500.00"
+    },
+    "ending_cash": {
+      "ending_balance": "4000.00"
+    },
+    "inventory": {
+      "ending_balance": "1350.00"
+    },
+    "net_income": {
+      "ending_balance": "1150.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "2500.00"
+    }
+  },
+  "period": "2027-06",
+  "scenario_id": "inv-002-inventory-write-down",
+  "statement_type": "cash_flow"
+}

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://saldima.dev/schemas/event.schema.json",
   "title": "Business Event",
-  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment', the first higher-level event type: the reference model itself derives the deferred-revenue recognition entries from a declared recognition policy, rather than copying author-supplied numbers. See docs/scenario-authoring.md and docs/accounting-policy.md.",
+  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment'. Phase 3 adds 'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', and 'inventory_sale' -- each a case where the reference model itself must derive entries from a declared policy (depreciation schedule, disposal gain/loss, FIFO costing) rather than copying author-supplied numbers. See docs/scenario-authoring.md and docs/accounting-policy.md.",
   "type": "object",
   "required": ["id", "date", "type"],
   "additionalProperties": true,
@@ -42,6 +42,22 @@
           "recognition_date": { "type": "string", "format": "date", "description": "Used by recognition_method=point_in_time" }
         }
       }
-    }
+    },
+    "asset_id": { "type": "string", "description": "Used by type=fixed_asset_purchase and type=fixed_asset_disposal to link a disposal to its purchase" },
+    "asset_account_id": { "type": "string", "description": "Used by type=fixed_asset_purchase" },
+    "accumulated_depreciation_account_id": { "type": "string", "description": "Used by type=fixed_asset_purchase" },
+    "depreciation_expense_account_id": { "type": "string", "description": "Used by type=fixed_asset_purchase" },
+    "cost": { "type": "string", "description": "Used by type=fixed_asset_purchase" },
+    "salvage_value": { "type": "string", "description": "Used by type=fixed_asset_purchase" },
+    "useful_life_months": { "type": "integer", "minimum": 1, "description": "Used by type=fixed_asset_purchase" },
+    "proceeds": { "type": "string", "description": "Used by type=fixed_asset_disposal" },
+    "gain_account_id": { "type": "string", "description": "Used by type=fixed_asset_disposal (revenue-type account)" },
+    "loss_account_id": { "type": "string", "description": "Used by type=fixed_asset_disposal (expense-type account)" },
+    "inventory_account_id": { "type": "string", "description": "Used by type=inventory_purchase and type=inventory_sale" },
+    "cogs_account_id": { "type": "string", "description": "Used by type=inventory_sale" },
+    "revenue_account_id": { "type": "string", "description": "Used by type=inventory_sale (also used per-obligation by type=customer_contract_payment)" },
+    "quantity": { "type": "string", "description": "Used by type=inventory_purchase and type=inventory_sale" },
+    "unit_cost": { "type": "string", "description": "Used by type=inventory_purchase" },
+    "unit_price": { "type": "string", "description": "Used by type=inventory_sale" }
   }
 }

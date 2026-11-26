@@ -1,0 +1,28 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment_a": {
+      "ending_balance": "-24000.00"
+    },
+    "beginning_cash": {
+      "ending_balance": "8000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "43000.00"
+    },
+    "equipment_a": {
+      "ending_balance": "60000.00"
+    },
+    "investing_cash_flow": {
+      "ending_balance": "60000.00"
+    },
+    "net_income": {
+      "ending_balance": "-1000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "-25000.00"
+    }
+  },
+  "period": "2028",
+  "scenario_id": "fa-002-asset-disposal",
+  "statement_type": "cash_flow"
+}

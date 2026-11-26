@@ -335,7 +335,7 @@ Pull-request, main-branch, nightly, and release-candidate CI stages of increasin
 - **Phase 6 — Compatibility and multi-book integration:** GnuCash XML fixtures, semantic round-trips, multi-book isolation, multi-device merge.
 - **Phase 7 — Scale and long-running regression:** large datasets, million-transaction stress tests, extended multi-year simulations, performance regression tracking, randomized property tests.
 
-This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002) — see section 19 and `docs/architecture.md`.
+This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002). **Phase 3** (fixed assets and inventory) follows, with five more (FA-001/002/003, INV-001/002) — see section 19 and `docs/architecture.md`.
 
 ## 19. Initial Gold-Standard Scenario Corpus
 
@@ -348,11 +348,11 @@ This repository's first commits implement **Phase 1** end-to-end (working refere
 | ACCR-002 | Prepaid insurance and rent | 2 years | Prepayments | Implemented |
 | REV-001 | Advance service contract | 1 year | Deferred revenue | Implemented |
 | REV-002 | Multiple performance obligations | 2 years | Revenue recognition | Implemented |
-| FA-001 | Straight-line equipment depreciation | 5 years | Depreciation | Planned |
-| FA-002 | Asset disposal | 5 years | Gain/loss on disposal | Planned |
-| FA-003 | Tax versus book depreciation | 5 years | MACRS and book schedules | Planned |
-| INV-001 | FIFO retail inventory | 2 years | Inventory and COGS | Planned |
-| INV-002 | Inventory write-down | 2 years | Valuation | Planned |
+| FA-001 | Straight-line equipment depreciation | 5 years | Depreciation | Implemented |
+| FA-002 | Asset disposal | 5 years | Gain/loss on disposal | Implemented |
+| FA-003 | Tax versus book depreciation | 5 years | MACRS and book schedules | Implemented |
+| INV-001 | FIFO retail inventory | 2 years | Inventory and COGS | Implemented |
+| INV-002 | Inventory write-down | 2 years | Valuation | Implemented |
 | DEBT-001 | Fixed-rate business loan | 5 years | Debt and interest | Planned |
 | PAY-001 | Payroll and withholding | 1 year | Payroll liabilities | Planned |
 | PART-001 | Two-partner formation | 2 years | Capital accounts | Planned |

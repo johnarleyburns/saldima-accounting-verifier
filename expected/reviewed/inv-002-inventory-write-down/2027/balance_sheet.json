@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "4000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "inventory": {
+      "ending_balance": "500.00"
+    },
+    "owner_equity": {
+      "ending_balance": "2200.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "2300.00"
+    }
+  },
+  "period": "2027",
+  "scenario_id": "inv-002-inventory-write-down",
+  "statement_type": "balance_sheet"
+}

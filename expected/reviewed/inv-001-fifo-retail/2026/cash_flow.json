@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "0.00"
+    },
+    "ending_cash": {
+      "ending_balance": "3000.00"
+    },
+    "inventory": {
+      "ending_balance": "-600.00"
+    },
+    "net_income": {
+      "ending_balance": "1400.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "3000.00"
+    },
+    "owner_equity": {
+      "ending_balance": "2200.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "inv-001-fifo-retail",
+  "statement_type": "cash_flow"
+}

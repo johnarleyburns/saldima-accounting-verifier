@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "cost_of_goods_sold": {
+      "ending_balance": "1350.00"
+    },
+    "net_income": {
+      "ending_balance": "1150.00"
+    },
+    "sales_revenue": {
+      "ending_balance": "2500.00"
+    }
+  },
+  "period": "2027-06",
+  "scenario_id": "inv-001-fifo-retail",
+  "statement_type": "income_statement"
+}

@@ -1,0 +1,13 @@
+{
+  "lines": {
+    "depreciation_expense": {
+      "ending_balance": "12000.00"
+    },
+    "net_income": {
+      "ending_balance": "-12000.00"
+    }
+  },
+  "period": "2027",
+  "scenario_id": "fa-003-tax-vs-book-depreciation",
+  "statement_type": "income_statement"
+}
