@@ -1,0 +1,576 @@
+scenario:
+  id: debt-001-fixed-rate-business-loan
+  name: Fixed-Rate Business Loan — Equal-Principal Amortization
+  version: 1
+  category: debt
+  description: >
+    A service business takes out a $60,000, 6%-annual-rate, 60-month
+    business loan on day one (equal-principal, declining-interest
+    amortization: a level $1,000.00/month principal payment, interest
+    computed each month on the declining balance) and operates for five
+    full fiscal years with steady monthly cash revenue. The
+    `loan_origination` event states the business fact and amortization
+    policy; the reference model derives the origination entry and the
+    full 60-month principal/interest schedule itself (see
+    docs/accounting-policy.md). Validates loan amortization and the
+    statement of cash flows' financing-activity classification (loan
+    proceeds and principal repayments are financing; interest expense is
+    operating, via net income) for the first time -- see
+    docs/reference-model.md. See docs/plan.md Phase 4, scenario DEBT-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2030-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates:
+      - "2026-12-31"
+      - "2027-12-31"
+      - "2028-12-31"
+      - "2029-12-31"
+      - "2030-12-31"
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: loan_payable
+      name: Loan Payable
+      type: liability
+      subtype: noncurrent_liability
+      cash_flow_category: financing
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: interest_expense
+      name: Interest Expense
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "5000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "5000.00"
+
+  events:
+    - id: loan-1-origination
+      date: 2026-01-01
+      type: loan_origination
+      cash_account_id: cash
+      loan_payable_account_id: loan_payable
+      interest_expense_account_id: interest_expense
+      principal: "60000.00"
+      annual_interest_rate: "0.06"
+      term_months: 60
+
+    - id: revenue-2026-01
+      date: 2026-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-02
+      date: 2026-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-03
+      date: 2026-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-04
+      date: 2026-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-05
+      date: 2026-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-06
+      date: 2026-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-07
+      date: 2026-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-08
+      date: 2026-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-09
+      date: 2026-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-10
+      date: 2026-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-11
+      date: 2026-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2026-12
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-01
+      date: 2027-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-02
+      date: 2027-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-03
+      date: 2027-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-04
+      date: 2027-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-05
+      date: 2027-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-06
+      date: 2027-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-07
+      date: 2027-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-08
+      date: 2027-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-09
+      date: 2027-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-10
+      date: 2027-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-11
+      date: 2027-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2027-12
+      date: 2027-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-01
+      date: 2028-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-02
+      date: 2028-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-03
+      date: 2028-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-04
+      date: 2028-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-05
+      date: 2028-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-06
+      date: 2028-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-07
+      date: 2028-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-08
+      date: 2028-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-09
+      date: 2028-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-10
+      date: 2028-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-11
+      date: 2028-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2028-12
+      date: 2028-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-01
+      date: 2029-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-02
+      date: 2029-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-03
+      date: 2029-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-04
+      date: 2029-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-05
+      date: 2029-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-06
+      date: 2029-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-07
+      date: 2029-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-08
+      date: 2029-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-09
+      date: 2029-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-10
+      date: 2029-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-11
+      date: 2029-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2029-12
+      date: 2029-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-01
+      date: 2030-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-02
+      date: 2030-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-03
+      date: 2030-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-04
+      date: 2030-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-05
+      date: 2030-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-06
+      date: 2030-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-07
+      date: 2030-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-08
+      date: 2030-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-09
+      date: 2030-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-10
+      date: 2030-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-11
+      date: 2030-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+    - id: revenue-2030-12
+      date: 2030-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "2000.00"
+        - account_id: service_revenue
+          credit: "2000.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-12"
+      - period: "2028-06"
+      - period: "2030-01"
+      - period: "2030-12"
+      - period: "2026"
+      - period: "2028"
+      - period: "2030"

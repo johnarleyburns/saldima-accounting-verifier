@@ -74,10 +74,23 @@ income_statement,balance_sheet,closing}.py` needed no changes (same
 "already generic" finding as Phase 2, now for contra-assets and gain/loss
 accounts too).
 
+Implemented (Phase 4 — debt and payroll; see `docs/plan.md` section 18):
+`reference/schedules/debt.py`; the `loan_origination` event type
+(`runner/scenario_runner.py`, `schemas/event.schema.json`); scenarios
+`DEBT-001` (`scenarios/debt/`) and `PAY-001` (`scenarios/payroll/`),
+their reviewed fixtures, and the corresponding unit/integration/invariant
+tests. Like Phase 2 (and unlike Phase 3), no `reference/accounting/*`
+changes were needed at all: Phase 3's `cash_flow_category` mechanism was
+already general enough to classify a liability (the loan payable, tagged
+`financing`) with zero further code — see `docs/reference-model.md`.
+`reference/schedules/` is now fully implemented (`deferred_revenue`,
+`receivables`, `payables`, `depreciation`, `inventory`, `debt` — every
+file the directory's README originally listed).
+
 Scaffolded only (directory + README explaining what's planned, see
-`docs/plan.md` section 18 for phases): `reference/schedules/debt.py`,
-`reference/tax/{partnership_basis,capital_accounts,liabilities,
-section_704c}.py`, every `adapters/*` implementation, every scenario
-category besides `foundational/`, `accruals/`, `revenue-recognition/`,
-`fixed-assets/`, and `inventory/`, `datasets/*`, and the `property`,
-`regression`, `compatibility`, and `performance` test suites.
+`docs/plan.md` section 18 for phases): `reference/tax/{partnership_basis,
+capital_accounts,liabilities,section_704c}.py`, every `adapters/*`
+implementation, every scenario category besides `foundational/`,
+`accruals/`, `revenue-recognition/`, `fixed-assets/`, `inventory/`,
+`debt/`, and `payroll/`, `datasets/*`, and the `property`, `regression`,
+`compatibility`, and `performance` test suites.

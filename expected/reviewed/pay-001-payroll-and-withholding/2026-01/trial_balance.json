@@ -1,0 +1,43 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "14382.50"
+    },
+    "federal_income_tax_withheld_payable": {
+      "credit": "800.00",
+      "debit": "0.00"
+    },
+    "fica_payable": {
+      "credit": "765.00",
+      "debit": "0.00"
+    },
+    "owner_equity": {
+      "credit": "10000.00",
+      "debit": "0.00"
+    },
+    "payroll_tax_expense": {
+      "credit": "0.00",
+      "debit": "382.50"
+    },
+    "retained_earnings": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "salaries_expense": {
+      "credit": "0.00",
+      "debit": "5000.00"
+    },
+    "service_revenue": {
+      "credit": "8000.00",
+      "debit": "0.00"
+    },
+    "state_income_tax_withheld_payable": {
+      "credit": "200.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "pay-001-payroll-and-withholding",
+  "statement_type": "trial_balance"
+}

@@ -76,7 +76,22 @@ financing_cash_flow == net_change_in_cash`) is exact in every period
 regardless — see FA-002's `approval.json` for a concrete worked example of
 this nuance, and `docs/reference-model.md`.
 
-## Event model: Phase 1 vs Phase 2 vs Phase 3
+## `cash_flow_category: financing` now populated for real (Phase 4)
+
+`DEBT-001` is the first scenario to tag an account `cash_flow_category:
+financing` (`loan_payable`) — `docs/reference-model.md` had already
+predicted this ("Debt (Phase 4) is expected to be the next phase to
+populate `financing_activities`"). No further code change was needed:
+`cash_flow.py`'s classification is purely by `account.cash_flow_category`
+regardless of whether the account is an asset or a liability, so loan
+proceeds (a liability increase, a financing *source* of cash) and every
+principal repayment (a liability decrease, a financing *use*) both flow
+through the existing generic logic. `tests/invariants/
+test_debt_accounts_flow_through.py` proves both directions directly,
+independent of any scenario — the liability-side counterpart to
+`FA-001`/`FA-002`'s asset-side proof.
+
+## Event model: Phase 1 vs Phase 2 vs Phase 3 vs Phase 4
 
 Phase 1 implements exactly one event type, `manual_journal_entry`: the
 scenario author supplies explicit debit/credit lines, and the reference
@@ -140,6 +155,35 @@ An **inventory write-down** (`INV-002`) stays on `manual_journal_entry`,
 by the same accruals-and-prepayments logic as Phase 2: the write-down
 dollar amount is management's own stated valuation judgment (market value
 is below cost by $X), not something derivable from a schedule.
+
+Phase 4 adds one more higher-level event type and, for the first time
+since Phase 2, confirms a whole scenario can stay on plain
+`manual_journal_entry`:
+
+- **`loan_origination`** (`DEBT-001`): the scenario author states the
+  loan's principal, annual rate, and term; the reference model derives
+  the full month-by-month principal/interest split from the declining
+  balance (`reference/schedules/debt.py`'s `build_amortization_schedule`)
+  — a genuine computation, not a restated number. Deliberately modeled
+  as an **equal-principal, declining-interest** loan rather than the
+  standard level-total-payment annuity: solving the annuity formula
+  (`payment = P·r / (1 − (1+r)⁻ⁿ)`) for an arbitrary rate/term essentially
+  never lands on a clean cent, which would make a gold fixture's hand-
+  verification arithmetic tedious for no real gain in what's being
+  tested. Equal-principal loans are a real, common business-loan
+  structure, and with principal divisible evenly by the term, the
+  resulting interest schedule is a clean arithmetic sequence (every
+  month's interest drops by the same fixed amount) that's fully hand-
+  verifiable month-by-month, not just spot-checked.
+- **`PAY-001`** (payroll and withholding) is, deliberately, **not** a new
+  event type: gross pay, every withholding amount, and the employer's
+  matching FICA are all stated business facts the payroll system/
+  bookkeeper supplies directly — there's no schedule for the reference
+  model to derive, the same reasoning that kept Phase 2's accruals on
+  `manual_journal_entry`. It reuses `ACCR-001`'s one-month accrual/
+  payment lag (withheld and employer amounts accrue monthly, remitted
+  the following month), which is both realistic and lets the fixture's
+  arithmetic reuse an already-proven pattern.
 
 ## FA-003 scope boundary: MACRS schedule only, no deferred tax
 

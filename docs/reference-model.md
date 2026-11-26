@@ -109,6 +109,18 @@ section.
 Debt (Phase 4) is expected to be the next phase to populate
 `financing_activities` (loan proceeds/principal repayments).
 
+**Update, Phase 4:** this is now real. `DEBT-001` tags `loan_payable`
+`cash_flow_category: financing`, and the loan proceeds (a liability
+increase) and every monthly principal repayment (a liability decrease)
+land in `financing_activities` with **no further code change** — the same
+generic `by_category[account.cash_flow_category][account.id] = delta`
+logic in `cash_flow.generate()` that already handled the asset side in
+Phase 3 handles the liability side identically, since the branch is keyed
+only on `AccountType.ASSET` vs. not, with the category lookup applied
+uniformly either way. `tests/invariants/test_debt_accounts_flow_through.py`
+proves both directions (proceeds in, principal out) on a hand-built
+ledger, independent of `DEBT-001`'s own bookkeeping.
+
 ## Phase 2 confirms (not just assumes) that AR/AP/prepaid/deferred-revenue flow correctly
 
 The proof sketch above shows the cash-flow reconciliation holds for *any*
@@ -142,6 +154,19 @@ test_core_scenarios.py`'s `test_inv_001_fifo_cogs_corroborates_the_ledger_indepe
 cross-checks FIFO COGS the same way the ACCR-001 payables cross-check
 corroborates accrued liabilities.
 
+## Phase 4 confirms genericity once more, and is the first phase to need no Phase 1 code changes at all
+
+`DEBT-001` and `PAY-001` exercise a liability tagged `cash_flow_category:
+financing`, a liability/expense split derived from a declining balance,
+and payroll liabilities for the first time, and required **zero** changes
+anywhere in `reference/accounting/*.py` -- unlike Phase 3, which needed
+the additive `cash_flow_category` field itself. Interest expense and a
+loan payable are ordinary `AccountType` accounts; the financing
+classification is the pre-existing Phase 3 mechanism applied to a
+liability instead of an asset (see the update above). This is Phase 2's
+situation repeating, not Phase 3's -- the infrastructure Phase 3 added
+turned out to be general enough that Phase 4 needed none of its own.
+
 ## Straight-line revenue recognition's rounding remainder goes to the last period
 
 `reference/schedules/deferred_revenue.py`'s `build_straight_line_schedule`
@@ -161,3 +186,12 @@ only ever removes trailing months, so an early disposal never actually
 reaches the remainder month, and every truncated amount is the plain even
 per-month figure (see `tests/unit/test_depreciation.py`'s
 `test_schedule_truncated_by_disposal_before_the_final_month`).
+
+`reference/schedules/debt.py`'s `build_amortization_schedule` (Phase 4)
+applies the same remainder-in-the-last-period convention to the equal
+*principal* payment (not interest, which is recomputed fresh each period
+from the actual remaining balance and needs no remainder handling of its
+own). `DEBT-001`'s own numbers happen to divide evenly (`$60,000 / 60 =
+$1,000.00` exactly), so see `tests/unit/test_debt.py`'s
+`test_schedule_absorbs_rounding_remainder_into_last_month` for a case that
+doesn't.

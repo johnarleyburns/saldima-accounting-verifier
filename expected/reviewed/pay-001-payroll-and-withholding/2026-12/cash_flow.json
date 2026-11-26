@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "40557.50"
+    },
+    "ending_cash": {
+      "ending_balance": "43175.00"
+    },
+    "net_income": {
+      "ending_balance": "2617.50"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "2617.50"
+    }
+  },
+  "period": "2026-12",
+  "scenario_id": "pay-001-payroll-and-withholding",
+  "statement_type": "cash_flow"
+}

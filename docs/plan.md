@@ -335,7 +335,7 @@ Pull-request, main-branch, nightly, and release-candidate CI stages of increasin
 - **Phase 6 — Compatibility and multi-book integration:** GnuCash XML fixtures, semantic round-trips, multi-book isolation, multi-device merge.
 - **Phase 7 — Scale and long-running regression:** large datasets, million-transaction stress tests, extended multi-year simulations, performance regression tracking, randomized property tests.
 
-This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002). **Phase 3** (fixed assets and inventory) follows, with five more (FA-001/002/003, INV-001/002) — see section 19 and `docs/architecture.md`.
+This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002). **Phase 3** (fixed assets and inventory) follows, with five more (FA-001/002/003, INV-001/002). **Phase 4** (debt and payroll) follows that, with two more (DEBT-001, PAY-001) — see section 19 and `docs/architecture.md`.
 
 ## 19. Initial Gold-Standard Scenario Corpus
 
@@ -353,8 +353,8 @@ This repository's first commits implement **Phase 1** end-to-end (working refere
 | FA-003 | Tax versus book depreciation | 5 years | MACRS and book schedules | Implemented |
 | INV-001 | FIFO retail inventory | 2 years | Inventory and COGS | Implemented |
 | INV-002 | Inventory write-down | 2 years | Valuation | Implemented |
-| DEBT-001 | Fixed-rate business loan | 5 years | Debt and interest | Planned |
-| PAY-001 | Payroll and withholding | 1 year | Payroll liabilities | Planned |
+| DEBT-001 | Fixed-rate business loan | 5 years | Debt and interest | Implemented |
+| PAY-001 | Payroll and withholding | 1 year | Payroll liabilities | Implemented |
 | PART-001 | Two-partner formation | 2 years | Capital accounts | Planned |
 | PART-002 | Partnership debt and outside basis | 5 years | Tax basis | Planned |
 | PART-003 | Property contribution and 704(c) | 5 years | Built-in gain/loss | Planned |

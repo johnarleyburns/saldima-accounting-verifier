@@ -3,12 +3,13 @@
 Phase 1 implements a single event type, `manual_journal_entry`: the
 scenario author supplies explicit debit/credit lines directly. Phase 2 adds
 `customer_contract_payment`. Phase 3 adds `fixed_asset_purchase`,
-`fixed_asset_disposal`, `inventory_purchase`, and `inventory_sale` -- each
-a case where the reference model itself must derive journal entries from a
-declared accounting policy (straight-line depreciation, disposal gain/
-loss, FIFO costing) rather than just posting author-supplied numbers. See
+`fixed_asset_disposal`, `inventory_purchase`, and `inventory_sale`. Phase 4
+adds `loan_origination` -- each a case where the reference model itself
+must derive journal entries from a declared accounting policy (straight-
+line depreciation, disposal gain/loss, FIFO costing, loan amortization)
+rather than just posting author-supplied numbers. See
 docs/accounting-policy.md's "Event model: Phase 1 vs Phase 2" and its
-Phase 3 addendum, and docs/plan.md section 2.2 for the original design
+Phase 3/4 addenda, and docs/plan.md section 2.2 for the original design
 intent.
 """
 
@@ -35,7 +36,7 @@ from reference.accounting.journal import (
 )
 from reference.accounting.ledger import Ledger
 from reference.accounting.rounding import ZERO, money
-from reference.schedules import deferred_revenue, depreciation
+from reference.schedules import debt, deferred_revenue, depreciation
 from reference.schedules import inventory as inventory_mod
 
 SCHEMAS_DIR = Path(__file__).resolve().parent.parent / "schemas"
@@ -191,11 +192,15 @@ def load_scenario(path: Path) -> LoadedScenario:
         elif event["type"] == "inventory_sale":
             for entry in _translate_inventory_sale(event, fifo_lots_by_account):
                 ledger.post(entry)
+        elif event["type"] == "loan_origination":
+            for entry in _translate_loan_origination(event):
+                ledger.post(entry)
         else:
             raise NotImplementedError(
                 f"Event type {event['type']!r} is not supported "
                 "(supported: 'manual_journal_entry', 'customer_contract_payment', "
-                "'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', 'inventory_sale')"
+                "'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', "
+                "'inventory_sale', 'loan_origination')"
             )
 
     return LoadedScenario(raw=raw, chart=chart, ledger=ledger)
@@ -463,3 +468,50 @@ def _translate_inventory_sale(
             source_event_id=event_id,
         ),
     ]
+
+
+def _translate_loan_origination(event: dict[str, Any]) -> list[JournalEntry]:
+    """Translate one `loan_origination` event into its journal entries.
+
+    Derives the equal-principal, declining-interest amortization schedule
+    (reference/schedules/debt.py) from the declared principal/rate/term
+    policy -- see docs/accounting-policy.md.
+    """
+    event_id = event["id"]
+    origination_date = date.fromisoformat(event["date"])
+    cash_account_id = event["cash_account_id"]
+    loan_payable_account_id = event["loan_payable_account_id"]
+    interest_expense_account_id = event["interest_expense_account_id"]
+    principal = money(event["principal"])
+    annual_interest_rate = money(event["annual_interest_rate"])
+    term_months = int(event["term_months"])
+
+    entries = [
+        JournalEntry(
+            id=f"event-{event_id}-origination",
+            date=origination_date,
+            lines=(
+                make_line(cash_account_id, debit=str(principal)),
+                make_line(loan_payable_account_id, credit=str(principal)),
+            ),
+            source_event_id=event_id,
+        )
+    ]
+
+    schedule = debt.build_amortization_schedule(principal, annual_interest_rate, term_months, origination_date)
+    for period_end, interest, principal_payment, _remaining_balance in schedule:
+        total_payment = interest + principal_payment
+        entries.append(
+            JournalEntry(
+                id=f"event-{event_id}-payment-{period_end.isoformat()}",
+                date=period_end,
+                lines=(
+                    make_line(interest_expense_account_id, debit=str(interest)),
+                    make_line(loan_payable_account_id, debit=str(principal_payment)),
+                    make_line(cash_account_id, credit=str(total_payment)),
+                ),
+                source_event_id=event_id,
+            )
+        )
+
+    return entries

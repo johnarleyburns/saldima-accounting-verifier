@@ -1,0 +1,19 @@
+{
+  "scenario_id": "pay-001-payroll-and-withholding",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 4 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output. Every month: gross pay 5000.00; withheld from the employee: federal 800.00, state 200.00, FICA 382.50 (totaling 1382.50); net pay to the employee 5000.00 − 1382.50 = 3617.50, paid immediately. Employer also owes a matching FICA share of 382.50 as payroll_tax_expense, added to the same fica_payable account (now holding 765.00 — both shares). Total monthly payable accrual: 800.00 + 200.00 + 765.00 = 1765.00, remitted in cash the following month (the same one-month accrual/payment lag as ACCR-001).",
+    "Every month has identical income-statement activity: service_revenue 8000.00, salaries_expense 5000.00, payroll_tax_expense 382.50, net income 2617.50.",
+    "2026-01 (January, no prior-month liability to remit yet): cash = 10000.00 (opening) + 8000.00 (revenue) − 3617.50 (net pay) = 14382.50 (no remittance this month). Liabilities at month end: federal 800.00, state 200.00, fica 765.00 (January's own accrual, unremitted until February). Balance sheet: assets 14382.50 = liabilities 1765.00 + equity (owner_equity 10000.00 + current_period_earnings 2617.50) 12617.50 — 1765.00 + 12617.50 = 14382.50. Cash flow: net_income 2617.50 + owner_equity +10000.00 (the opening contribution) + federal +800.00 + state +200.00 + fica +765.00 = 14382.50, matching ending_cash 14382.50 − beginning_cash 0.00.",
+    "2026-06 (June, standalone month, steady state — a prior month's liability is remitted and a new one accrues, netting to zero liability change): cash change = 8000.00 (revenue) − 3617.50 (net pay) − 1765.00 (May's liability, remitted) = 2617.50 — equal to net income exactly, since the liability accounts' net delta for the month is 0.00 (1765.00 remitted, 1765.00 newly accrued). current_period_earnings (January–June, no closing yet) = 6 × 2617.50 = 15705.00.",
+    "2026-12 (December, standalone month, after the single fiscal-year closing): same steady-state activity as June (net income 2617.50, cash change 2617.50). December's own accrual (1765.00) remains unremitted at year end — it would be paid in January 2027, outside this scenario's window — so the balance sheet still shows liabilities of 1765.00 (same composition as every other month-end). retained_earnings = 31410.00 (the full year's net income, swept in by the closing).",
+    "2026 (full fiscal year): revenue 12×8000.00 = 96000.00; salaries_expense 12×5000.00 = 60000.00; payroll_tax_expense 12×382.50 = 4590.00; net income 31410.00. Cash: 10000.00 (opening) + 96000.00 (revenue) − 12×3617.50 (net pay, 43410.00) − 11×1765.00 (remittances for months 1–11, 19415.00) = 43175.00. Cash flow: net_income 31410.00 + owner_equity +10000.00 + the three payable accounts' full-year deltas (0.00 → 1765.00 combined, i.e. December's unremitted accrual) = 31410.00 + 10000.00 + 1765.00 = 43175.00, matching ending_cash 43175.00 − beginning_cash 0.00. Balance sheet: assets 43175.00 = liabilities 1765.00 + equity (owner_equity 10000.00 + retained_earnings 31410.00) 41410.00."
+  ],
+  "periods_covered": ["2026-01", "2026-06", "2026-12", "2026"]
+}

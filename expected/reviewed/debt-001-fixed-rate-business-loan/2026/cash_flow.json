@@ -1,0 +1,28 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "0.00"
+    },
+    "ending_cash": {
+      "ending_balance": "73730.00"
+    },
+    "financing_cash_flow": {
+      "ending_balance": "48000.00"
+    },
+    "loan_payable": {
+      "ending_balance": "48000.00"
+    },
+    "net_income": {
+      "ending_balance": "20730.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "25730.00"
+    },
+    "owner_equity": {
+      "ending_balance": "5000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "debt-001-fixed-rate-business-loan",
+  "statement_type": "cash_flow"
+}

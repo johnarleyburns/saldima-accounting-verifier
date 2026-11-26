@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "interest_expense": {
+      "ending_balance": "60.00"
+    },
+    "net_income": {
+      "ending_balance": "1940.00"
+    },
+    "service_revenue": {
+      "ending_balance": "2000.00"
+    }
+  },
+  "period": "2030-01",
+  "scenario_id": "debt-001-fixed-rate-business-loan",
+  "statement_type": "income_statement"
+}

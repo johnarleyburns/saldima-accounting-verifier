@@ -27,6 +27,8 @@ SCENARIOS = [
     REPO_ROOT / "scenarios" / "fixed-assets" / "fa-003-tax-vs-book-depreciation.yaml",
     REPO_ROOT / "scenarios" / "inventory" / "inv-001-fifo-retail.yaml",
     REPO_ROOT / "scenarios" / "inventory" / "inv-002-inventory-write-down.yaml",
+    REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml",
+    REPO_ROOT / "scenarios" / "payroll" / "pay-001-payroll-and-withholding.yaml",
 ]
 
 
@@ -186,6 +188,48 @@ def test_inv_001_fifo_cogs_corroborates_the_ledger_independently():
     balances = loaded.ledger.balances_as_of(date(2027, 12, 31))
     ledger_cogs_total = balances["cost_of_goods_sold"]["ending_balance"]
     assert cogs_1 + cogs_2 == ledger_cogs_total
+
+
+def test_debt_001_covers_five_fiscal_years():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml")
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-12",
+        "2028-06",
+        "2030-01",
+        "2030-12",
+        "2026",
+        "2028",
+        "2030",
+    }
+
+
+def test_pay_001_covers_monthly_midyear_and_annual_periods():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "payroll" / "pay-001-payroll-and-withholding.yaml")
+    assert set(loaded.report_periods) == {"2026-01", "2026-06", "2026-12", "2026"}
+
+
+def test_debt_001_amortization_schedule_corroborates_the_ledger_independently():
+    """reference/schedules/debt.py's build_amortization_schedule, applied to
+    DEBT-001's own principal/rate/term independently of the ledger, must agree
+    with the interest_expense and loan_payable entries the reference model
+    actually posted -- the same "independent schedule corroborates the ledger"
+    pattern as the ACCR-001 payables cross-check and the INV-001 FIFO
+    cross-check above."""
+    from reference.schedules import debt as debt_mod
+
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml")
+
+    schedule = debt_mod.build_amortization_schedule(
+        Decimal("60000.00"), Decimal("0.06"), 60, date(2026, 1, 1)
+    )
+    total_interest = sum((interest for _, interest, _, _ in schedule), Decimal("0.00"))
+    total_principal = sum((principal for _, _, principal, _ in schedule), Decimal("0.00"))
+
+    balances = loaded.ledger.balances_as_of(date(2030, 12, 31))
+    assert total_interest == balances["interest_expense"]["ending_balance"]
+    assert total_principal == Decimal("60000.00")
+    assert balances["loan_payable"]["ending_balance"] == Decimal("0.00")
 
 
 def test_accr_001_payables_schedule_corroborates_accrued_liability_balances():

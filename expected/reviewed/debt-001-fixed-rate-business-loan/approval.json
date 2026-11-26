@@ -1,0 +1,21 @@
+{
+  "scenario_id": "debt-001-fixed-rate-business-loan",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 4 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": { "debt": "equal_principal_declining_interest" },
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output. $60,000 loan, 6% annual (0.5%/month), 60 months: equal principal = 60000.00/60 = 1000.00/month exactly (no remainder). Because the balance always drops by a round 1000.00, interest drops by an exact 1000.00×0.5% = 5.00 every month: month m's interest = 300.00 − 5.00×(m−1), where m runs 1..60 from January 2026.",
+    "Every month's payment = interest_m + 1000.00. Cash change per month m = 2000.00 (revenue) − payment_m = 700.00 + 5.00×(m−1). Cumulative cash through month M = 65000.00 (opening 5000.00 + loan proceeds 60000.00, both in January) + 700.00×M + 2.5×M×(M−1).",
+    "2026-01 (m=1): interest 300.00, net income 1700.00. Cash = 65000.00 + 2000.00 − 1300.00 = 65700.00. loan_payable = 59000.00. Cash flow: operating_cash_flow = net_income 1700.00 + owner_equity +5000.00 (the opening contribution) = 6700.00; financing_cash_flow = loan_payable +59000.00 (the loan proceeds net of January's principal payment, both inside January's window); total 65700.00 = ending_cash 65700.00 − beginning_cash 0.00.",
+    "2026-12 (December alone, m=12, after the first of five closings): interest = 300.00 − 55.00 = 245.00, net income 1755.00. Cumulative cash at M=12: 65000.00 + 8400.00 + 330.00 = 73730.00. loan_payable = 48000.00 (12 × 1000.00 repaid). Cash flow: operating_cash_flow 1755.00 (no owner_equity change this month); financing_cash_flow −1000.00 (one principal payment); total 755.00, matching ending_cash 73730.00 − beginning_cash (M=11: 65000.00 + 7700.00 + 275.00 = 72975.00) = 755.00.",
+    "2028-06 (m=30, mid-run): interest = 300.00 − 145.00 = 155.00. Cumulative cash: 65000.00 + 21000.00 + 2175.00 = 88175.00. loan_payable = 60000.00 − 30000.00 = 30000.00. current_period_earnings (Jan–Jun 2028, months 25–30): interest sums 180+175+170+165+160+155 = 1005.00, six months of 2000.00 revenue = 12000.00, net 10995.00. retained_earnings (through the 2026 and 2027 closings): 2026 net income 24000.00 − 3270.00 (12×300.00 − 5.00×66) = 20730.00; 2027 net income 24000.00 − 2550.00 (months 13–24 interest, averaging 212.50×12) = 21450.00; cumulative 42180.00.",
+    "2030-01 (m=49): interest = 300.00 − 240.00 = 60.00, net income 1940.00. Cumulative cash: 65000.00 + 34300.00 + 5880.00 = 105180.00. loan_payable = 60000.00 − 49000.00 = 11000.00.",
+    "2030-12 (m=60, the loan's final payment, after the fifth and final closing): interest = 300.00 − 295.00 = 5.00, net income 1995.00. loan_payable reaches exactly 0.00 — the loan is fully repaid. Cumulative cash: 65000.00 + 42000.00 + 8850.00 = 115850.00.",
+    "2026/2028/2030 (full fiscal years): interest totals 3270.00 / 1830.00 (months 25–36, averaging 152.50×12) / 390.00 (months 49–60, averaging 32.50×12); net income 20730.00 / 22170.00 / 23610.00. retained_earnings accumulates across all five closings: 20730.00 → 42180.00 (+2027's 21450.00) → 64350.00 (+2028's 22170.00) → 87240.00 (+2029's 22890.00, months 37–48 averaging 92.50×12) → 110850.00 (+2030's 23610.00) — matching the final balance sheet exactly. Cash flow: each full year's financing_cash_flow is −12000.00 (12 monthly principal payments) except 2026, which nets +48000.00 (60000.00 proceeds − 12000.00 of 2026's repayments); operating_cash_flow is each year's own net income (plus the one-time +5000.00 owner contribution in 2026)."
+  ],
+  "periods_covered": ["2026-01", "2026-12", "2028-06", "2030-01", "2030-12", "2026", "2028", "2030"]
+}
