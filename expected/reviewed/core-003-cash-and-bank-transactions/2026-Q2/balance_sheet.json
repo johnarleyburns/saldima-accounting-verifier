@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "checking": {
+      "ending_balance": "12600.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "5600.00"
+    },
+    "owner_equity": {
+      "ending_balance": "10000.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "0.00"
+    },
+    "savings": {
+      "ending_balance": "3000.00"
+    }
+  },
+  "period": "2026-Q2",
+  "scenario_id": "core-003-cash-and-bank-transactions",
+  "statement_type": "balance_sheet"
+}

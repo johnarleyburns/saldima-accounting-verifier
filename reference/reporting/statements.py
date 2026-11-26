@@ -10,7 +10,7 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
-from reference.accounting import balance_sheet, income_statement, trial_balance
+from reference.accounting import balance_sheet, bank_reconciliation, income_statement, trial_balance
 
 
 def _fmt(value: Decimal) -> str:
@@ -50,4 +50,19 @@ def balance_sheet_to_dict(bs: balance_sheet.BalanceSheet) -> dict[str, Any]:
         "period": bs.period,
         "statement_type": "balance_sheet",
         "lines": lines,
+    }
+
+
+def bank_reconciliation_to_dict(rec: bank_reconciliation.BankReconciliation) -> dict[str, Any]:
+    return {
+        "scenario_id": rec.scenario_id,
+        "period": rec.period,
+        "statement_type": "bank_reconciliation",
+        "lines": {
+            "book_balance": {"ending_balance": _fmt(rec.book_balance)},
+            "bank_statement_balance": {"ending_balance": _fmt(rec.bank_statement_balance)},
+            "deposits_in_transit": {"ending_balance": _fmt(rec.deposits_in_transit)},
+            "outstanding_checks": {"ending_balance": _fmt(rec.outstanding_checks)},
+            "adjusted_bank_balance": {"ending_balance": _fmt(rec.adjusted_bank_balance)},
+        },
     }

@@ -535,3 +535,48 @@ event type and no schema change. `runner/consolidation_runner.py` is a
 small, explicit, hardcoded registry mapping each group id to its entity
 file paths and `EliminationPair` list, not a new YAML schema — there are
 only two consolidation groups, ever planned.
+
+## Bank reconciliation scope boundary (`CORE-003`)
+
+`CORE-003`'s "Cash and reconciliation" validation target
+(`docs/plan.md` section 19) is the classic bank-reconciliation identity:
+`book_balance == bank_statement_balance + deposits_in_transit -
+outstanding_checks`. `reference/accounting/bank_reconciliation.py`
+mirrors `cash_flow.py`'s own shape exactly — a frozen `BankReconciliation`
+result dataclass with an `adjusted_bank_balance` property and an
+`assert_reconciles()` method, and a `generate()` function that reads
+`book_balance` from the existing `Ledger.balances_as_of` and raises
+`AccountingError` if the identity doesn't hold.
+
+**Scope boundary:** `bank_statement_balance`, `deposits_in_transit`, and
+`outstanding_checks` are *declared* by the scenario author in the new
+`bank_reconciliations` scenario block (`schemas/scenario.schema.json`),
+as if transcribed directly from an actual bank statement and check
+register — this module verifies the reconciliation *arithmetic*, not
+bank-statement import or automated transaction matching against an
+imported bank feed. A real bank-feed-matching engine is out of scope for
+this reference model, the same kind of explicit boundary `FA-003` and
+`PART-002`/`003` already draw for their own tax-side simplifications.
+
+`CORE-003` also confirms (not just assumes) that nothing in
+`reference/accounting/*.py` was ever implicitly built around exactly one
+cash account: `LoadedScenario.cash_account_ids` and `cash_flow.generate`
+already take a *set*, so a scenario with two cash accounts (`checking`/
+`savings`) and a transfer between them needs zero further changes — both
+accounts are excluded from operating/investing/financing classification
+by the same `if account.id in cash_account_ids: continue` branch that
+already existed, and the transfer's net effect on `beginning_cash`/
+`ending_cash` (summed across every cash account) is correctly zero, so it
+never even appears as a cash-flow adjustment. This is the same
+"already generic" finding every prior phase has made at least once (see
+`docs/reference-model.md`), now for multiple cash accounts.
+
+Each declared reconciliation is normalized into the same
+`{scenario_id, period, statement_type, lines}` shape every other
+statement uses (`reference/reporting/statements.bank_reconciliation_to_dict`,
+`statement_type: "bank_reconciliation"`) and produced as its own
+`reconciliation-<cash_account_id>-<as_of>` "period" entry by
+`runner/reference_runner.generate_bank_reconciliations`, alongside
+`generate_period_reports`'s ordinary periods — so it reuses
+`runner/compare.py` and `tests/integration/test_core_scenarios.py`'s
+existing comparison loop with no changes to either.

@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "bank_fee_expense": {
+      "ending_balance": "25.00"
+    },
+    "interest_income": {
+      "ending_balance": "15.00"
+    },
+    "net_income": {
+      "ending_balance": "11440.00"
+    },
+    "rent_expense": {
+      "ending_balance": "4800.00"
+    },
+    "service_revenue": {
+      "ending_balance": "17500.00"
+    },
+    "utilities_expense": {
+      "ending_balance": "1250.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "core-003-cash-and-bank-transactions",
+  "statement_type": "income_statement"
+}

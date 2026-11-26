@@ -25,6 +25,13 @@ core-002-basic-service-business.yaml` for a fully worked example.
   `retained_earnings_account`/`partner_allocations` must be given. See
   `docs/accounting-policy.md`.
 - `policies`, `rounding`: see `docs/accounting-policy.md`.
+- `bank_reconciliations`: a list of `{cash_account_id, as_of,
+  bank_statement_balance, deposits_in_transit, outstanding_checks}`
+  (CORE-003 scope — see `docs/accounting-policy.md`). Each entry produces
+  its own `reconciliation-<cash_account_id>-<as_of>` report "period"
+  alongside `expected.reports`' ordinary periods, asserting
+  `book_balance == bank_statement_balance + deposits_in_transit -
+  outstanding_checks` for that cash account at that date.
 
 Per-account (under `accounts[]`): `cash_flow_category`
 (`operating`/`investing`/`financing`, default `operating`) — see

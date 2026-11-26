@@ -56,6 +56,21 @@
             }
           }
         },
+        "bank_reconciliations": {
+          "type": "array",
+          "description": "CORE-003 scope: declared bank-statement/check-register data (not detected by matching an imported bank feed) verifying book_balance == bank_statement_balance + deposits_in_transit - outstanding_checks for one cash account at one date -- see docs/accounting-policy.md.",
+          "items": {
+            "type": "object",
+            "required": ["cash_account_id", "as_of", "bank_statement_balance", "deposits_in_transit", "outstanding_checks"],
+            "properties": {
+              "cash_account_id": { "type": "string" },
+              "as_of": { "type": "string", "format": "date" },
+              "bank_statement_balance": { "type": "string" },
+              "deposits_in_transit": { "type": "string" },
+              "outstanding_checks": { "type": "string" }
+            }
+          }
+        },
         "opening_balances": {
           "type": "array",
           "items": {

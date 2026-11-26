@@ -1,0 +1,210 @@
+scenario:
+  id: core-003-cash-and-bank-transactions
+  name: Cash and Bank Transactions — Bank Reconciliation
+  version: 1
+  category: foundational
+  description: >
+    A sole proprietor service business operates for one full fiscal year
+    with two cash accounts (checking and savings): quarterly cash
+    service revenue and rent, a mid-year transfer into savings, interest
+    earned on savings, and -- the scenario's actual validation target --
+    a year-end bank reconciliation for checking, where two December
+    checks are still outstanding and a December 31 deposit hasn't yet
+    been processed by the bank, alongside a bank fee discovered on the
+    statement and booked as an adjusting entry. Validates that multiple
+    cash accounts and an inter-account transfer flow correctly through
+    the existing cash-flow reconciliation with no reference-model
+    changes, and that the book balance reconciles to the declared bank
+    statement balance once those timing differences are accounted for.
+    See docs/plan.md section 19, scenario CORE-003.
+
+  accounting:
+    framework: US_GAAP
+    basis: cash
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2026-12-31
+
+  cash_accounts: [checking, savings]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31"]
+
+  bank_reconciliations:
+    - cash_account_id: checking
+      as_of: 2026-12-31
+      bank_statement_balance: "18175.00"
+      deposits_in_transit: "1500.00"
+      outstanding_checks: "1250.00"
+
+  accounts:
+    - id: checking
+      name: Checking Account
+      type: asset
+    - id: savings
+      name: Savings Account
+      type: asset
+    - id: owner_equity
+      name: Owner's Equity
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: interest_income
+      name: Interest Income
+      type: revenue
+    - id: rent_expense
+      name: Rent Expense
+      type: expense
+    - id: utilities_expense
+      name: Utilities Expense
+      type: expense
+    - id: bank_fee_expense
+      name: Bank Fee Expense
+      type: expense
+
+  opening_balances:
+    - account_id: checking
+      debit: "10000.00"
+      credit: "0.00"
+    - account_id: owner_equity
+      debit: "0.00"
+      credit: "10000.00"
+
+  events:
+    - id: transfer-to-savings
+      date: 2026-02-01
+      type: manual_journal_entry
+      lines:
+        - account_id: savings
+          debit: "3000.00"
+        - account_id: checking
+          credit: "3000.00"
+
+    - id: revenue-2026-q1
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: checking
+          debit: "4000.00"
+        - account_id: service_revenue
+          credit: "4000.00"
+    - id: rent-2026-q1
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "1200.00"
+        - account_id: checking
+          credit: "1200.00"
+
+    - id: revenue-2026-q2
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: checking
+          debit: "4000.00"
+        - account_id: service_revenue
+          credit: "4000.00"
+    - id: rent-2026-q2
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "1200.00"
+        - account_id: checking
+          credit: "1200.00"
+
+    - id: revenue-2026-q3
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: checking
+          debit: "4000.00"
+        - account_id: service_revenue
+          credit: "4000.00"
+    - id: rent-2026-q3
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "1200.00"
+        - account_id: checking
+          credit: "1200.00"
+
+    - id: revenue-2026-q4
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: checking
+          debit: "4000.00"
+        - account_id: service_revenue
+          credit: "4000.00"
+    - id: rent-2026-q4
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: rent_expense
+          debit: "1200.00"
+        - account_id: checking
+          credit: "1200.00"
+
+    - id: check-1200-utilities
+      date: 2026-12-20
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "800.00"
+        - account_id: checking
+          credit: "800.00"
+    - id: check-1201-utilities
+      date: 2026-12-22
+      type: manual_journal_entry
+      lines:
+        - account_id: utilities_expense
+          debit: "450.00"
+        - account_id: checking
+          credit: "450.00"
+
+    - id: deposit-in-transit-2026-12-31
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: checking
+          debit: "1500.00"
+        - account_id: service_revenue
+          credit: "1500.00"
+    - id: bank-fee-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: bank_fee_expense
+          debit: "25.00"
+        - account_id: checking
+          credit: "25.00"
+    - id: interest-savings-2026
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: savings
+          debit: "15.00"
+        - account_id: interest_income
+          credit: "15.00"
+
+  expected:
+    reports:
+      - period: "2026-Q1"
+      - period: "2026-Q2"
+      - period: "2026-Q3"
+      - period: "2026-Q4"
+      - period: "2026"
