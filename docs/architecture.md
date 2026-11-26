@@ -129,9 +129,38 @@ scenarios validated by a dedicated test module instead of a
 documented, schema-conformant GnuCash round-trip conventions this phase
 needed and the merge algorithm's conflict semantics.
 
+Implemented (Phase 7 — scale and long-running regression; see
+`docs/plan.md` section 18): `tests/property/` — Hypothesis-based
+generalizations of the hand-built examples in `tests/invariants/
+test_double_entry_invariants.py` (balanced postings, the accounting
+equation, idempotent replay under posting-order reshuffles, cash-flow
+reconciliation, `closing.py`'s partner-allocation remainder convention,
+and the shared rounding-remainder convention across
+`reference/schedules/{deferred_revenue,depreciation,debt}.py` and
+`reference/tax/liabilities.py`, plus `reference/sync/merge.py`'s merge
+semantics) over randomly generated inputs instead of one hand-picked
+example each — see `docs/reference-model.md`'s "double-entry invariants,
+numbered" section. `scripts/generate_synthetic_ledger.py` (a deterministic
+large-ledger generator, reused by both the tests and the manual
+benchmark) and `scripts/run_performance_benchmark.py` (times report
+generation at 1,000 to 1,000,000 transactions, writing a baseline to
+`reports/generated/performance-baseline.json` — a manual tool, not run by
+`make test`, pending a Nightly CI stage per `docs/release-gates.md`);
+`tests/performance/test_performance_smoke.py` exercises the same code
+path at a small, fast scale on every `make test`. No new scenario and no
+change to any existing scenario or fixture. This phase's one
+`reference/accounting/*.py` change is a pure performance fix the
+benchmark itself surfaced: `ledger.py`'s `Ledger.post` had an O(n)
+duplicate-id scan, making posting `n` entries O(n²) overall (100,000+
+transactions took over 1,000 CPU-seconds); it now tracks posted ids in a
+set, with no change to observable behavior — see
+`docs/reference-model.md`'s "Phase 7's performance baseline" section.
+`tests/regression/` is intentionally still empty — see
+`docs/release-gates.md`'s regression-scenario template.
+
 Scaffolded only (directory + README explaining what's planned, see
 `docs/plan.md` section 18 for phases): `adapters/{saldima,csv,ofx,qfx}/`,
 every scenario category besides `foundational/`, `accruals/`,
 `revenue-recognition/`, `fixed-assets/`, `inventory/`, `debt/`,
-`payroll/`, and `partnerships/`, `datasets/*`, and the `property`,
-`regression`, and `performance` test suites.
+`payroll/`, and `partnerships/`, `datasets/*`, and the `tests/regression`
+suite.

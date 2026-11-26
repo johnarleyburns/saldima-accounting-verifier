@@ -28,9 +28,22 @@ class Ledger:
     chart: ChartOfAccounts
     entries: list[JournalEntry] = field(default_factory=list)
     closed_through: date | None = None
+    _entry_ids: set[str] = field(default_factory=set, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        # Mirrors whatever `entries` the Ledger was constructed with (empty
+        # in every real caller today, which only ever populates it via
+        # `post()`) -- see the duplicate-id check below.
+        self._entry_ids = {entry.id for entry in self.entries}
 
     def post(self, entry: JournalEntry) -> None:
-        if any(existing.id == entry.id for existing in self.entries):
+        # A set lookup here, not a linear scan over `self.entries`, is what
+        # keeps posting `n` entries O(n) overall instead of O(n^2) -- see
+        # docs/plan.md section 15 / docs/reference-model.md's performance
+        # section, which is what surfaced this (scripts/
+        # run_performance_benchmark.py at 100,000+ transactions never
+        # finished before this fix).
+        if entry.id in self._entry_ids:
             raise AccountingError(f"Duplicate journal entry id: {entry.id!r}")
         for line in entry.lines:
             if line.account_id not in self.chart:
@@ -44,6 +57,7 @@ class Ledger:
                 f"closed period (closed through {self.closed_through})"
             )
         self.entries.append(entry)
+        self._entry_ids.add(entry.id)
 
     def close_period(self, through: date) -> None:
         """Lock all periods up to and including `through` against new postings.

@@ -29,7 +29,9 @@ def main() -> None:
         period_dir = out_dir / period
         period_dir.mkdir(parents=True, exist_ok=True)
         for statement_type, data in statements.items():
-            (period_dir / f"{statement_type}.json").write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+            (period_dir / f"{statement_type}.json").write_text(
+                json.dumps(data, indent=2, sort_keys=True) + "\n"
+            )
         print(f"{loaded.id} {period}: wrote {list(statements.keys())}")
 
 

@@ -54,12 +54,37 @@ No accounting-engine release is production-ready if:
 This repository's current `.github/workflows/ci.yml` implements the
 pull-request stage only (schema validation + pytest + ruff). The later
 stages are added as the corresponding test categories are implemented
-(see `docs/test-categories.md`).
+(see `docs/test-categories.md`). `tests/property` and the small-scale
+`tests/performance/test_performance_smoke.py` already run under the
+pull-request stage today, since they're fast enough not to need their
+own stage. The full-scale benchmark, `scripts/run_performance_benchmark.py`
+(1,000 to 1,000,000 generated transactions, via
+`scripts/generate_synthetic_ledger.py`), is this phase's intended Nightly-
+stage entry point, but isn't wired into CI yet -- run it manually; it
+only measures and records a baseline to `reports/generated/
+performance-baseline.json`, per section 15's "before any regression
+thresholds are introduced."
 
 ## Regression scenarios (docs/plan.md section 21)
 
 Every production accounting defect found should produce a permanent
 regression scenario under `scenarios/<category>/` (or a dedicated
 `tests/regression/` case for a defect that isn't naturally a full
-scenario), following the template in `docs/plan.md` section 21: state the
-bug, the correct expected behavior, and the regression scenario/test id.
+scenario). Record, either in the scenario's own files or in the
+`tests/regression/test_<defect>.py` module's docstring:
+
+1. **Defect summary** -- one or two sentences describing what went wrong.
+2. **Correct expected behavior** -- what should have happened instead,
+   stated as an accounting fact, not an implementation detail.
+3. **Regression scenario/test id** -- the `scenarios/<category>/<id>`
+   (with its `expected/reviewed/` fixture) if it's naturally a full
+   scenario, or the `tests/regression/test_<short-defect-name>.py` module
+   name if it's narrower (e.g. one malformed input that should be
+   rejected, or one edge case in a single reference module).
+4. A **link back** to the original defect report or issue, if one exists.
+
+No defect has occurred in this repository's history yet (every commit so
+far is planned feature work), so `tests/regression/` stays exactly as
+scaffolded -- empty -- until one does. Do not add a fabricated example
+here; an invented "defect" would defeat the category's entire purpose
+(see docs/test-categories.md).

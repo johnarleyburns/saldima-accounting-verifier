@@ -1,8 +1,10 @@
-"""Core double-entry invariants from docs/plan.md section 13, items 1-3, 6-7.
+"""Core double-entry invariants from docs/plan.md section 13.
 
-These exercise the invariants directly on hand-built ledgers. Hypothesis-
-based randomized coverage of the same invariants across generated books is
-planned for tests/property (Phase 7) — see docs/test-categories.md.
+These exercise the invariants directly on hand-built ledgers. See
+docs/reference-model.md's "double-entry invariants, numbered" section
+for the canonical numbering used here and for which invariants also
+have Hypothesis-based randomized coverage across generated books
+(tests/property/, Phase 7).
 """
 
 from datetime import date
