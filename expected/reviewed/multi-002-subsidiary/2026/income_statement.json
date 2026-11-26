@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "intercompany_interest_expense": {
+      "ending_balance": "3000.00"
+    },
+    "intercompany_management_fee_expense": {
+      "ending_balance": "10000.00"
+    },
+    "net_income": {
+      "ending_balance": "17000.00"
+    },
+    "operating_expense": {
+      "ending_balance": "50000.00"
+    },
+    "revenue": {
+      "ending_balance": "80000.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "multi-002-subsidiary",
+  "statement_type": "income_statement"
+}

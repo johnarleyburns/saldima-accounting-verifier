@@ -1,0 +1,19 @@
+{
+  "scenario_id": "multi-001-parent",
+  "scenario_version": 1,
+  "reference_model_commit": "Multi-entity consolidation implementation (MULTI-001, docs/plan.md section 19)",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output:",
+    "Opening (2026-01-01): cash 200000.00 (debit) / paid_in_capital 200000.00 (credit). Formation: debit investment_in_subsidiary 100000.00, credit cash 100000.00 -> cash 100000.00. Loan funded: debit intercompany_receivable 50000.00, credit cash 50000.00 -> cash 50000.00.",
+    "2026: interest received 3000.00 (debit cash, credit intercompany_interest_income) -> cash 53000.00, intercompany_interest_income 3000.00 (period activity). Closing 2026-12-31 sweeps the 3000.00 into retained_earnings. End-of-2026 balance sheet: assets cash 53000.00 + investment_in_subsidiary 100000.00 + intercompany_receivable 50000.00 = 203000.00 = liabilities+equity paid_in_capital 200000.00 + retained_earnings 3000.00 = 203000.00.",
+    "2027: a second 3000.00 interest receipt (same as 2026, fresh period activity since the 2026 closing excluded it from 2027's window), plus the 50000.00 balloon principal repayment (debit cash, credit intercompany_receivable) -> cash 53000.00 + 3000.00 + 50000.00 = 106000.00; intercompany_receivable 50000.00 - 50000.00 = 0.00. Closing 2027-12-31 sweeps the second 3000.00 into retained_earnings -> 3000.00 + 3000.00 = 6000.00. End-of-2027 balance sheet: assets cash 106000.00 + investment_in_subsidiary 100000.00 + intercompany_receivable 0.00 = 206000.00 = paid_in_capital 200000.00 + retained_earnings 6000.00 = 206000.00.",
+    "Cash flow 2026: investment_in_subsidiary and intercompany_receivable are both tagged cash_flow_category: investing, so investing_cash_flow = -100000.00 - 50000.00 = -150000.00; operating_cash_flow = net_income 3000.00 + paid_in_capital 200000.00 (an untagged equity account, defaults to operating) = 203000.00; 203000.00 - 150000.00 = 53000.00, matching ending_cash 53000.00 - beginning_cash 0.00.",
+    "This is the Parent half of MULTI-001's two-entity group; see scenarios/multi-entity/multi-001-subsidiary.yaml for the Subsidiary half and docs/accounting-policy.md for how the two consolidate (the actual MULTI-001 validation target, under expected/reviewed/multi-001-intercompany-transactions/)."
+  ],
+  "periods_covered": ["2026", "2027"]
+}

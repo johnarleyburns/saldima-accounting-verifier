@@ -1,0 +1,27 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "230000.00"
+    },
+    "operating_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "paid_in_capital": {
+      "credit": "200000.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "30000.00",
+      "debit": "0.00"
+    },
+    "revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "multi-001-intercompany-transactions",
+  "statement_type": "trial_balance"
+}

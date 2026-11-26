@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "102000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "165000.00"
+    },
+    "intercompany_receivable": {
+      "ending_balance": "50000.00"
+    },
+    "investing_cash_flow": {
+      "ending_balance": "50000.00"
+    },
+    "net_income": {
+      "ending_balance": "13000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "13000.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "multi-002-parent",
+  "statement_type": "cash_flow"
+}

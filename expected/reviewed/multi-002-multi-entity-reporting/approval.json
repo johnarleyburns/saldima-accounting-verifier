@@ -1,0 +1,21 @@
+{
+  "scenario_id": "multi-002-multi-entity-reporting",
+  "scenario_version": 1,
+  "reference_model_commit": "Multi-entity consolidation implementation (MULTI-002, docs/plan.md section 19)",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {
+    "consolidation": "wholly-owned subsidiary, cost method, no noncontrolling interest; consolidated only at a fiscal year end after each entity's own closing; no consolidated statement of cash flows -- see docs/accounting-policy.md. Two independent elimination pairs this scenario adds beyond MULTI-001: investment-vs-equity and loan-receivable-vs-payable (financing-side, same as MULTI-001) plus intercompany management fee revenue-vs-expense (operating-side, new)."
+  },
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against each entity's own reviewed fixtures (expected/reviewed/multi-002-parent/, multi-002-subsidiary/) before comparing to the consolidation module's output -- see reference/accounting/consolidation.py and runner/consolidation_runner.py.",
+    "Combined cash (Parent + Sub) each year end: 2026 63000.00+167000.00=230000.00; 2027 76000.00+187000.00=263000.00; 2028 89000.00+210000.00=299000.00; 2029 102000.00+236000.00=338000.00; 2030 165000.00+215000.00=380000.00.",
+    "Combined retained_earnings (Parent + Sub), summed directly with no elimination -- correct for a wholly-owned subsidiary with no noncontrolling interest, since only the subsidiary's *original* contributed capital is eliminated against the parent's investment account (see below), not its post-formation earnings: 2026 13000.00+17000.00=30000.00; 2027 26000.00+37000.00=63000.00; 2028 39000.00+60000.00=99000.00; 2029 52000.00+86000.00=138000.00; 2030 65000.00+115000.00=180000.00.",
+    "Eliminations, every year: investment_in_subsidiary 100000.00 vs common_stock 100000.00 (constant, never changes) -- equal, eliminated. intercompany_receivable vs intercompany_payable -- 50000.00 vs 50000.00 through 2029, 0.00 vs 0.00 in 2030 (balloon repaid) -- equal every year, eliminated.",
+    "Consolidated balance sheet (assets cash = liabilities 0.00 + equity (paid_in_capital 200000.00 + retained_earnings)): 2026 230000.00 = 200000.00+30000.00; 2027 263000.00 = 200000.00+63000.00; 2028 299000.00 = 200000.00+99000.00; 2029 338000.00 = 200000.00+138000.00; 2030 380000.00 = 200000.00+180000.00.",
+    "Consolidated income statement: each year, Parent's intercompany_interest_income (3000.00) and intercompany_management_fee_revenue (10000.00) are both eliminated against Sub's matching intercompany_interest_expense and intercompany_management_fee_expense -- neither pair appears as a gross line item. Remaining revenue is Sub's external revenue only (80000/85000/90000/95000/100000), remaining expense is Sub's operating_expense only (50000/52000/54000/56000/58000), giving net_income 30000/33000/36000/39000/42000 -- which matches each year's increase in combined retained_earnings above exactly (e.g. 2027: 63000.00 - 30000.00 = 33000.00)."
+  ],
+  "periods_covered": ["2026", "2027", "2028", "2029", "2030"]
+}

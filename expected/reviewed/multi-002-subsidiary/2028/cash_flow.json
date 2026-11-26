@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "187000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "210000.00"
+    },
+    "net_income": {
+      "ending_balance": "23000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "23000.00"
+    }
+  },
+  "period": "2028",
+  "scenario_id": "multi-002-subsidiary",
+  "statement_type": "cash_flow"
+}

@@ -337,6 +337,8 @@ Pull-request, main-branch, nightly, and release-candidate CI stages of increasin
 
 This repository's first commits implement **Phase 1** end-to-end (working reference accounting core plus two fully worked gold-standard scenarios) and scaffold every later phase's directories and interfaces so they can be filled in incrementally. **Phase 2** (AR/AP, accruals, prepayments, deferred revenue) is implemented next, with four more gold-standard scenarios (ACCR-001/002, REV-001/002). **Phase 3** (fixed assets and inventory) follows, with five more (FA-001/002/003, INV-001/002). **Phase 4** (debt and payroll) follows that, with two more (DEBT-001, PAY-001). **Phase 5** (partnership accounting) follows that, with four more (PART-001/002/003/004). **Phase 6** (compatibility and multi-book integration) follows that, with GNC-001 and SYNC-001/002 — the first phase whose scenarios aren't all backed by a `scenarios/*.yaml` + reviewed-fixture pair (SYNC-001/002 are validated by a dedicated test module instead; see `docs/accounting-policy.md`) — see section 19 and `docs/architecture.md`. **Phase 7** (scale and long-running regression) follows that: `tests/property` generalizes the hand-built invariant examples in `tests/invariants` to randomized inputs via Hypothesis; `tests/performance` adds a deterministic synthetic-ledger generator and a manual benchmark script (smoke-tested at a small scale on every run, full-scale as a Nightly-stage candidate — see `docs/release-gates.md`); `tests/regression` stays intentionally empty, since no production accounting defect has occurred in this repository's history yet. This phase adds no new scenario to the corpus in section 19 and touches no existing scenario or fixture; running the new benchmark for the first time did surface one real O(n²) scaling bottleneck in `reference/accounting/ledger.py`, fixed with no change to observable behavior — see `docs/reference-model.md`.
 
+`MULTI-001`/`MULTI-002` (multi-entity accounting and consolidation, item 15 of section 1's validation list) don't map to any of the 7 phases above — they're out-of-roadmap follow-on work implemented after Phase 7, filling in the one remaining gap in section 19's corpus. Each entity is an ordinary, independently-loadable scenario (`scenarios/multi-entity/multi-00{1,2}-{parent,subsidiary}.yaml`); the new, additive `reference/accounting/consolidation.py` combines already-closed entity books and eliminates intercompany balances/activity — see `docs/accounting-policy.md` for the consolidation scope boundaries (wholly-owned subsidiary, cost method, no noncontrolling interest, fiscal-year-end-only, no consolidated cash flow).
+
 ## 19. Initial Gold-Standard Scenario Corpus
 
 | ID | Scenario | Duration | Primary validation | Status |
@@ -359,8 +361,8 @@ This repository's first commits implement **Phase 1** end-to-end (working refere
 | PART-002 | Partnership debt and outside basis | 5 years | Tax basis | Implemented |
 | PART-003 | Property contribution and 704(c) | 5 years | Built-in gain/loss | Implemented |
 | PART-004 | Partnership liquidation | 10 years | Final basis and distributions | Implemented |
-| MULTI-001 | Intercompany transactions | 2 years | Consolidation | Planned |
-| MULTI-002 | Multi-entity reporting | 5 years | Consolidated statements | Planned |
+| MULTI-001 | Intercompany transactions | 2 years | Consolidation | Implemented |
+| MULTI-002 | Multi-entity reporting | 5 years | Consolidated statements | Implemented |
 | SYNC-001 | Concurrent independent transactions | Multiple branches | Reconciliation | Implemented |
 | SYNC-002 | Conflicting transaction edits | Multiple branches | Conflict preservation | Implemented |
 | GNC-001 | GnuCash XML round trip | Multiple years | Compatibility | Implemented |

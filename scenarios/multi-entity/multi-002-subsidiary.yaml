@@ -1,0 +1,262 @@
+scenario:
+  id: multi-002-subsidiary
+  name: "MULTI-002: Subsidiary Co. (standalone)"
+  version: 1
+  category: multi-entity
+  description: >
+    Subsidiary Co.'s own standalone books for MULTI-002 (docs/plan.md
+    section 19): a wholly-owned subsidiary formed with a cash
+    contribution from its parent, which also lends it cash intercompany
+    (interest-only, balloon principal repayment at the end of year
+    five) and charges it an annual intercompany management fee,
+    alongside its own ordinary external revenue and expense (growing
+    each year). Validated independently here exactly like any other
+    scenario; see scenarios/multi-entity/multi-002-parent.yaml for the
+    other half of the group and docs/accounting-policy.md for how the
+    two are consolidated (MULTI-002's actual "Consolidated statements"
+    validation target).
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2030-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31", "2027-12-31", "2028-12-31", "2029-12-31", "2030-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: intercompany_payable
+      name: Intercompany Loan Payable
+      type: liability
+      cash_flow_category: financing
+    - id: common_stock
+      name: Common Stock
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: revenue
+      name: Service Revenue
+      type: revenue
+    - id: operating_expense
+      name: Operating Expense
+      type: expense
+    - id: intercompany_interest_expense
+      name: Intercompany Interest Expense
+      type: expense
+    - id: intercompany_management_fee_expense
+      name: Intercompany Management Fee Expense
+      type: expense
+
+  events:
+    - id: formation
+      date: 2026-01-01
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "100000.00"
+        - account_id: common_stock
+          credit: "100000.00"
+    - id: receive-intercompany-loan
+      date: 2026-01-01
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "50000.00"
+        - account_id: intercompany_payable
+          credit: "50000.00"
+
+    - id: revenue-2026
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "80000.00"
+        - account_id: revenue
+          credit: "80000.00"
+    - id: operating-expense-2026
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "50000.00"
+        - account_id: cash
+          credit: "50000.00"
+    - id: intercompany-interest-2026
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_interest_expense
+          debit: "3000.00"
+        - account_id: cash
+          credit: "3000.00"
+    - id: management-fee-2026
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_management_fee_expense
+          debit: "10000.00"
+        - account_id: cash
+          credit: "10000.00"
+
+    - id: revenue-2027
+      date: 2027-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "85000.00"
+        - account_id: revenue
+          credit: "85000.00"
+    - id: operating-expense-2027
+      date: 2027-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "52000.00"
+        - account_id: cash
+          credit: "52000.00"
+    - id: intercompany-interest-2027
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_interest_expense
+          debit: "3000.00"
+        - account_id: cash
+          credit: "3000.00"
+    - id: management-fee-2027
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_management_fee_expense
+          debit: "10000.00"
+        - account_id: cash
+          credit: "10000.00"
+
+    - id: revenue-2028
+      date: 2028-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "90000.00"
+        - account_id: revenue
+          credit: "90000.00"
+    - id: operating-expense-2028
+      date: 2028-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "54000.00"
+        - account_id: cash
+          credit: "54000.00"
+    - id: intercompany-interest-2028
+      date: 2028-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_interest_expense
+          debit: "3000.00"
+        - account_id: cash
+          credit: "3000.00"
+    - id: management-fee-2028
+      date: 2028-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_management_fee_expense
+          debit: "10000.00"
+        - account_id: cash
+          credit: "10000.00"
+
+    - id: revenue-2029
+      date: 2029-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "95000.00"
+        - account_id: revenue
+          credit: "95000.00"
+    - id: operating-expense-2029
+      date: 2029-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "56000.00"
+        - account_id: cash
+          credit: "56000.00"
+    - id: intercompany-interest-2029
+      date: 2029-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_interest_expense
+          debit: "3000.00"
+        - account_id: cash
+          credit: "3000.00"
+    - id: management-fee-2029
+      date: 2029-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_management_fee_expense
+          debit: "10000.00"
+        - account_id: cash
+          credit: "10000.00"
+
+    - id: revenue-2030
+      date: 2030-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "100000.00"
+        - account_id: revenue
+          credit: "100000.00"
+    - id: operating-expense-2030
+      date: 2030-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "58000.00"
+        - account_id: cash
+          credit: "58000.00"
+    - id: intercompany-interest-2030
+      date: 2030-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_interest_expense
+          debit: "3000.00"
+        - account_id: cash
+          credit: "3000.00"
+    - id: management-fee-2030
+      date: 2030-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_management_fee_expense
+          debit: "10000.00"
+        - account_id: cash
+          credit: "10000.00"
+    - id: intercompany-loan-repaid
+      date: 2030-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_payable
+          debit: "50000.00"
+        - account_id: cash
+          credit: "50000.00"
+
+  expected:
+    reports:
+      - period: "2026"
+      - period: "2027"
+      - period: "2028"
+      - period: "2029"
+      - period: "2030"

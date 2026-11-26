@@ -1,0 +1,187 @@
+scenario:
+  id: multi-002-parent
+  name: "MULTI-002: Parent Co. (standalone)"
+  version: 1
+  category: multi-entity
+  description: >
+    Parent Co.'s own standalone books for MULTI-002 (docs/plan.md
+    section 19), a fresh five-year multi-entity group (not a literal
+    continuation of MULTI-001's files, the same way PART-004 is its own
+    scenario rather than continuing PART-001). Parent forms a
+    wholly-owned subsidiary with a cash contribution, lends it cash
+    intercompany (interest-only, balloon principal repayment at the end
+    of year five), and additionally charges it an annual intercompany
+    management fee -- an *operating*-side intercompany relationship on
+    top of the *financing*-side loan, so MULTI-002 exercises two
+    independent elimination pairs together across five annual
+    consolidation cycles. Validated independently here exactly like any
+    other scenario; see scenarios/multi-entity/multi-002-subsidiary.yaml
+    for the other half of the group and docs/accounting-policy.md for
+    how the two are consolidated (MULTI-002's actual "Consolidated
+    statements" validation target).
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2030-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    retained_earnings_account: retained_earnings
+    dates: ["2026-12-31", "2027-12-31", "2028-12-31", "2029-12-31", "2030-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: investment_in_subsidiary
+      name: Investment in Subsidiary
+      type: asset
+      cash_flow_category: investing
+    - id: intercompany_receivable
+      name: Intercompany Loan Receivable
+      type: asset
+      cash_flow_category: investing
+    - id: paid_in_capital
+      name: Paid-in Capital
+      type: equity
+    - id: retained_earnings
+      name: Retained Earnings
+      type: equity
+    - id: intercompany_interest_income
+      name: Intercompany Interest Income
+      type: revenue
+    - id: intercompany_management_fee_revenue
+      name: Intercompany Management Fee Revenue
+      type: revenue
+
+  opening_balances:
+    - account_id: cash
+      debit: "200000.00"
+      credit: "0.00"
+    - account_id: paid_in_capital
+      debit: "0.00"
+      credit: "200000.00"
+
+  events:
+    - id: form-subsidiary
+      date: 2026-01-01
+      type: manual_journal_entry
+      lines:
+        - account_id: investment_in_subsidiary
+          debit: "100000.00"
+        - account_id: cash
+          credit: "100000.00"
+    - id: fund-intercompany-loan
+      date: 2026-01-01
+      type: manual_journal_entry
+      lines:
+        - account_id: intercompany_receivable
+          debit: "50000.00"
+        - account_id: cash
+          credit: "50000.00"
+    - id: intercompany-interest-2026
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: management-fee-2026
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "10000.00"
+        - account_id: intercompany_management_fee_revenue
+          credit: "10000.00"
+    - id: intercompany-interest-2027
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: management-fee-2027
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "10000.00"
+        - account_id: intercompany_management_fee_revenue
+          credit: "10000.00"
+    - id: intercompany-interest-2028
+      date: 2028-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: management-fee-2028
+      date: 2028-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "10000.00"
+        - account_id: intercompany_management_fee_revenue
+          credit: "10000.00"
+    - id: intercompany-interest-2029
+      date: 2029-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: management-fee-2029
+      date: 2029-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "10000.00"
+        - account_id: intercompany_management_fee_revenue
+          credit: "10000.00"
+    - id: intercompany-interest-2030
+      date: 2030-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: intercompany_interest_income
+          credit: "3000.00"
+    - id: management-fee-2030
+      date: 2030-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "10000.00"
+        - account_id: intercompany_management_fee_revenue
+          credit: "10000.00"
+    - id: intercompany-loan-repaid
+      date: 2030-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "50000.00"
+        - account_id: intercompany_receivable
+          credit: "50000.00"
+
+  expected:
+    reports:
+      - period: "2026"
+      - period: "2027"
+      - period: "2028"
+      - period: "2029"
+      - period: "2030"

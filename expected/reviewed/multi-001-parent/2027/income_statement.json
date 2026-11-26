@@ -1,0 +1,13 @@
+{
+  "lines": {
+    "intercompany_interest_income": {
+      "ending_balance": "3000.00"
+    },
+    "net_income": {
+      "ending_balance": "3000.00"
+    }
+  },
+  "period": "2027",
+  "scenario_id": "multi-001-parent",
+  "statement_type": "income_statement"
+}

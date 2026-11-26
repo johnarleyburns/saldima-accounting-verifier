@@ -1,0 +1,19 @@
+{
+  "scenario_id": "multi-001-subsidiary",
+  "scenario_version": 1,
+  "reference_model_commit": "Multi-entity consolidation implementation (MULTI-001, docs/plan.md section 19)",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output:",
+    "Formation (2026-01-01): debit cash 100000.00, credit common_stock 100000.00. Loan received: debit cash 50000.00, credit intercompany_payable 50000.00 -> cash 150000.00.",
+    "2026 activity: revenue 80000.00 (debit cash, credit revenue) -> cash 230000.00; operating_expense 50000.00 (debit expense, credit cash) -> cash 180000.00; intercompany interest paid 3000.00 (debit intercompany_interest_expense, credit cash) -> cash 177000.00. Net income = 80000.00 - 50000.00 - 3000.00 = 27000.00, swept into retained_earnings by the 2026-12-31 closing. End-of-2026 balance sheet: assets cash 177000.00 = liabilities intercompany_payable 50000.00 + equity (common_stock 100000.00 + retained_earnings 27000.00) 127000.00 + 50000.00 = 177000.00.",
+    "2027 activity: revenue 90000.00 -> cash 267000.00; operating_expense 55000.00 -> cash 212000.00; intercompany interest paid 3000.00 -> cash 209000.00; intercompany loan principal repaid 50000.00 (debit intercompany_payable, credit cash) -> cash 159000.00, intercompany_payable 0.00. Net income = 90000.00 - 55000.00 - 3000.00 = 32000.00, swept into retained_earnings by the 2027-12-31 closing -> 27000.00 + 32000.00 = 59000.00. End-of-2027 balance sheet: assets cash 159000.00 = liabilities 0.00 + equity (common_stock 100000.00 + retained_earnings 59000.00) 159000.00.",
+    "Cash flow 2026: intercompany_payable is tagged cash_flow_category: financing, so financing_cash_flow = +50000.00 (a liability increase is a source of cash); operating_cash_flow = net_income 27000.00 + common_stock 100000.00 (an untagged equity account, defaults to operating) = 127000.00; 127000.00 + 50000.00 = 177000.00, matching ending_cash 177000.00 - beginning_cash 0.00.",
+    "This is the Subsidiary half of MULTI-001's two-entity group; see scenarios/multi-entity/multi-001-parent.yaml for the Parent half and docs/accounting-policy.md for how the two consolidate (the actual MULTI-001 validation target, under expected/reviewed/multi-001-intercompany-transactions/)."
+  ],
+  "periods_covered": ["2026", "2027"]
+}
