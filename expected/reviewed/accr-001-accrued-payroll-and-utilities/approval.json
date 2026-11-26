@@ -1,0 +1,20 @@
+{
+  "scenario_id": "accr-001-accrued-payroll-and-utilities",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 2 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-25",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output:",
+    "Every month has identical income-statement activity regardless of cash timing: revenue 2000.00, salaries_expense 1200.00 (accrued at month-end, not when paid), utilities_expense 150.00 (same), net income 650.00.",
+    "2026-01 (January, no prior-month accrual to pay yet): cash = opening 10000.00 + revenue 2000.00 = 12000.00 (no cash paid out this month). accrued_payroll_payable and accrued_utilities_payable end the month at 1200.00/150.00 (January's own accrual, unpaid until February). Balance sheet: assets 12000.00 = liabilities 1350.00 + equity (owner_equity 10000.00 + current_period_earnings 650.00) 10650.00. Cash flow: net_income 650.00 + owner_equity adjustment +10000.00 (the opening contribution, dated within January) + accrued_payroll_payable +1200.00 + accrued_utilities_payable +150.00 = operating_cash_flow 12000.00 = ending_cash 12000.00 − beginning_cash 0.00.",
+    "2026-06 (June, standalone month, steady state): at the start of June, May's accrual (1200.00 + 150.00 = 1350.00) is paid in cash; June's own accrual of the same amounts is posted at month-end (non-cash). Net cash change = +2000.00 (revenue) − 1350.00 (prior-month payment) = 650.00, matching every steady-state month exactly (income statement is always revenue 2000/salaries 1200/utilities 150/net 650, by construction). Cash flow: net_income 650.00 + accrued_payroll_payable delta 0 (1200 paid, 1200 newly accrued — no net change) + accrued_utilities_payable delta 0 = 650.00, matching ending_cash 15250.00 − beginning_cash 14600.00 = 650.00. Running cash total after n months (n≥2): 10000 + 2000n − 1350(n−1); at n=6: 10000+12000−6750=15250.00, matching.",
+    "2026-12 (December, standalone month, after the 2026-12-31 closing entry posts same day): December's own activity is identical to every other month (revenue 2000, salaries 1200, utilities 150, net 650) since closing entries are excluded from period activity (see docs/reference-model.md). Running cash at n=12: 10000+24000−1350×11=19150.00. Balance sheet after closing: assets 19150.00 = liabilities 1350.00 (December's accrual, still unpaid — carries into 2027, outside this scenario's window) + equity (owner_equity 10000.00 + retained_earnings 7800.00, the full year's net income swept in + current_period_earnings 0.00) 17800.00.",
+    "2026 (full fiscal year): revenue 12×2000.00=24000.00, salaries 12×1200.00=14400.00, utilities 12×150.00=1800.00, net income 7800.00 — matches 12 identical months. Cash: 10000.00 (opening) + 24000.00 (revenue) − 13200.00 (11 monthly payroll payments × 1200.00) − 1650.00 (11 monthly utilities payments × 150.00) = 19150.00. Cash flow: net_income 7800.00 + owner_equity +10000.00 + accrued_payroll_payable (0→1200.00, +1200.00) + accrued_utilities_payable (0→150.00, +150.00) = 19150.00, matching ending_cash 19150.00 − beginning_cash 0.00. Balance sheet: assets 19150.00 = liabilities 1350.00 + equity (10000.00 owner_equity + 7800.00 retained_earnings) 17800.00.",
+    "Cross-checked with reference/schedules/payables.py: treating each month's accrual as an open 'bill' (dated at month-end) closed by the following month's payment, the independently computed outstanding balance matches accrued_payroll_payable + accrued_utilities_payable at every reported period — see the ACCR-001 cross-check in tests/integration/test_core_scenarios.py."
+  ],
+  "periods_covered": ["2026-01", "2026-06", "2026-12", "2026"]
+}

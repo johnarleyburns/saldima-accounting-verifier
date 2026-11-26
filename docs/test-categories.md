@@ -8,7 +8,7 @@
 | `tests/property` | Hypothesis-based randomized invariant testing across generated books | Planned (Phase 7) |
 | `tests/regression` | One test per fixed accounting defect, kept forever (docs/plan.md section 21) | Planned (empty until the first defect is fixed) |
 | `tests/compatibility` | GnuCash XML semantic round-trip tests | Planned (Phase 6) |
-| `tests/multi_period` | Multi-year carryforward, fiscal-year-boundary, prior-period-adjustment tests | Planned (Phase 2+; CORE-002 is a partial start, covered under `tests/integration`) |
+| `tests/multi_period` | Multi-year carryforward, fiscal-year-boundary, prior-period-adjustment tests | Implemented (partial — multi-year closing carryforward via ACCR-002's two fiscal years; CORE-002's single-year cycle is still covered under `tests/integration`) |
 | `tests/performance` | Generated-book-size benchmarks and regression thresholds | Planned (Phase 7) |
 
 See `docs/plan.md` sections 13–15 for what each category is meant to cover

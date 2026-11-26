@@ -1,0 +1,31 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "20400.00"
+    },
+    "deferred_revenue": {
+      "credit": "9000.00",
+      "debit": "0.00"
+    },
+    "license_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "retained_earnings": {
+      "credit": "11400.00",
+      "debit": "0.00"
+    },
+    "support_cost_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "support_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2026",
+  "scenario_id": "rev-002-multiple-performance-obligations",
+  "statement_type": "trial_balance"
+}

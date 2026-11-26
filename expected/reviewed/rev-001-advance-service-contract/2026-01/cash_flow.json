@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "0.00"
+    },
+    "deferred_revenue": {
+      "ending_balance": "11000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "11600.00"
+    },
+    "net_income": {
+      "ending_balance": "600.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "11600.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "rev-001-advance-service-contract",
+  "statement_type": "cash_flow"
+}

@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "9600.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "3600.00"
+    },
+    "deferred_revenue": {
+      "ending_balance": "6000.00"
+    },
+    "retained_earnings": {
+      "ending_balance": "0.00"
+    }
+  },
+  "period": "2026-06",
+  "scenario_id": "rev-001-advance-service-contract",
+  "statement_type": "balance_sheet"
+}

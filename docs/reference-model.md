@@ -79,3 +79,31 @@ This is accurate (the reconciliation still ties to actual cash movement)
 but not a GAAP-presentable statement of cash flows. Classification arrives
 with Phase 3 (fixed assets) and Phase 4 (debt), which are the first phases
 where investing/financing activity actually exists in a scenario.
+
+## Phase 2 confirms (not just assumes) that AR/AP/prepaid/deferred-revenue flow correctly
+
+The proof sketch above shows the cash-flow reconciliation holds for *any*
+consistent choice of what counts as a balance "delta" across *every*
+non-cash account, by construction of the balanced-journal-entry invariant
+— it was never actually specific to the handful of account types Phase 1's
+two scenarios happened to use. Phase 2 (`ACCR-001/002`, `REV-001/002`)
+exercises accrued liabilities, prepaid-expense assets, and a deferred-
+revenue liability for the first time, and confirms the proof holds for
+them too, with no changes to `cash_flow.py`, `trial_balance.py`,
+`income_statement.py`, or `balance_sheet.py` (all already generic over
+`AccountType`). `tests/invariants/test_accrual_accounts_flow_through.py`
+proves this directly on a small hand-built ledger, independent of any
+scenario's specific bookkeeping — see `docs/accounting-policy.md` for the
+full writeup.
+
+## Straight-line revenue recognition's rounding remainder goes to the last period
+
+`reference/schedules/deferred_revenue.py`'s `build_straight_line_schedule`
+divides a total evenly across every month in the service period and rounds
+each monthly amount with `round_currency`; dividing most totals evenly
+leaves a fractional-cent remainder that doesn't disappear on its own. The
+fix is the same one `closing.py` already uses for its own computed totals:
+absorb the remainder into the *last* period, so the per-period amounts
+always sum to exactly the contract total instead of silently drifting a
+cent short or over. See `tests/unit/test_deferred_revenue.py`'s
+`test_straight_line_schedule_absorbs_rounding_remainder_into_last_month`.

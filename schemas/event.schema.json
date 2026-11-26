@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://saldima.dev/schemas/event.schema.json",
   "title": "Business Event",
-  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 supports only 'manual_journal_entry' (explicit debits/credits); later phases add higher-level event types (e.g. customer_contract_payment) that the engine itself must translate.",
+  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment', the first higher-level event type: the reference model itself derives the deferred-revenue recognition entries from a declared recognition policy, rather than copying author-supplied numbers. See docs/scenario-authoring.md and docs/accounting-policy.md.",
   "type": "object",
   "required": ["id", "date", "type"],
   "additionalProperties": true,
@@ -20,6 +20,26 @@
           "account_id": { "type": "string" },
           "debit": { "type": "string" },
           "credit": { "type": "string" }
+        }
+      }
+    },
+    "customer": { "type": "string", "description": "Used by type=customer_contract_payment" },
+    "cash_account_id": { "type": "string", "description": "Used by type=customer_contract_payment" },
+    "deferred_revenue_account_id": { "type": "string", "description": "Used by type=customer_contract_payment" },
+    "obligations": {
+      "type": "array",
+      "description": "Used by type=customer_contract_payment: one entry per performance obligation funded by this payment.",
+      "items": {
+        "type": "object",
+        "required": ["id", "amount", "revenue_account_id", "recognition_method"],
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "string" },
+          "revenue_account_id": { "type": "string" },
+          "recognition_method": { "type": "string", "enum": ["straight_line", "point_in_time"] },
+          "service_start": { "type": "string", "format": "date", "description": "Used by recognition_method=straight_line; must be the first day of its month" },
+          "service_end": { "type": "string", "format": "date", "description": "Used by recognition_method=straight_line; must be the last day of its month" },
+          "recognition_date": { "type": "string", "format": "date", "description": "Used by recognition_method=point_in_time" }
         }
       }
     }

@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "33200.00"
+    },
+    "ending_cash": {
+      "ending_balance": "34800.00"
+    },
+    "net_income": {
+      "ending_balance": "1200.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "1600.00"
+    },
+    "prepaid_insurance": {
+      "ending_balance": "100.00"
+    },
+    "prepaid_rent": {
+      "ending_balance": "300.00"
+    }
+  },
+  "period": "2027-12",
+  "scenario_id": "accr-002-prepaid-insurance-and-rent",
+  "statement_type": "cash_flow"
+}

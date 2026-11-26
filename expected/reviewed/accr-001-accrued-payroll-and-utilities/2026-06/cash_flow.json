@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "14600.00"
+    },
+    "ending_cash": {
+      "ending_balance": "15250.00"
+    },
+    "net_income": {
+      "ending_balance": "650.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "650.00"
+    }
+  },
+  "period": "2026-06",
+  "scenario_id": "accr-001-accrued-payroll-and-utilities",
+  "statement_type": "cash_flow"
+}

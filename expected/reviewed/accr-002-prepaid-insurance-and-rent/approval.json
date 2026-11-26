@@ -1,0 +1,21 @@
+{
+  "scenario_id": "accr-002-prepaid-insurance-and-rent",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 2 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-25",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output:",
+    "Every month has identical income-statement activity: revenue 1600.00, insurance_expense 100.00 (1200.00/year amortized over 12 months), rent_expense 300.00 (900.00/quarter amortized over 3 months), net income 1200.00.",
+    "2026-01 (January: annual insurance prepaid 1200.00 and Q1 rent prepaid 900.00, both on 2026-01-01, plus the opening equity contribution — all three cash events plus revenue fall inside January's window): cash = opening 6000.00 − 1200.00 (insurance) − 900.00 (rent) + 1600.00 (revenue) = 5500.00. prepaid_insurance = 1200.00 − 100.00 (January's amortization) = 1100.00; prepaid_rent = 900.00 − 300.00 = 600.00. Balance sheet: assets 5500.00 + 1100.00 + 600.00 = 7200.00 = equity (owner_equity 6000.00 + current_period_earnings 1200.00) 7200.00 (no liabilities). Cash flow: net_income 1200.00 + owner_equity +6000.00 − prepaid_insurance 1100.00 (asset increase, use of cash) − prepaid_rent 600.00 (same) = 5500.00, matching ending_cash 5500.00 − beginning_cash 0.00.",
+    "2026-12 (December, standalone month, after the 2026-12-31 closing entry): December's own activity is identical to every other month. By December both the annual insurance prepayment and the Q4 rent prepayment (paid 2026-10-01) are fully amortized to 0.00 by design (12 months of insurance amortization exactly matches the one annual prepayment; 4 quarterly rent prepayments of 3 months each exactly cover all 12 months). Balance sheet after closing: assets cash 20400.00 (prepaid balances both 0.00) = equity (owner_equity 6000.00 + retained_earnings 14400.00, the full year's net income + current_period_earnings 0.00) 20400.00.",
+    "2026 (full fiscal year 1): revenue 12×1600.00=19200.00, insurance 12×100.00=1200.00 (one annual prepayment, fully amortized), rent 12×300.00=3600.00 (four quarterly prepayments of 900.00 = 3600.00, fully amortized), net income 14400.00. Cash: 6000.00 (opening) + 19200.00 (revenue) − 1200.00 (insurance) − 3600.00 (rent, 4×900.00) = 20400.00. Both prepaid balances are 0.00 at both the start and end of the year, so their cash-flow adjustment over the full year nets to 0.00: operating_cash_flow = net_income 14400.00 + owner_equity +6000.00 = 20400.00, matching ending_cash 20400.00 − beginning_cash 0.00. Balance sheet: assets 20400.00 = equity (6000.00 + 14400.00) 20400.00.",
+    "2027-01 (January of fiscal year 2: insurance renews — a second 1200.00 annual prepayment — alongside the regular Q1 rent prepayment of 900.00): identical pattern and numbers to 2026-01 except the opening equity contribution doesn't recur (it's a one-time 2026-01-01 event). Cash: 20400.00 (2026 year-end) − 1200.00 − 900.00 + 1600.00 = 19900.00, matching. prepaid_insurance 1100.00, prepaid_rent 600.00 again, as in January of year 1.",
+    "2027-12 (December of fiscal year 2, after the second, 2027-12-31 closing entry — the second fiscal-year closing in this scenario): both prepaid balances again wind down to exactly 0.00 (the final 2027-10-01 rent prepayment and 2027-01-01 insurance prepayment both fully amortize by 2027-12-31). retained_earnings = 14400.00 (year 1, swept in by the first closing) + 14400.00 (year 2, swept in by the second closing) = 28800.00, accumulating correctly across both closings. Balance sheet: assets cash 34800.00 = equity (owner_equity 6000.00 + retained_earnings 28800.00) 34800.00.",
+    "2027 (full fiscal year 2): identical totals to 2026 (revenue 19200.00, insurance 1200.00, rent 3600.00, net income 14400.00) since the two years are structurally symmetric. Cash: 20400.00 (start of 2027) + 19200.00 − 1200.00 − 3600.00 = 34800.00. Balance sheet and cash-flow reconciliation both hold by the same reasoning as 2026's full-year check above."
+  ],
+  "periods_covered": ["2026-01", "2026-12", "2027-01", "2027-12", "2026", "2027"]
+}

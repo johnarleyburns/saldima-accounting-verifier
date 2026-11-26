@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "license_revenue": {
+      "ending_balance": "6000.00"
+    },
+    "net_income": {
+      "ending_balance": "6450.00"
+    },
+    "support_cost_expense": {
+      "ending_balance": "300.00"
+    },
+    "support_revenue": {
+      "ending_balance": "750.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "rev-002-multiple-performance-obligations",
+  "statement_type": "income_statement"
+}

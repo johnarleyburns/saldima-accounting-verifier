@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "650.00"
+    },
+    "salaries_expense": {
+      "ending_balance": "1200.00"
+    },
+    "service_revenue": {
+      "ending_balance": "2000.00"
+    },
+    "utilities_expense": {
+      "ending_balance": "150.00"
+    }
+  },
+  "period": "2026-06",
+  "scenario_id": "accr-001-accrued-payroll-and-utilities",
+  "statement_type": "income_statement"
+}
