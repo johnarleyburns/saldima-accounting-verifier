@@ -41,9 +41,15 @@
         },
         "closing": {
           "type": "object",
-          "required": ["retained_earnings_account", "dates"],
+          "required": ["dates"],
+          "description": "Exactly one of retained_earnings_account or partner_allocations must be given (enforced by the reference model, not this schema) -- see docs/accounting-policy.md.",
           "properties": {
             "retained_earnings_account": { "type": "string" },
+            "partner_allocations": {
+              "type": "object",
+              "description": "Phase 5: {account_id: ratio_string}, one entry per partner capital account, ratios summing to \"1.00\". Splits each closing's net income/loss across these accounts instead of sweeping it into one retained_earnings_account.",
+              "additionalProperties": { "type": "string" }
+            },
             "dates": {
               "type": "array",
               "items": { "type": "string", "format": "date" }

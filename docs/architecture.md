@@ -87,10 +87,31 @@ already general enough to classify a liability (the loan payable, tagged
 `receivables`, `payables`, `depreciation`, `inventory`, `debt` — every
 file the directory's README originally listed).
 
+Implemented (Phase 5 — partnership accounting; see `docs/plan.md`
+section 18): `reference/tax/{liabilities,partnership_basis,
+section_704c}.py`; no new event type (`fixed_asset_purchase` gained an
+additive `contributed_capital_account_id` field, and `closing.py` gained
+a `partner_allocations` alternative to `retained_earnings_account_id` —
+see below); scenarios `PART-001` through `PART-004`
+(`scenarios/partnerships/`), their reviewed fixtures, and the
+corresponding unit/integration/invariant tests, including two dedicated
+tax-schedule tests (`test_part_002_outside_basis.py`,
+`test_part_003_section_704c.py`) mirroring `FA-003`'s pattern. Like
+Phase 3 (and unlike Phase 4), this phase *did* require a real
+`reference/accounting/*` change: `closing.close_period` gained an
+alternative `partner_allocations` parameter to split net income/loss
+across multiple partner capital accounts by ratio, instead of sweeping it
+into one retained-earnings account — a small, additive change (confirmed
+by rerunning all eleven pre-Phase-5 scenarios' fixtures unchanged) — see
+`docs/reference-model.md`. `balance_sheet.py`/`trial_balance.py`/
+`cash_flow.py` needed no changes (same "already generic" finding as every
+prior phase, now for multiple equity accounts). **No**
+`reference/tax/capital_accounts.py` exists — see
+`docs/accounting-policy.md` for why.
+
 Scaffolded only (directory + README explaining what's planned, see
-`docs/plan.md` section 18 for phases): `reference/tax/{partnership_basis,
-capital_accounts,liabilities,section_704c}.py`, every `adapters/*`
-implementation, every scenario category besides `foundational/`,
-`accruals/`, `revenue-recognition/`, `fixed-assets/`, `inventory/`,
-`debt/`, and `payroll/`, `datasets/*`, and the `property`, `regression`,
-`compatibility`, and `performance` test suites.
+`docs/plan.md` section 18 for phases): every `adapters/*` implementation,
+every scenario category besides `foundational/`, `accruals/`,
+`revenue-recognition/`, `fixed-assets/`, `inventory/`, `debt/`,
+`payroll/`, and `partnerships/`, `datasets/*`, and the `property`,
+`regression`, `compatibility`, and `performance` test suites.

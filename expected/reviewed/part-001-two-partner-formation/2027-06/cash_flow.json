@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "94000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "86000.00"
+    },
+    "net_income": {
+      "ending_balance": "2000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "-8000.00"
+    },
+    "partner_a_capital": {
+      "ending_balance": "-5000.00"
+    },
+    "partner_b_capital": {
+      "ending_balance": "-5000.00"
+    }
+  },
+  "period": "2027-06",
+  "scenario_id": "part-001-two-partner-formation",
+  "statement_type": "cash_flow"
+}

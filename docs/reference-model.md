@@ -167,6 +167,40 @@ liability instead of an asset (see the update above). This is Phase 2's
 situation repeating, not Phase 3's -- the infrastructure Phase 3 added
 turned out to be general enough that Phase 4 needed none of its own.
 
+## Phase 5 is the first phase since Phase 3 to need a real reference/accounting change -- and it's a small, additive one
+
+`closing.py`'s `close_period` hardcoded crediting/debiting exactly **one**
+account (`retained_earnings_account_id`) for a period's whole net income/
+loss. A partnership needs that split across multiple partner capital
+accounts by ratio, so `close_period` gained an alternative
+`partner_allocations: dict[str, Decimal] | None` parameter — exactly one
+of it or `retained_earnings_account_id` must be given. The allocation
+loop gives each target `round_currency(net_to_retained_earnings * ratio)`
+except the last target in the given order, which gets the exact
+remainder (the same remainder-to-last convention `reference/schedules/*`
+already uses everywhere). **For a single target this reduces to exactly
+the pre-Phase-5 behavior** — the sole target always *is* "the last one,"
+so it gets the full, unrounded amount, with no rounding step even
+entering the picture. All eleven pre-Phase-5 scenarios' reviewed fixtures
+were confirmed byte-for-byte unchanged before a single Phase 5 fixture
+was written.
+
+Multiple partner capital accounts needed no further changes anywhere:
+`balance_sheet.py`/`trial_balance.py` already sum every `AccountType.
+EQUITY` account generically (the same genericity Phase 2 found for AR/AP
+and Phase 3 found for contra-assets), and `cash_flow.py` needed no
+changes either -- a partner's own contributions/distributions (not the
+closing allocation itself, which is excluded the same way every other
+closing entry is) are the only things that show up as that period's
+cash-flow adjustment for a partner capital account, exactly as the
+exclude-closing mechanism above already guarantees for any equity
+account.
+
+Outside basis and the section 704(c) built-in-gain allocation
+(`PART-002`, `PART-003`) are schedule-only, like MACRS before them (see
+the FA-003 section above) -- see `docs/accounting-policy.md` for the full
+writeup and scope boundaries (traditional method only, no section 743(b)).
+
 ## Straight-line revenue recognition's rounding remainder goes to the last period
 
 `reference/schedules/deferred_revenue.py`'s `build_straight_line_schedule`
@@ -195,3 +229,12 @@ own). `DEBT-001`'s own numbers happen to divide evenly (`$60,000 / 60 =
 $1,000.00` exactly), so see `tests/unit/test_debt.py`'s
 `test_schedule_absorbs_rounding_remainder_into_last_month` for a case that
 doesn't.
+
+`reference/tax/liabilities.py`'s `partner_share_of_liability` (Phase 5)
+applies the identical remainder-to-last convention when a liability
+doesn't split evenly by ratio across partners -- see
+`tests/unit/test_liabilities.py`'s
+`test_uneven_split_with_remainder_on_the_last_partner`. The same
+convention, generalized to an arbitrary number of named targets rather
+than a fixed time sequence, is also what `closing.py`'s new
+`partner_allocations` path uses (see the Phase 5 section above).

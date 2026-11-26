@@ -29,6 +29,10 @@ SCENARIOS = [
     REPO_ROOT / "scenarios" / "inventory" / "inv-002-inventory-write-down.yaml",
     REPO_ROOT / "scenarios" / "debt" / "debt-001-fixed-rate-business-loan.yaml",
     REPO_ROOT / "scenarios" / "payroll" / "pay-001-payroll-and-withholding.yaml",
+    REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml",
+    REPO_ROOT / "scenarios" / "partnerships" / "part-002-partnership-debt-and-outside-basis.yaml",
+    REPO_ROOT / "scenarios" / "partnerships" / "part-003-property-contribution-704c.yaml",
+    REPO_ROOT / "scenarios" / "partnerships" / "part-004-partnership-liquidation.yaml",
 ]
 
 
@@ -207,6 +211,68 @@ def test_debt_001_covers_five_fiscal_years():
 def test_pay_001_covers_monthly_midyear_and_annual_periods():
     loaded = load_scenario(REPO_ROOT / "scenarios" / "payroll" / "pay-001-payroll-and-withholding.yaml")
     assert set(loaded.report_periods) == {"2026-01", "2026-06", "2026-12", "2026"}
+
+
+def test_part_001_covers_monthly_midyear_and_annual_periods():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml")
+    assert set(loaded.report_periods) == {"2026-01", "2026-12", "2027-06", "2027-12", "2026", "2027"}
+
+
+def test_part_002_covers_five_fiscal_years():
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "partnerships" / "part-002-partnership-debt-and-outside-basis.yaml"
+    )
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-12",
+        "2028-06",
+        "2030-01",
+        "2030-12",
+        "2026",
+        "2028",
+        "2030",
+    }
+
+
+def test_part_003_covers_five_fiscal_years():
+    loaded = load_scenario(
+        REPO_ROOT / "scenarios" / "partnerships" / "part-003-property-contribution-704c.yaml"
+    )
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2026-12",
+        "2028-06",
+        "2030-01",
+        "2030-12",
+        "2026",
+        "2028",
+        "2030",
+    }
+
+
+def test_part_004_covers_ten_fiscal_years():
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "partnerships" / "part-004-partnership-liquidation.yaml")
+    assert set(loaded.report_periods) == {
+        "2026-01",
+        "2030-12",
+        "2034-12",
+        "2035-12",
+        "2026",
+        "2030",
+        "2035",
+    }
+
+
+def test_part_001_closing_allocates_net_income_50_50_between_partners():
+    """Cross-check closing.py's partner_allocations path against PART-001's own
+    independently hand-verified per-partner totals: both partners must end up
+    with identical capital balances, since their ratios and the underlying net
+    income are symmetric."""
+    loaded = load_scenario(REPO_ROOT / "scenarios" / "partnerships" / "part-001-two-partner-formation.yaml")
+    reference_runner.apply_closing_entries(loaded)
+    balances = loaded.ledger.balances_as_of(date(2027, 12, 31))
+    assert balances["partner_a_capital"]["ending_balance"] == balances["partner_b_capital"]["ending_balance"]
+    assert balances["partner_a_capital"]["ending_balance"] == Decimal("49000.00")
 
 
 def test_debt_001_amortization_schedule_corroborates_the_ledger_independently():

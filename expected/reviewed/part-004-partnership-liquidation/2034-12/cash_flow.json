@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "274000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "276000.00"
+    },
+    "net_income": {
+      "ending_balance": "2000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "2000.00"
+    }
+  },
+  "period": "2034-12",
+  "scenario_id": "part-004-partnership-liquidation",
+  "statement_type": "cash_flow"
+}

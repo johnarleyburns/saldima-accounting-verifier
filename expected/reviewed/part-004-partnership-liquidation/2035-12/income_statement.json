@@ -1,0 +1,16 @@
+{
+  "lines": {
+    "net_income": {
+      "ending_balance": "2000.00"
+    },
+    "operating_expense": {
+      "ending_balance": "1000.00"
+    },
+    "service_revenue": {
+      "ending_balance": "3000.00"
+    }
+  },
+  "period": "2035-12",
+  "scenario_id": "part-004-partnership-liquidation",
+  "statement_type": "income_statement"
+}

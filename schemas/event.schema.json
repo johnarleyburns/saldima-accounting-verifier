@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://saldima.dev/schemas/event.schema.json",
   "title": "Business Event",
-  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment'. Phase 3 adds 'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', and 'inventory_sale'. Phase 4 adds 'loan_origination' -- each a case where the reference model itself must derive entries from a declared policy (depreciation schedule, disposal gain/loss, FIFO costing, loan amortization) rather than copying author-supplied numbers. See docs/scenario-authoring.md and docs/accounting-policy.md.",
+  "description": "A business event that the accounting engine under test must translate into journal entries. Phase 1 implements only 'manual_journal_entry' (explicit debits/credits). Phase 2 adds 'customer_contract_payment'. Phase 3 adds 'fixed_asset_purchase', 'fixed_asset_disposal', 'inventory_purchase', and 'inventory_sale'. Phase 4 adds 'loan_origination' -- each a case where the reference model itself must derive entries from a declared policy (depreciation schedule, disposal gain/loss, FIFO costing, loan amortization) rather than copying author-supplied numbers. Phase 5 (partnership accounting) introduces no new event type, but extends 'fixed_asset_purchase' with an alternative funding field (contributed_capital_account_id) for a partner contributing property instead of cash. See docs/scenario-authoring.md and docs/accounting-policy.md.",
   "type": "object",
   "required": ["id", "date", "type"],
   "additionalProperties": true,
@@ -24,7 +24,8 @@
       }
     },
     "customer": { "type": "string", "description": "Used by type=customer_contract_payment" },
-    "cash_account_id": { "type": "string", "description": "Used by type=customer_contract_payment" },
+    "cash_account_id": { "type": "string", "description": "Used by type=customer_contract_payment, fixed_asset_purchase (one of cash_account_id/contributed_capital_account_id), fixed_asset_disposal, inventory_purchase, inventory_sale, and loan_origination" },
+    "contributed_capital_account_id": { "type": "string", "description": "Used by type=fixed_asset_purchase as an alternative to cash_account_id (Phase 5: a partner contributing the asset itself, at fair market value, instead of the partnership buying it with cash)" },
     "deferred_revenue_account_id": { "type": "string", "description": "Used by type=customer_contract_payment" },
     "obligations": {
       "type": "array",

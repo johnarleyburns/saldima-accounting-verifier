@@ -295,6 +295,12 @@ def _translate_fixed_asset_purchase(
     (reference/schedules/depreciation.py) from the declared cost/salvage/
     useful-life policy, truncated at a later `fixed_asset_disposal` event
     for the same `asset_id`, if any -- see docs/accounting-policy.md.
+
+    The purchase entry's credit side is `cash_account_id` (a cash
+    purchase), unless `contributed_capital_account_id` is given instead
+    (Phase 5: a partner contributing the asset itself, at fair market
+    value, rather than the partnership buying it with cash) -- exactly
+    one of the two must be present.
     """
     event_id = event["id"]
     asset_id = event["asset_id"]
@@ -302,7 +308,18 @@ def _translate_fixed_asset_purchase(
     asset_account_id = event["asset_account_id"]
     accumulated_depreciation_account_id = event["accumulated_depreciation_account_id"]
     depreciation_expense_account_id = event["depreciation_expense_account_id"]
-    cash_account_id = event["cash_account_id"]
+    cash_account_id: str | None = event.get("cash_account_id")
+    contributed_capital_account_id: str | None = event.get("contributed_capital_account_id")
+    if (cash_account_id is None) == (contributed_capital_account_id is None):
+        raise AccountingError(
+            f"fixed_asset_purchase event {event_id!r} must give exactly one of "
+            "cash_account_id or contributed_capital_account_id"
+        )
+    if cash_account_id is not None:
+        funding_account_id = cash_account_id
+    else:
+        assert contributed_capital_account_id is not None
+        funding_account_id = contributed_capital_account_id
     cost = money(event["cost"])
     salvage_value = money(event["salvage_value"])
     useful_life_months = int(event["useful_life_months"])
@@ -313,7 +330,7 @@ def _translate_fixed_asset_purchase(
             date=purchase_date,
             lines=(
                 make_line(asset_account_id, debit=str(cost)),
-                make_line(cash_account_id, credit=str(cost)),
+                make_line(funding_account_id, credit=str(cost)),
             ),
             source_event_id=event_id,
         )

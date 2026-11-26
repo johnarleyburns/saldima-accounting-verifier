@@ -1,0 +1,27 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "86000.00"
+    },
+    "operating_expense": {
+      "credit": "0.00",
+      "debit": "6000.00"
+    },
+    "partner_a_capital": {
+      "credit": "37000.00",
+      "debit": "0.00"
+    },
+    "partner_b_capital": {
+      "credit": "37000.00",
+      "debit": "0.00"
+    },
+    "service_revenue": {
+      "credit": "18000.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2027-06",
+  "scenario_id": "part-001-two-partner-formation",
+  "statement_type": "trial_balance"
+}

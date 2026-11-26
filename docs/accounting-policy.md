@@ -91,7 +91,119 @@ test_debt_accounts_flow_through.py` proves both directions directly,
 independent of any scenario — the liability-side counterpart to
 `FA-001`/`FA-002`'s asset-side proof.
 
-## Event model: Phase 1 vs Phase 2 vs Phase 3 vs Phase 4
+## `closing.partner_allocations` (Phase 5)
+
+`closing.close_period` (`reference/accounting/closing.py`) now accepts
+either `retained_earnings_account_id` (a single account — unchanged
+single-owner/corporate behavior) or `partner_allocations` (a
+`{account_id: ratio}` mapping whose ratios sum to exactly `1.00`) —
+exactly one of the two must be given. This is the one real
+`reference/accounting/*` change Phase 5 needed: a partnership must split
+each period's net income/loss across multiple partner capital accounts by
+ratio instead of sweeping it into one retained-earnings account.
+
+Each target gets `round_currency(net_to_retained_earnings * ratio)`
+except the *last* target in `partner_allocations`'s iteration order, which
+gets the exact remainder — the same remainder-to-last convention every
+`reference/schedules/*` module already uses. For a single target (the
+`retained_earnings_account_id` case) that target always *is* "the last
+one," so it gets the full, unrounded amount — **this reduces to exactly
+today's single-account behavior**, proven by rerunning all eleven
+pre-Phase-5 scenarios' reviewed fixtures unchanged before writing a single
+partnership fixture.
+
+Multiple partner capital accounts themselves need **no** new schema/type
+machinery: `AccountType.EQUITY` with many accounts of that type, and
+`balance_sheet.py`/`trial_balance.py` already sum every equity account
+generically into the totals — the gap was purely at closing time.
+`tests/unit/test_closing.py` and `tests/invariants/
+test_partner_capital_accounts_flow_through.py` cover both claims.
+
+The scenario-level field is `closing.partner_allocations: {account_id:
+"ratio_string"}` (`schemas/scenario.schema.json`), alongside the existing
+`closing.retained_earnings_account` — see `docs/scenario-authoring.md`.
+
+## Reusing Phase 2-4 event types for partnership scenarios (Phase 5)
+
+No new event type is needed anywhere in Phase 5:
+
+- **Cash contributions and distributions** (`PART-001`, `PART-004`) are
+  stated dollar facts → `manual_journal_entry` (debit/credit a specific
+  partner's capital account), like every other "stated fact" case since
+  Phase 2. A **liquidating distribution** (`PART-004`) pays out each
+  partner's exact current capital balance — a number the scenario author
+  already knows from their own hand computation, not something the
+  engine needs to derive — so it's `manual_journal_entry` too.
+- **A partnership-level loan** (`PART-002`) reuses Phase 4's
+  `loan_origination` unchanged; the loan is the partnership's, not any
+  one partner's, exactly like a loan on any other business's books.
+- **A partner contributing property instead of cash** (`PART-003`) needed
+  one small, additive extension to `fixed_asset_purchase`: an optional
+  `contributed_capital_account_id` field, an alternative to
+  `cash_account_id` — when present, the purchase entry credits that
+  partner-capital account for the property's fair market value instead
+  of debiting cash. Exactly one of the two must be given. Everything else
+  about `fixed_asset_purchase` (the depreciation schedule derivation,
+  disposal linking) is reused as-is; `FA-001/002/003` only ever use
+  `cash_account_id`, so this is fully backward-compatible (confirmed by
+  rerunning their fixtures unchanged).
+
+## Outside basis and section 704(c) are schedule-only, never posted (Phase 5)
+
+Outside tax basis (IRC sections 705(a)/752) and the section 704(c)
+built-in-gain allocation are tax concepts with **no GAAP journal-entry
+counterpart at all** — a real partnership's books never post an "outside
+basis" entry, and section 704(c) doesn't change what the books record for
+a contributed asset (straight-line depreciation at fair market value,
+split by the ordinary profit ratio). Both are modeled the way `FA-003`
+modeled MACRS: computed independently, hand-verified, and checked by a
+dedicated test, never posted to any ledger.
+
+- **`reference/tax/liabilities.py`**: a partner's share of partnership
+  liabilities under section 752. Assumes liabilities are shared in the
+  same ratio as profits/losses — real section 752 sharing rules
+  distinguish recourse from nonrecourse debt and can diverge from the
+  profit ratio (e.g. nonrecourse debt follows the "partnership minimum
+  gain" rules), which this reference model does not model. Used by
+  `PART-002`.
+- **`reference/tax/partnership_basis.py`**: `outside_basis(contribution,
+  share_of_liabilities, cumulative_allocated_income,
+  cumulative_allocated_losses, distributions_received)` per IRC section
+  705(a); raises if the result would be negative (section 704(d) limits a
+  partner's loss deduction to basis). Used by `PART-002`'s dedicated test
+  (`tests/integration/test_part_002_outside_basis.py`), which also proves
+  the identity `outside_basis == book_capital + share_of_liabilities`
+  holds in `PART-002` (zero distributions there), independent of either
+  module assuming it of the other.
+- **`reference/tax/section_704c.py`**: `traditional_method_allocation`
+  implements **only the traditional method** (Treasury Reg. 1.704-3(b))
+  for a single contributed asset — not the curative or remedial methods
+  Treasury Reg. 1.704-3(c)/(d) separately allow, which this reference
+  model does not implement (a documented scope boundary, the same honesty
+  applied to MACRS). `PART-003`'s numbers are deliberately chosen so the
+  "ceiling rule" binds *exactly* (the non-contributing partner's book
+  depreciation share equals the total available tax depreciation,
+  leaving the contributing partner with $0.00/month tax depreciation for
+  the asset's life) — a clean, concrete illustration of the well-known
+  "ceiling rule problem," not an edge case the module merely tolerates.
+  Used by `PART-003`'s dedicated test
+  (`tests/integration/test_part_003_section_704c.py`).
+
+**No `reference/tax/capital_accounts.py` exists.** "Capital accounts" is
+exactly what the ordinary ledger (partner equity accounts) plus
+`closing.partner_allocations` already track; a wrapper module would only
+restate `ledger.balances_as_of`. See `reference/tax/README.md`.
+
+**Section 743(b)** (a basis step-up when a partner buys into an existing
+partnership at a price different from their share of inside basis) is not
+implemented — none of `PART-001` through `PART-004` involve a partner
+buying an existing interest, and it's genuinely out of scope for this
+batch, the same way `FA-003` notes deferred tax is out of scope.
+
+## Event model: Phase 1 vs Phase 2 vs Phase 3 vs Phase 4 vs Phase 5
+
+(Phase 5 added no new event type at all — see "Reusing Phase 2-4 event
+types for partnership scenarios" above.)
 
 Phase 1 implements exactly one event type, `manual_journal_entry`: the
 scenario author supplies explicit debit/credit lines, and the reference

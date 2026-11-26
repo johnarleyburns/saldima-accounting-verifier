@@ -13,6 +13,7 @@ from datetime import date
 from typing import Any
 
 from reference.accounting import balance_sheet, cash_flow, closing, income_statement, trial_balance
+from reference.accounting.rounding import money
 from reference.reporting import statements
 from runner import period as period_mod
 from runner.scenario_runner import LoadedScenario
@@ -22,7 +23,16 @@ def apply_closing_entries(scenario: LoadedScenario) -> None:
     closing_cfg = scenario.raw.get("closing")
     if not closing_cfg:
         return
-    retained_earnings_account_id = closing_cfg["retained_earnings_account"]
+    retained_earnings_account_id = closing_cfg.get("retained_earnings_account")
+    partner_allocations_raw = closing_cfg.get("partner_allocations")
+    # Partnership scenarios (Phase 5) allocate net income/loss across
+    # multiple partner capital accounts by ratio instead of sweeping it
+    # into one retained-earnings account -- see docs/accounting-policy.md.
+    partner_allocations = (
+        {account_id: money(ratio) for account_id, ratio in partner_allocations_raw.items()}
+        if partner_allocations_raw is not None
+        else None
+    )
     for close_date_str in closing_cfg["dates"]:
         close_date = date.fromisoformat(close_date_str)
         fy_start = period_mod.fiscal_year_start(close_date)
@@ -33,6 +43,7 @@ def apply_closing_entries(scenario: LoadedScenario) -> None:
             period_end=close_date,
             retained_earnings_account_id=retained_earnings_account_id,
             entry_id=f"closing-{close_date.isoformat()}",
+            partner_allocations=partner_allocations,
         )
 
 

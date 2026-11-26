@@ -1,0 +1,27 @@
+{
+  "lines": {
+    "cash": {
+      "credit": "0.00",
+      "debit": "180000.00"
+    },
+    "operating_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "partner_a_capital": {
+      "credit": "90000.00",
+      "debit": "0.00"
+    },
+    "partner_b_capital": {
+      "credit": "90000.00",
+      "debit": "0.00"
+    },
+    "service_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2030-12",
+  "scenario_id": "part-004-partnership-liquidation",
+  "statement_type": "trial_balance"
+}

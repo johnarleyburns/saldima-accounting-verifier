@@ -17,7 +17,13 @@ core-002-basic-service-business.yaml` for a fully worked example.
 - `cash_accounts`: account ids treated as cash for cash-flow reporting.
 - `closing`: `{retained_earnings_account, dates}` — fiscal-year-end closing
   entries to post before generating reports. Phase 1 supports calendar-year
-  closings only (fiscal year == calendar year).
+  closings only (fiscal year == calendar year). As an alternative to
+  `retained_earnings_account` (Phase 5), pass `partner_allocations:
+  {account_id: "ratio_string"}` instead — one entry per partner capital
+  account, ratios summing to exactly `"1.00"` — to split each closing's net
+  income/loss across multiple accounts by ratio. Exactly one of
+  `retained_earnings_account`/`partner_allocations` must be given. See
+  `docs/accounting-policy.md`.
 - `policies`, `rounding`: see `docs/accounting-policy.md`.
 
 Per-account (under `accounts[]`): `cash_flow_category`
@@ -26,7 +32,8 @@ Per-account (under `accounts[]`): `cash_flow_category`
 
 ## Events
 
-Seven event types are implemented. Adding a new one means:
+Seven event types are implemented (Phase 5 added none — see below).
+Adding a new one means:
 
 1. Add it to `schemas/event.schema.json`.
 2. Teach `runner/scenario_runner.py` how to translate it into
@@ -80,9 +87,13 @@ straight-line depreciation schedule itself
 
 Fields: `asset_id` (links a later `fixed_asset_disposal` to this asset),
 `asset_account_id`, `accumulated_depreciation_account_id`,
-`depreciation_expense_account_id`, `cash_account_id`, `cost`,
-`salvage_value`, `useful_life_months` (the purchase `date` is the
-in-service date, and must be the first day of its month). If a
+`depreciation_expense_account_id`, `cost`, `salvage_value`,
+`useful_life_months` (the purchase `date` is the in-service date, and
+must be the first day of its month), and exactly one of `cash_account_id`
+(a cash purchase) or `contributed_capital_account_id` (Phase 5: a partner
+contributing the asset itself, at fair market value, credited to their
+capital account instead of debiting cash — see
+`scenarios/partnerships/part-003-property-contribution-704c.yaml`). If a
 `fixed_asset_disposal` for the same `asset_id` exists anywhere in the
 scenario's `events`, the depreciation schedule stops at the last full
 month on or before the disposal date instead of running the full
@@ -157,6 +168,19 @@ stated business facts with no schedule to derive, so it's
 `scenarios/payroll/pay-001-payroll-and-withholding.yaml` for the
 one-month accrual/remittance-lag pattern (the same shape as
 `ACCR-001`'s accrued-liability lag).
+
+### Partnership scenarios (Phase 5): no new event type
+
+`PART-001` through `PART-004` introduce no new event type at all — see
+"`closing.partner_allocations`" above for the one scenario-level addition,
+and `fixed_asset_purchase`'s `contributed_capital_account_id` above for
+the other. Partner contributions, withdrawals, and liquidating
+distributions are all `manual_journal_entry`; a partnership-level loan is
+an ordinary `loan_origination`. See `docs/accounting-policy.md`'s "Reusing
+Phase 2-4 event types for partnership scenarios" for the full rationale,
+and `reference/tax/{liabilities,partnership_basis,section_704c}.py` for
+the outside-basis/section-704(c) tax schedules `PART-002`/`PART-003`
+validate separately (never posted to any ledger).
 
 ## Reporting periods
 

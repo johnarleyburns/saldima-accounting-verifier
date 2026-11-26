@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "130850.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "loan_payable": {
+      "ending_balance": "0.00"
+    },
+    "partner_a_capital": {
+      "ending_balance": "65425.00"
+    },
+    "partner_b_capital": {
+      "ending_balance": "65425.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "part-002-partnership-debt-and-outside-basis",
+  "statement_type": "balance_sheet"
+}

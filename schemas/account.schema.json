@@ -17,7 +17,7 @@
       "enum": [
         "current_asset", "noncurrent_asset", "contra_asset",
         "current_liability", "noncurrent_liability",
-        "contra_revenue"
+        "contra_revenue", "partner_capital"
       ]
     },
     "parent_id": { "type": "string" },
