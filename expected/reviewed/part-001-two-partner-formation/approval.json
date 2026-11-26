@@ -1,0 +1,20 @@
+{
+  "scenario_id": "part-001-two-partner-formation",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 5 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output. Partners A and B each contribute $30,000 cash (opening balance, Jan 1 2026). Every month: revenue 3000.00, expense 1000.00, net income 2000.00, identical every month — no steady-state ambiguity here since the only non-recurring events are the two closings and the two mid-2027 withdrawals.",
+    "2026-01 (January, no closing yet): cash = 60000.00 (opening) + 2000.00 (Jan net) = 62000.00. Balance sheet: assets 62000.00 = equity (partner_a_capital 30000.00 + partner_b_capital 30000.00 + current_period_earnings 2000.00, unclosed) 62000.00. Cash flow: net_income 2000.00 + partner_a_capital +30000.00 + partner_b_capital +30000.00 (the opening contributions, both dated within January) = 62000.00, matching ending_cash 62000.00 − beginning_cash 0.00.",
+    "2026-12 (December, standalone month, after the first 50/50 closing): December's own activity is the same 2000.00 net income as every month. The closing entry (dated the same day) splits the full year's 24000.00 net income 12000.00/12000.00 between A and B — partner_a_capital = 30000.00 + 12000.00 = 42000.00, same for B. cash = 60000.00 + 12×2000.00 = 84000.00. Cash flow: net_income 2000.00 only (the closing entry itself is invisible to cash_flow.py, per docs/reference-model.md) = ending_cash 84000.00 − beginning_cash (end of November, 60000.00 + 11×2000.00 = 82000.00) = 2000.00.",
+    "2027-06 (June, the withdrawal month): June's own net income is again 2000.00; both partners also withdraw 5000.00 cash each, dated June 30. partner_a_capital = 42000.00 − 5000.00 = 37000.00, same for B. cash = (end of May: 84000.00 + 5×2000.00 = 94000.00) + 2000.00 (June revenue/expense) − 5000.00 − 5000.00 = 86000.00. current_period_earnings (Jan–Jun 2027, no closing yet) = 6×2000.00 = 12000.00. Balance sheet: assets 86000.00 = equity (37000.00 + 37000.00 + 12000.00) 86000.00. Cash flow: net_income 2000.00 + partner_a_capital −5000.00 + partner_b_capital −5000.00 = −8000.00, matching ending_cash 86000.00 − beginning_cash 94000.00 = −8000.00.",
+    "2027-12 (December, standalone month, after the second 50/50 closing): the full year's 24000.00 net income splits 12000.00/12000.00, added to each partner's post-withdrawal balance: partner_a_capital = 37000.00 + 12000.00 = 49000.00, same for B. cash = 86000.00 + 6×2000.00 (July–Dec) = 98000.00. Balance sheet: assets 98000.00 = equity (49000.00 + 49000.00) 98000.00 exactly.",
+    "2026 (full fiscal year): revenue 36000.00, expense 12000.00, net income 24000.00. Cash: 0.00 → 84000.00, change 84000.00. Cash flow: net_income 24000.00 + partner_a_capital +30000.00 + partner_b_capital +30000.00 (the opening contributions, the only thing that happened to those accounts outside of the excluded closing entry) = 84000.00, matching.",
+    "2027 (full fiscal year): same revenue/expense/net income as 2026. Cash: 84000.00 → 98000.00, change 14000.00. Cash flow: net_income 24000.00 + partner_a_capital −5000.00 + partner_b_capital −5000.00 (the withdrawals, the only non-closing activity in those accounts this year) = 14000.00, matching."
+  ],
+  "periods_covered": ["2026-01", "2026-12", "2027-06", "2027-12", "2026", "2027"]
+}

@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "interest_expense": {
+      "ending_balance": "245.00"
+    },
+    "net_income": {
+      "ending_balance": "1755.00"
+    },
+    "operating_expense": {
+      "ending_balance": "1000.00"
+    },
+    "service_revenue": {
+      "ending_balance": "3000.00"
+    }
+  },
+  "period": "2026-12",
+  "scenario_id": "part-002-partnership-debt-and-outside-basis",
+  "statement_type": "income_statement"
+}

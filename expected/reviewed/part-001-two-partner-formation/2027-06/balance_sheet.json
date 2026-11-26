@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "86000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "12000.00"
+    },
+    "partner_a_capital": {
+      "ending_balance": "37000.00"
+    },
+    "partner_b_capital": {
+      "ending_balance": "37000.00"
+    }
+  },
+  "period": "2027-06",
+  "scenario_id": "part-001-two-partner-formation",
+  "statement_type": "balance_sheet"
+}

@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "ending_balance": "-60000.00"
+    },
+    "cash": {
+      "ending_balance": "180000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "0.00"
+    },
+    "equipment": {
+      "ending_balance": "60000.00"
+    },
+    "partner_c_capital": {
+      "ending_balance": "90000.00"
+    },
+    "partner_d_capital": {
+      "ending_balance": "90000.00"
+    }
+  },
+  "period": "2030-12",
+  "scenario_id": "part-003-property-contribution-704c",
+  "statement_type": "balance_sheet"
+}

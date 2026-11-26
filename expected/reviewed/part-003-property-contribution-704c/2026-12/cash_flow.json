@@ -1,0 +1,22 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "ending_balance": "1000.00"
+    },
+    "beginning_cash": {
+      "ending_balance": "82000.00"
+    },
+    "ending_cash": {
+      "ending_balance": "84000.00"
+    },
+    "net_income": {
+      "ending_balance": "1000.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "2000.00"
+    }
+  },
+  "period": "2026-12",
+  "scenario_id": "part-003-property-contribution-704c",
+  "statement_type": "cash_flow"
+}

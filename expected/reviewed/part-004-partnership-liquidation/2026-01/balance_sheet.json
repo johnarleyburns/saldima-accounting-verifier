@@ -1,0 +1,19 @@
+{
+  "lines": {
+    "cash": {
+      "ending_balance": "62000.00"
+    },
+    "current_period_earnings": {
+      "ending_balance": "2000.00"
+    },
+    "partner_a_capital": {
+      "ending_balance": "30000.00"
+    },
+    "partner_b_capital": {
+      "ending_balance": "30000.00"
+    }
+  },
+  "period": "2026-01",
+  "scenario_id": "part-004-partnership-liquidation",
+  "statement_type": "balance_sheet"
+}

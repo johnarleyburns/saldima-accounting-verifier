@@ -1,0 +1,481 @@
+scenario:
+  id: part-001-two-partner-formation
+  name: Two-Partner Formation — Capital Accounts
+  version: 1
+  category: partnerships
+  description: >
+    Partners A and B form a general partnership, each contributing
+    $30,000 cash for an equal (50/50) interest. The partnership operates
+    for two full fiscal years with steady monthly cash revenue and
+    expense, closing net income into each partner's own capital account
+    by ratio instead of into one combined retained-earnings account
+    (`closing.partner_allocations` — see docs/accounting-policy.md).
+    Partner contributions and a mid-second-year cash withdrawal by each
+    partner are stated business facts (`manual_journal_entry`) — nothing
+    about this scenario needs the reference model to derive a schedule.
+    Validates multiple partner capital accounts flowing correctly through
+    the trial balance, balance sheet, and cash flow reconciliation, and
+    the new ratio-based closing allocation. See docs/plan.md Phase 5,
+    scenario PART-001.
+
+  accounting:
+    framework: US_GAAP
+    basis: accrual
+    currency: USD
+    fiscal_year_end: "12-31"
+
+  rounding:
+    currency_precision: 2
+    method: HALF_UP
+
+  start_date: 2026-01-01
+  end_date: 2027-12-31
+
+  cash_accounts: [cash]
+
+  closing:
+    partner_allocations:
+      partner_a_capital: "0.50"
+      partner_b_capital: "0.50"
+    dates: ["2026-12-31", "2027-12-31"]
+
+  accounts:
+    - id: cash
+      name: Cash
+      type: asset
+    - id: partner_a_capital
+      name: Partner A Capital
+      type: equity
+      subtype: partner_capital
+    - id: partner_b_capital
+      name: Partner B Capital
+      type: equity
+      subtype: partner_capital
+    - id: service_revenue
+      name: Service Revenue
+      type: revenue
+    - id: operating_expense
+      name: Operating Expense
+      type: expense
+
+  opening_balances:
+    - account_id: cash
+      debit: "60000.00"
+      credit: "0.00"
+    - account_id: partner_a_capital
+      debit: "0.00"
+      credit: "30000.00"
+    - account_id: partner_b_capital
+      debit: "0.00"
+      credit: "30000.00"
+
+  events:
+    - id: revenue-2026-01
+      date: 2026-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-01
+      date: 2026-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-02
+      date: 2026-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-02
+      date: 2026-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-03
+      date: 2026-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-03
+      date: 2026-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-04
+      date: 2026-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-04
+      date: 2026-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-05
+      date: 2026-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-05
+      date: 2026-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-06
+      date: 2026-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-06
+      date: 2026-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-07
+      date: 2026-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-07
+      date: 2026-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-08
+      date: 2026-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-08
+      date: 2026-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-09
+      date: 2026-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-09
+      date: 2026-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-10
+      date: 2026-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-10
+      date: 2026-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-11
+      date: 2026-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-11
+      date: 2026-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2026-12
+      date: 2026-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2026-12
+      date: 2026-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-01
+      date: 2027-01-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-01
+      date: 2027-01-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-02
+      date: 2027-02-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-02
+      date: 2027-02-28
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-03
+      date: 2027-03-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-03
+      date: 2027-03-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-04
+      date: 2027-04-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-04
+      date: 2027-04-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-05
+      date: 2027-05-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-05
+      date: 2027-05-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-06
+      date: 2027-06-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-06
+      date: 2027-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: withdrawal-partner-a-2027-06
+      date: 2027-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: partner_a_capital
+          debit: "5000.00"
+        - account_id: cash
+          credit: "5000.00"
+    - id: withdrawal-partner-b-2027-06
+      date: 2027-06-30
+      type: manual_journal_entry
+      lines:
+        - account_id: partner_b_capital
+          debit: "5000.00"
+        - account_id: cash
+          credit: "5000.00"
+    - id: revenue-2027-07
+      date: 2027-07-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-07
+      date: 2027-07-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-08
+      date: 2027-08-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-08
+      date: 2027-08-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-09
+      date: 2027-09-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-09
+      date: 2027-09-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-10
+      date: 2027-10-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-10
+      date: 2027-10-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-11
+      date: 2027-11-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-11
+      date: 2027-11-30
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+    - id: revenue-2027-12
+      date: 2027-12-15
+      type: manual_journal_entry
+      lines:
+        - account_id: cash
+          debit: "3000.00"
+        - account_id: service_revenue
+          credit: "3000.00"
+    - id: expense-2027-12
+      date: 2027-12-31
+      type: manual_journal_entry
+      lines:
+        - account_id: operating_expense
+          debit: "1000.00"
+        - account_id: cash
+          credit: "1000.00"
+
+  expected:
+    reports:
+      - period: "2026-01"
+      - period: "2026-12"
+      - period: "2027-06"
+      - period: "2027-12"
+      - period: "2026"
+      - period: "2027"

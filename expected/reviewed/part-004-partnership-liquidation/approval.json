@@ -1,0 +1,21 @@
+{
+  "scenario_id": "part-004-partnership-liquidation",
+  "scenario_version": 1,
+  "reference_model_commit": "Phase 5 implementation",
+  "accounting_framework": "US_GAAP",
+  "basis": "accrual",
+  "policies": {},
+  "review_date": "2026-11-26",
+  "reviewer": "implementer (first-pass only; see docs/release-gates.md — a second independent reviewer should sign off before this fixture is relied on as a release gate)",
+  "notes": [
+    "Hand-verified against the scenario's own arithmetic before comparing to reference-model output. Same shape as PART-001: $30,000.00 cash contribution each, $3000.00 revenue/$1000.00 expense every month, net income 2000.00/month, identical every month for ten full years. No withdrawals until the very end.",
+    "2026-01 (January, no closing yet): cash = 60000.00 + 2000.00 = 62000.00, matching PART-001's January exactly (same opening facts, same first month).",
+    "Full-year net income is 24000.00 every year (12×2000.00), split 12000.00/12000.00 at each of ten closings. Cumulative cash through the end of year N (no withdrawals before liquidation): 60000.00 + 24000.00×N. Cumulative per-partner capital through year N: 30000.00 + 12000.00×N.",
+    "2030-12 (end of year 5, after the fifth closing): cash = 60000.00 + 120000.00 = 180000.00. partner_a_capital = partner_b_capital = 30000.00 + 60000.00 = 90000.00. Balance sheet: assets 180000.00 = equity (90000.00 + 90000.00) 180000.00.",
+    "2034-12 (end of year 9, after the ninth closing, the last full year before liquidation): cash = 60000.00 + 216000.00 = 276000.00. partner_a_capital = partner_b_capital = 30000.00 + 108000.00 = 138000.00. Balance sheet: assets 276000.00 = equity (138000.00 + 138000.00) 276000.00.",
+    "2035-12-31 (the tenth and final closing, same day as the liquidating distribution): the tenth year's 24000.00 net income is split 12000.00/12000.00 first, bringing each partner's capital to 138000.00 + 12000.00 = 150000.00 and cash to 276000.00 + 24000.00 = 300000.00 — then the liquidating distribution pays each partner exactly 150000.00 in cash, debiting their capital account and crediting cash for that same amount. Both partner capital accounts and cash land on exactly 0.00 — nothing is left over, and nothing goes negative, confirming the liquidating amounts were computed correctly from the scenario's own year-by-year arithmetic above. Balance sheet: assets 0.00 = equity (0.00 + 0.00) 0.00, a cleanly wound-down partnership.",
+    "2035 (the final full fiscal year): net income 24000.00, identical to every other year (the liquidating distribution has no income-statement effect — it only moves capital and cash). Cash flow: operating_cash_flow = net_income 24000.00 + partner_a_capital −150000.00 + partner_b_capital −150000.00 (the only non-closing activity in those accounts this year is the liquidating distribution) = −276000.00, matching ending_cash 0.00 − beginning_cash 276000.00 = −276000.00.",
+    "2026/2030 (full fiscal years, for comparison): net income 24000.00, matching every year's identical activity; balance sheets balance as shown above for the corresponding year-end balances."
+  ],
+  "periods_covered": ["2026-01", "2030-12", "2034-12", "2035-12", "2026", "2030", "2035"]
+}

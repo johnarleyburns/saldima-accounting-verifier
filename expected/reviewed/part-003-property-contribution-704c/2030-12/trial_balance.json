@@ -1,0 +1,39 @@
+{
+  "lines": {
+    "accumulated_depreciation_equipment": {
+      "credit": "60000.00",
+      "debit": "0.00"
+    },
+    "cash": {
+      "credit": "0.00",
+      "debit": "180000.00"
+    },
+    "depreciation_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "equipment": {
+      "credit": "0.00",
+      "debit": "60000.00"
+    },
+    "operating_expense": {
+      "credit": "0.00",
+      "debit": "0.00"
+    },
+    "partner_c_capital": {
+      "credit": "90000.00",
+      "debit": "0.00"
+    },
+    "partner_d_capital": {
+      "credit": "90000.00",
+      "debit": "0.00"
+    },
+    "service_revenue": {
+      "credit": "0.00",
+      "debit": "0.00"
+    }
+  },
+  "period": "2030-12",
+  "scenario_id": "part-003-property-contribution-704c",
+  "statement_type": "trial_balance"
+}

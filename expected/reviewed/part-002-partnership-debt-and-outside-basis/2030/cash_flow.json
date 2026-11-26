@@ -1,0 +1,25 @@
+{
+  "lines": {
+    "beginning_cash": {
+      "ending_balance": "119240.00"
+    },
+    "ending_cash": {
+      "ending_balance": "130850.00"
+    },
+    "financing_cash_flow": {
+      "ending_balance": "-12000.00"
+    },
+    "loan_payable": {
+      "ending_balance": "-12000.00"
+    },
+    "net_income": {
+      "ending_balance": "23610.00"
+    },
+    "operating_cash_flow": {
+      "ending_balance": "23610.00"
+    }
+  },
+  "period": "2030",
+  "scenario_id": "part-002-partnership-debt-and-outside-basis",
+  "statement_type": "cash_flow"
+}
