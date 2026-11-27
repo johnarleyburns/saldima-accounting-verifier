@@ -590,3 +590,89 @@ statement uses (`reference/reporting/statements.bank_reconciliation_to_dict`,
 `generate_period_reports`'s ordinary periods — so it reuses
 `runner/compare.py` and `tests/integration/test_core_scenarios.py`'s
 existing comparison loop with no changes to either.
+
+## Saldima bridge (`adapters/saldima/`)
+
+A real Saldima engine exists as the sibling `saldima` repository
+(TypeScript on Cloudflare; `packages/gnucash` is its pure, Node-only
+accounting-primitives package — no Cloudflare/network/fetch). That repo
+merged a small NDJSON stdin/stdout bridge over `packages/gnucash`'s
+ledger functions (`pnpm accounting-bridge`,
+`packages/gnucash/src/{cli,cli-bridge}.ts`), which `adapters/saldima/
+bridge.py` (transport) and `adapters/saldima/adapter.py`
+(`SaldimaAdapter`, the actual `AccountingSystemAdapter` implementation)
+drive from here — the first adapter in this repo validating against a
+*different, real, independently-built* engine, rather than our own
+adapter code against a file-format schema (`adapters/gnucash_xml`).
+
+**Environment gating.** This repo's CI never has the `saldima` repo
+checked out, so nothing may assume the bridge exists.
+`bridge.saldima_repo_path()` reads the `SALDIMA_REPO_PATH` environment
+variable (no sibling-directory guessing) and `bridge.is_available()`
+additionally checks `pnpm` is on `PATH`.
+`tests/integration/test_saldima_bridge_cross_validation.py` is
+`pytest.mark.skipif`-gated on exactly that check, so `make test`/CI
+stays green with nothing configured, and exporting
+`SALDIMA_REPO_PATH=/path/to/saldima` locally runs the real cross-engine
+validation.
+
+**Money sign convention.** Saldima's `Split.value` is one signed
+`Money` (a `{num, denom}` bigint rational) per split — positive for a
+debit-normal increase, negative for a credit-normal one — rather than
+separate non-negative debit/credit fields. Since every `JournalLine` in
+this reference model is already one-sided (`JournalEntry.__post_init__`
+enforces it), `value = line.debit - line.credit` is an exact, lossless
+translation each way (`bridge.to_wire_money`/`from_wire_money`); a
+balanced entry's lines always sum to exactly zero under that
+transformation, matching Saldima's own `UNBALANCED_TRANSACTION` check
+by construction.
+
+**No event-translation or closing-entry concept on the bridge side**
+(scope boundary, same honest reason `adapters/gnucash_xml`'s `apply_event`/
+`run_adjustments` are no-ops): `packages/gnucash`'s pure functions only
+know posted transactions, not business events or "this transaction is a
+closing entry." `SaldimaAdapter.create_book` builds the full ledger up
+front via the unmodified `runner/scenario_runner.build_ledger` +
+`runner/reference_runner.apply_closing_entries`, then replays every
+resulting entry (closing entries included) into Saldima as ordinary
+posted transactions — this works correctly with no special handling,
+since a closing entry's effect (zeroing revenue/expense into retained
+earnings) is, to a raw ledger, just another balanced transaction whose
+net effect on any already-closed account's cumulative balance is
+genuinely zero.
+
+**Aggregate-only balance sheet / income statement** (scope boundary):
+`packages/gnucash`'s `balanceSheet`/`incomeStatement` return rolled-up
+totals only (`assets`/`liabilities`/`equity`/`retainedEarnings` and
+`revenue`/`expenses`/`netIncome`), not per-account lines — its reporting
+is still minimal. `SaldimaAdapter.get_financial_statements` reflects
+that honestly (`total_assets` etc.) rather than forcing a per-account
+shape the real engine doesn't produce, and the cross-validation test
+compares those aggregates against totals computed from our own
+`balance_sheet.generate`/`income_statement.generate` objects directly,
+not against the per-account reviewed fixture files. `trialBalance`
+*does* return full per-account rows, so that comparison is full and
+direct (GUIDs mapped back to our account ids) against the existing
+reviewed fixtures via the unchanged `runner/compare.py` — with one
+normalization: `packages/gnucash`'s `trialBalance` omits any account at
+exactly a zero balance (its own convention), so
+`get_financial_statements` fills those back in as explicit `0.00`
+lines to match our own `trial_balance.generate`'s "every chart account,
+always" convention — a presentation fix, not a correctness one.
+
+**Comparison windows must avoid the no-closing-exclusion gap**: because
+the bridge has no "exclude closing entries from period activity"
+concept, an income-statement comparison window whose *end date* lands
+exactly on a closing date would include that closing entry's own
+zeroing effect inside the window on Saldima's side (while our own
+`income_statement.generate` excludes it) — a real but narrow edge case,
+not a defect in either engine's core accounting. The cross-validation
+test picks comparison windows that avoid it (see
+`tests/integration/test_saldima_bridge_cross_validation.py`'s own
+comments); point-in-time trial-balance/balance-sheet checks are
+unaffected by this, since they're not windowed.
+
+**GUIDs**: `adapters/saldima/adapter.py` reuses
+`adapters.gnucash_xml.xml_format.account_guid`/`entry_guid` directly —
+the same deterministic MD5-hash-based mapping `adapters/gnucash_xml`
+already uses and tests, not reinvented for this adapter.
