@@ -131,8 +131,18 @@ def _read_slots(slots_el: ET.Element | None) -> dict[str, str]:
     return slots
 
 
-def _commodity_element(parent_el: ET.Element, tag_prefix: str) -> None:
-    commodity_el = ET.SubElement(parent_el, _tag(tag_prefix, "commodity"))
+def _commodity_ref_element(parent_el: ET.Element, tag_prefix: str, tag_name: str) -> None:
+    """A `{space, id}` commodity reference -- `act:commodity` for an
+    account, but `trn:currency` (not `trn:commodity`) for a transaction,
+    per the real GnuCash source and its own RELAX NG schema
+    (`libgnucash/backend/xml/DTD/gnucash-v2.rnc`'s `Transaction` rule,
+    `src/backend/xml/gnc-transaction-xml-v2.c`'s `trn_currency_handler`)
+    -- confirmed by actually opening an exported file with the real
+    engine (python3-gnucash), which rejected `trn:commodity` outright
+    ("Unhandled tag"). The parse side never reads this element back (not
+    needed to reconstruct a JournalEntry), so this is write-side only.
+    """
+    commodity_el = ET.SubElement(parent_el, _tag(tag_prefix, tag_name))
     ET.SubElement(commodity_el, _tag("cmdty", "space")).text = "ISO4217"
     ET.SubElement(commodity_el, _tag("cmdty", "id")).text = "USD"
 
@@ -145,7 +155,7 @@ def _account_element(book_el: ET.Element, account: Account) -> None:
     id_el.set("type", "guid")
     id_el.text = account_guid(account.id)
     ET.SubElement(el, _tag("act", "type")).text = ACCOUNT_TYPE_TO_GNUCASH[account.type]
-    _commodity_element(el, "act")
+    _commodity_ref_element(el, "act", "commodity")
     ET.SubElement(el, _tag("act", "commodity-scu")).text = str(SCU)
 
     slots_el = ET.SubElement(el, _tag("act", "slots"))
@@ -174,7 +184,7 @@ def _transaction_element(book_el: ET.Element, entry: JournalEntry) -> None:
     id_el = ET.SubElement(el, _tag("trn", "id"))
     id_el.set("type", "guid")
     id_el.text = entry_guid(entry.id)
-    _commodity_element(el, "trn")
+    _commodity_ref_element(el, "trn", "currency")
     date_posted_el = ET.SubElement(el, _tag("trn", "date-posted"))
     ET.SubElement(date_posted_el, _tag("ts", "date")).text = encode_timestamp(entry.date)
     date_entered_el = ET.SubElement(el, _tag("trn", "date-entered"))

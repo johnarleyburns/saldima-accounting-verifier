@@ -442,6 +442,27 @@ id/name/type/parent/`cash_flow_category`, every entry's date/
 never against XML text — matching `docs/plan.md` section 10's own wording
 ("semantic equivalence... not byte-for-byte XML equality").
 
+**A real bug the schema alone couldn't catch, only the real engine
+could**: `xml_format.py` originally wrote a transaction's currency
+reference as `<trn:commodity>` — schema-plausible-looking, and
+self-consistent under our *own* round trip (`parse_book` never reads
+this element back either way, so `GNC-001`'s own comparison couldn't
+catch it), but wrong. The real GnuCash source
+(`src/backend/xml/gnc-transaction-xml-v2.c`'s `trn_currency_handler`)
+and the RELAX NG schema's own `Transaction` rule both use
+`<trn:currency>`. The real GnuCash engine (`python3-gnucash`, actually
+opening an exported file) rejected `<trn:commodity>` outright
+("Unhandled tag"). Fixed to `<trn:currency>`; the exported file now
+opens and re-saves cleanly through the real engine, which also confirms
+GnuCash preserves our `act:slots`/`trn:slots` extensibility convention
+(`saldima_account_id`, `cash_flow_category`, `source_event_id`) through
+a real round trip, not just our own parser's. `scripts/
+export_gnucash_book.py`'s FA-001 output is the file actually tested
+this way. This is the concrete argument for testing against the real
+engine, not only the schema it's built from — see
+`docs/accounting-policy.md`'s "Saldima bridge" section for the same
+lesson applied to a second, independent engine.
+
 ## Multi-book merge semantics (Phase 6, `SYNC-001`/`SYNC-002`)
 
 `reference/sync/merge.py` is new: multi-book branch merge didn't exist
