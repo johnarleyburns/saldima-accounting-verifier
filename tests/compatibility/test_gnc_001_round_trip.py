@@ -54,6 +54,7 @@ def test_exported_xml_uses_the_real_gnucash_element_and_attribute_names():
         "<act:type>ROOT</act:type>",
         "<act:type>ASSET</act:type>",
         "<gnc:transaction",
+        "<trn:currency>",
         "<trn:splits>",
         "<trn:split>",
         "<split:reconciled-state>n</split:reconciled-state>",
@@ -61,6 +62,13 @@ def test_exported_xml_uses_the_real_gnucash_element_and_attribute_names():
         "<split:account",
     ):
         assert expected_fragment in text, f"missing {expected_fragment!r} in exported XML"
+    # Regression: a transaction's currency reference is `trn:currency`, not
+    # `trn:commodity` -- the real GnuCash engine rejects the latter outright
+    # ("Unhandled tag: trn:commodity"), confirmed by actually opening an
+    # exported file with python3-gnucash. Our own parse_book never read this
+    # element either way, so this round trip's other checks couldn't catch
+    # it on their own -- see docs/accounting-policy.md.
+    assert "<trn:commodity>" not in text
 
 
 def test_every_account_round_trips_with_identical_id_name_type_parent_and_cash_flow_category():
