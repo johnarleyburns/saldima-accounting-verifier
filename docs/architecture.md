@@ -198,9 +198,26 @@ correctly through `cash_flow.py`'s existing reconciliation with zero
 `reference/accounting/*.py` changes beyond the new module above — see
 `docs/accounting-policy.md`.
 
+Partially implemented, environment-gated (`adapters/saldima/` — see
+`docs/accounting-policy.md`'s "Saldima bridge" section for the full
+writeup): `bridge.py` (NDJSON subprocess transport to `pnpm
+accounting-bridge` in the sibling `saldima` repository's `packages/
+gnucash`) and `adapter.py` (`SaldimaAdapter`, a real
+`AccountingSystemAdapter` driving that actual engine) — the first
+adapter in this repo validating against a genuinely different,
+independently-built accounting engine, not just our own adapter code
+against a file-format schema. Gated on the `SALDIMA_REPO_PATH`
+environment variable, since this repo's CI never has the sibling repo
+checked out; `tests/integration/test_saldima_bridge_cross_validation.py`
+skips cleanly without it and runs real cross-engine validation with it
+set. Scope boundaries this increment: aggregate-only balance sheet/
+income statement (the real engine's reporting is still minimal), no
+`apply_event`/closing-entry concept on the bridge (same honest no-op
+pattern as `adapters/gnucash_xml`'s).
+
 Scaffolded only (directory + README explaining what's planned, see
-`docs/plan.md` section 18 for phases): `adapters/{saldima,csv,ofx,qfx}/`,
-every scenario category besides `foundational/`, `accruals/`,
+`docs/plan.md` section 18 for phases): `adapters/{csv,ofx,qfx}/`, every
+scenario category besides `foundational/`, `accruals/`,
 `revenue-recognition/`, `fixed-assets/`, `inventory/`, `debt/`,
 `payroll/`, `partnerships/`, and `multi-entity/`, `datasets/*`, and the
 `tests/regression` suite.

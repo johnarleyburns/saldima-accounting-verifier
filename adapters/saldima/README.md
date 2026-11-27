@@ -1,17 +1,23 @@
 # adapters/saldima
 
-**Status:** Interface contract defined (see `adapters/__init__.py` and
-`docs/architecture.md`); concrete implementation not yet written.
+**Status:** Partially implemented, environment-gated. `SaldimaAdapter`
+(`adapter.py`) is a real `AccountingSystemAdapter` implementation
+(`adapters/__init__.py`) driving the actual Saldima engine — the sibling
+`saldima` repository's `packages/gnucash` pure ledger functions, via a
+small NDJSON stdin/stdout bridge merged there (`pnpm accounting-bridge`,
+`packages/gnucash/src/{cli,cli-bridge}.ts`). `adapters/saldima/bridge.py`
+is the subprocess transport.
 
-Earlier docs in this repository claimed no Saldima engine existed to
-drive, full stop — that was wrong. A real Saldima engine exists as the
-sibling repository `saldima` (TypeScript on Cloudflare, currently Phase
-P0/Foundations; see its own `docs/spec/`), plus `saldima-ios`/
-`saldima-android`. It has simply never been connected to *this*
-repository. Implementing this adapter for real requires studying that
-engine's actual accounting data model/API first (a separate piece of
-work, touching a separate repository with its own contract) before this
-suite could drive it.
+This repo's own CI never has the `saldima` repo checked out, so every
+caller must go through `bridge.is_available()` first (true only when the
+`SALDIMA_REPO_PATH` environment variable points at a real checkout and
+`pnpm` is on `PATH`) — see `tests/integration/
+test_saldima_bridge_cross_validation.py`, which skips cleanly when it
+returns `False`, and `docs/accounting-policy.md`'s "Saldima bridge"
+section for the scope boundaries (aggregate-only balance sheet/income
+statement, no per-account lines yet; no `apply_event`/closing-entry
+concept on the bridge's side, same honest reason as
+`adapters/gnucash_xml`'s).
 
 This adapter must implement `AccountingSystemAdapter` and return normalized
 data in the comparison schema (`schemas/financial-statement.schema.json`,
