@@ -374,7 +374,10 @@ unchanged) plus `runner/reference_runner.py`'s `apply_closing_entries`,
 then answers queries through `reference/accounting/*` the same way
 `reference_runner.py` does. This is honest: it's a self-contained engine
 backed by GnuCash's own data model, not a stand-in for a real Saldima
-engine, which doesn't exist in this repository.
+engine — no Saldima engine is driven *by this repository*, though a real
+one does exist as the sibling `saldima` repository (see the note on
+`adapters/saldima/` below, corrected from earlier phases' overstatement
+that no such engine existed anywhere).
 
 `apply_event`/`run_adjustments` on `GnuCashXmlAdapter` are documented
 no-ops: GnuCash's native file format has no concept of incrementally
@@ -383,12 +386,19 @@ format. `create_book` already processes every event in the scenario in
 one pass; an artificial per-event protocol here would be less honest
 about what a file-format adapter's real job is, not more correct.
 
-`adapters/saldima/`, `adapters/csv/`, `adapters/ofx/`, `adapters/qfx/`
-remain exactly as scaffolded as they've always been — implementing any of
-them for real would require an actual external system or file-format
-authority this repository doesn't have (or, for `adapters/saldima/`
-specifically, would require claiming to drive a production engine that
-isn't present here at all).
+`scripts/export_gnucash_book.py` writes `GnuCashXmlAdapter.export_book`'s
+output to an actual `.gnucash` file on disk (every prior use of
+`export_book`, including `GNC-001`, stayed entirely in memory) — for
+opening a reviewed scenario directly in real GnuCash, which this
+repository had never actually done before.
+
+`adapters/csv/`, `adapters/ofx/`, `adapters/qfx/` remain exactly as
+scaffolded as they've always been — implementing any of them for real
+would require an actual external file-format authority this repository
+doesn't have. `adapters/saldima/` is different: a real Saldima engine
+*does* exist (the sibling `saldima` repository, currently Phase P0), it's
+just never been connected to this one — see `adapters/saldima/README.md`
+for the corrected status and what a real implementation would need.
 
 ## GnuCash XML round-trip conventions (Phase 6, `GNC-001`)
 

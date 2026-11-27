@@ -2,9 +2,10 @@
 `AccountingSystemAdapter` (adapters/__init__.py) backed by GnuCash's own
 data model, not a live Saldima engine.
 
-`adapters/saldima/` stays unimplemented -- there's no actual Saldima
-engine available in this repository to drive, and claiming otherwise
-would be dishonest. But GnuCash's own account/transaction/split model is
+`adapters/saldima/` stays unimplemented -- no Saldima engine has been
+connected to *this* repository (a real one exists as the sibling
+`saldima` repository; see `adapters/saldima/README.md`), and claiming
+otherwise would be dishonest. But GnuCash's own account/transaction/split model is
 expressive enough to *be* a tiny accounting engine in its own right, so
 this adapter is a real, complete implementation: it builds a book from a
 scenario using the exact same translation the reference run itself uses

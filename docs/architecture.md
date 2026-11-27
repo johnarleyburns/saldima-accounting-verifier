@@ -116,8 +116,9 @@ Implemented (Phase 6 — compatibility and multi-book integration; see
 `docs/plan.md` section 18): `adapters/gnucash_xml/{xml_format,
 adapter}.py` — the first real `adapters/*` implementation, a
 self-contained engine backed by GnuCash's own data model (not a live
-Saldima driver; `adapters/saldima/` stays unimplemented, since there's no
-actual Saldima engine available here) — and `reference/sync/merge.py`, a
+Saldima driver; `adapters/saldima/` stays unimplemented, since no Saldima
+engine had been connected to this repository — see
+`adapters/saldima/README.md`) — and `reference/sync/merge.py`, a
 new reference-model subpackage for multi-book branch merge semantics.
 Scenario `GNC-001` (`tests/compatibility/test_gnc_001_round_trip.py`,
 round-tripping the already-reviewed `FA-001` through real GnuCash v2
